@@ -1,0 +1,34 @@
+<RCC>
+  <qresource prefix="/" >
+    <file alias="mainicon" >images/running.png</file>
+    <file alias="exit" >images/door_out.png</file>
+    <file alias="about" >images/lightbulb.png</file>
+    <file alias="calendar" >images/calendar_view_month.png</file>
+    <file alias="statistics" >images/chart_curve.png</file>
+    <file alias="event_edit" >images/date_edit.png</file>
+    <file alias="event_add" >images/date_add.png</file>
+    <file alias="event_delete" >images/date_delete.png</file>
+    <file alias="resultset_first" >images/resultset_first.png</file>
+    <file alias="resultset_last" >images/resultset_last.png</file>
+    <file alias="resultset_next" >images/resultset_next.png</file>
+    <file alias="resultset_previous" >images/resultset_previous.png</file>
+    <file alias="table_edit" >images/table_edit.png</file>
+    <file alias="table_add" >images/table_add.png</file>
+    <file alias="table_delete" >images/table_delete.png</file>
+    <file alias="reset" >images/arrow_refresh.png</file>
+    <file alias="save" >images/disk.png</file>
+    <file alias="cancel" >images/cancel.png</file>
+    <file alias="star" >images/star.png</file>
+    <file alias="medal" >images/rosette.png</file>
+    <file alias="intervals" >images/arrow_rotate_clockwise.png</file>
+    <file alias="yes" >images/tick.png</file>
+    <file alias="vote_high" >images/emoticon_smile.png</file>
+    <file alias="vote_low" >images/emoticon_unhappy.png</file>
+    <file alias="table_row_up" >images/arrow_up.png</file>
+    <file alias="table_row_down" >images/arrow_down.png</file>
+  </qresource>
+  <qresource>
+    <file>translations/running_en_US.qm</file>
+    <file>translations/running_it_IT.qm</file>
+  </qresource>
+</RCC>
