@@ -1,0 +1,172 @@
+<ui version="4.0" >
+ <class>ShoeModelView</class>
+ <widget class="QDialog" name="ShoeModelView" >
+  <property name="windowModality" >
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Edit "Shoe model"</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QPushButton" name="addPushButton" >
+       <property name="icon" >
+        <iconset>
+         <normaloff>:table_add</normaloff>:table_add</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removePushButton" >
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>:table_delete</normaloff>:table_delete</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableView" name="tableView" >
+     <property name="editTriggers" >
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior" >
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="cornerButtonEnabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="1" column="0" >
+       <widget class="QLabel" name="descriptionLabel" >
+        <property name="text" >
+         <string>Description</string>
+        </property>
+        <property name="buddy" >
+         <cstring>descriptionLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="descriptionLineEdit" />
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="shoeMakerLabel" >
+        <property name="text" >
+         <string>Maker</string>
+        </property>
+        <property name="buddy" >
+         <cstring>shoeMakerComboBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QComboBox" name="shoeMakerComboBox" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QPushButton" name="resetPushButton" >
+       <property name="text" >
+        <string>Reset</string>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>:reset</normaloff>:reset</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="savePushButton" >
+       <property name="text" >
+        <string>Save</string>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>:save</normaloff>:save</iconset>
+       </property>
+       <property name="default" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelPushButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>:cancel</normaloff>:cancel</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../resources/application.qrc" />
+ </resources>
+ <connections/>
+</ui>
