@@ -19,4 +19,4 @@ goto Exit
 echo File %filename% not found.
 
 :Exit
-rem pause
+pause

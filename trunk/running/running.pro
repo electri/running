@@ -53,6 +53,8 @@ HEADERS += src/objects/baseobject.h \
     src/delegates/booleanimageitemdelegate.h \
     src/delegates/calendardelegate.h \
     src/delegates/comboobjectitemdelegate.h \
+    src/delegates/distancestyleditemdelegate.h \
+    src/delegates/durationstyleditemdelegate.h \
     src/widgets/calendarwidget.h \
     src/widgets/statisticswidget.h \
     src/widgets/qxtstars/qxtglobal.h \
@@ -112,6 +114,8 @@ SOURCES += src/objects/baseobject.cpp \
     src/delegates/booleanimageitemdelegate.cpp \
     src/delegates/calendardelegate.cpp \
     src/delegates/comboobjectitemdelegate.cpp \
+    src/delegates/distancestyleditemdelegate.cpp \
+    src/delegates/durationstyleditemdelegate.cpp \
     src/widgets/calendarwidget.cpp \
     src/widgets/statisticswidget.cpp \
     src/widgets/qxtstars/qxtstars.cpp \

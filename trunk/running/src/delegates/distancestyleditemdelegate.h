@@ -18,28 +18,23 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
+#ifndef DISTANCESTYLEDITEMDELEGATE_H
+#define DISTANCESTYLEDITEMDELEGATE_H
+
+#include <QStyledItemDelegate>
 #include <QLocale>
 
-#include "views/mainview.h"
-
-int main(int argc, char *argv[])
+class DistanceStyledItemDelegate : public QStyledItemDelegate
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+public:
+	DistanceStyledItemDelegate(QObject *parent = 0, quint8 precision = 0, const QString &prefix = "", const QString &suffix = "");
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.1.1");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+	QString displayText(const QVariant &value, const QLocale &locale) const;
 
-	QTranslator myappTranslator;
-	myappTranslator.load(":/translations/running_" + QLocale::system().name());
-	app.installTranslator(&myappTranslator);
+private:
+	uint m_precision;
+	QString m_prefix;
+	QString m_suffix;
+};
 
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
-}
+#endif

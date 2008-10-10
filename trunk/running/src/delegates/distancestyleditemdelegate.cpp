@@ -18,28 +18,38 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
-#include <QLocale>
+#include "distancestyleditemdelegate.h"
 
-#include "views/mainview.h"
+#include "../utility/utility.h"
 
-int main(int argc, char *argv[])
+DistanceStyledItemDelegate::DistanceStyledItemDelegate(QObject *parent, quint8 precision, const QString &prefix, const QString &suffix)
+	: QStyledItemDelegate(parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	m_precision = precision;
+	m_prefix = prefix;
+	m_suffix = suffix;
+}
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.1.1");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+QString DistanceStyledItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
+{
+	if (value.isNull()) return "";
 
-	QTranslator myappTranslator;
-	myappTranslator.load(":/translations/running_" + QLocale::system().name());
-	app.installTranslator(&myappTranslator);
+	QString s = "";
 
-	MainView* view = new MainView();
-	view->show();
+	bool ok = false;
+	double d = value.toDouble(&ok);
+	if (ok) {
+		s = Utility::formatDistance(d, m_precision);
+	}
 
-	return app.exec();
+	if (s != "") {
+		if (m_prefix != "") {
+			s = m_prefix + " " + s;
+		}
+		if (m_suffix != "") {
+			s = s + " " + m_suffix;
+		}
+	}
+
+	return s;
 }

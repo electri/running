@@ -120,7 +120,11 @@
             </widget>
            </item>
            <item row="1" column="1" >
-            <widget class="QTimeEdit" name="startTimeEdit" />
+            <widget class="QTimeEdit" name="startTimeEdit" >
+             <property name="displayFormat" >
+              <string>h:mm AP</string>
+             </property>
+            </widget>
            </item>
            <item row="1" column="2" colspan="9" >
             <spacer name="horizontalSpacer" >
@@ -239,6 +243,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="displayFormat" >
+              <string>h:mm:ss</string>
              </property>
             </widget>
            </item>

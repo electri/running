@@ -92,7 +92,9 @@ MainView::MainView(QWidget *parent)
 																	QMessageBox::Ok, QMessageBox::NoButton);
 	}
 
-//	calendarWidget->setSelectedDate(QDate(2006, 11, 1));
+#ifdef QT_DEBUG
+	calendarWidget->setSelectedDate(QDate(2006, 11, 1));
+#endif
 
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(showDebugOnConsole()));
@@ -556,7 +558,7 @@ void MainView::about()
 {
 	QString message = "<html><head></head><body>\n";
 	message += "<h1>" + qApp->applicationName() + "</h1>\n";
-//	message += qApp->applicationVersion() + "<br>\n";
+	message += qApp->applicationVersion() + "<br><br>\n";
 	message += tr("A simple program for runners based on a calendar and an event list.") + "<br>\n";
 	message += "<hr><br>\n";
 	message += tr("Made with:") + "<br>\n";
