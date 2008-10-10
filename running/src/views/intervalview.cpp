@@ -27,6 +27,8 @@
 #include "../objects/intervaltype.h"
 #include "../services/objectmap.h"
 #include "../delegates/comboobjectitemdelegate.h"
+#include "../delegates/distancestyleditemdelegate.h"
+#include "../delegates/durationstyleditemdelegate.h"
 #include "../models/intervaltablemodel.h"
 #include "../views/intervaltypeview.h"
 #include "../utility/utility.h"
@@ -43,7 +45,9 @@ IntervalView::IntervalView(Objects::Event *event, QWidget *parent, quint32 id)
 	tableView->setColumnWidth(1, 130);
 	tableView->setItemDelegateForColumn(1, new ComboObjectItemDelegate(Objects::Types::IntervalType, tableView));
 	tableView->setColumnWidth(2, 100);
+	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", tr(" km")));
 	tableView->setColumnWidth(3, 100);
+	tableView->setItemDelegateForColumn(3, new DurationStyledItemDelegate(tableView));
 	tableView->hideColumn(4);
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),

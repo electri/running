@@ -18,28 +18,27 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
-#include <QLocale>
+#include <QTime>
 
-#include "views/mainview.h"
+#include "durationstyleditemdelegate.h"
 
-int main(int argc, char *argv[])
+#include "../utility/utility.h"
+
+DurationStyledItemDelegate::DurationStyledItemDelegate(QObject *parent)
+	: QStyledItemDelegate(parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+}
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.1.1");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+QString DurationStyledItemDelegate::displayText(const QVariant &value, const QLocale&) const
+{
+	if (value.isNull()) return "";
 
-	QTranslator myappTranslator;
-	myappTranslator.load(":/translations/running_" + QLocale::system().name());
-	app.installTranslator(&myappTranslator);
+	QString s = "";
 
-	MainView* view = new MainView();
-	view->show();
+	QTime t = value.toTime();
+	if (t.isValid()) {
+		s = Utility::formatDuration(t);
+	}
 
-	return app.exec();
+	return s;
 }

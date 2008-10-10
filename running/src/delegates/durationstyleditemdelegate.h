@@ -18,28 +18,20 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
+#ifndef DURATIONSTYLEDITEMDELEGATE_H
+#define DURATIONSTYLEDITEMDELEGATE_H
+
+#include <QStyledItemDelegate>
 #include <QLocale>
 
-#include "views/mainview.h"
-
-int main(int argc, char *argv[])
+class DurationStyledItemDelegate : public QStyledItemDelegate
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+public:
+	DurationStyledItemDelegate(QObject *parent = 0);
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.1.1");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+	QString displayText(const QVariant &value, const QLocale &locale) const;
+};
 
-	QTranslator myappTranslator;
-	myappTranslator.load(":/translations/running_" + QLocale::system().name());
-	app.installTranslator(&myappTranslator);
+#endif
 
-	MainView* view = new MainView();
-	view->show();
 
-	return app.exec();
-}
