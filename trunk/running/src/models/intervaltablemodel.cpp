@@ -23,10 +23,9 @@
 #include "../objects/interval.h"
 #include "../objects/intervaltype.h"
 #include "../objects/event.h"
-#include "../services/objectmap.h"
 
 IntervalTableModel::IntervalTableModel(Objects::Event *event, QObject *parent)
-	: BaseObjectTableModel(Objects::Types::Interval, event, parent)
+	: BaseObjectTableModel(Objects::Types::Interval, event->intervals(), event, parent)
 {
 }
 
@@ -58,8 +57,7 @@ QVariant IntervalTableModel::getColumnValue(Objects::BaseObject *object, int col
 	QVariant value;
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 	if (interval) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		value = interval->id();				break;
 			case 1:		value = interval->intervalType() ? interval->intervalType()->id() : 0;		break;
 			case 2:		value = interval->distance();		break;
@@ -72,15 +70,12 @@ QVariant IntervalTableModel::getColumnValue(Objects::BaseObject *object, int col
 
 void IntervalTableModel::setColumnValue(Objects::BaseObject *object, int column, const QVariant &value)
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 	if (interval) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		break;
 			case 1:		interval->setIntervalType(static_cast<Objects::IntervalType *>(
-							session->getObjectById(interval->intervalType(), Objects::Types::IntervalType, value.toInt())));	break;
+							this->child(Objects::Types::IntervalType, value.toInt(), interval->intervalType())));	break;
 			case 2:		interval->setDistance(value.toDouble());	break;
 			case 3:		interval->setDuration(value.toTime());		break;
 			case 4:		interval->setNotes(value.toString());		break;

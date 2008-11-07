@@ -30,13 +30,14 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 
 	app.setApplicationName("running");
-	app.setApplicationVersion("0.1.1");
+	app.setApplicationVersion("0.2 ß");
 	app.setOrganizationName("Project hosted at Google Code");
 	app.setOrganizationDomain("http://code.google.com/p/running");
 
 	QTranslator myappTranslator;
-	myappTranslator.load(":/translations/running_" + QLocale::system().name());
-	app.installTranslator(&myappTranslator);
+	if (myappTranslator.load(":/translations/running.qm")) {
+		app.installTranslator(&myappTranslator);
+	}
 
 	MainView* view = new MainView();
 	view->show();

@@ -29,6 +29,11 @@
 #include "../objects/weather.h"
 #include "../objects/interval.h"
 #include "../objects/intervaltype.h"
+#include "../objects/cfg.h"
+#include "../objects/cfgdistanceunit.h"
+#include "../objects/cfgweightunit.h"
+#include "../objects/cfgtemperatureunit.h"
+#include "../objects/cfgcurrencyunit.h"
 
 namespace Services {
 

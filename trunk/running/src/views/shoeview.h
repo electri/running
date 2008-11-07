@@ -34,7 +34,7 @@ class ShoeView : public QDialog, public Ui::ShoeView
 public:
 	ShoeView(QWidget *parent = 0, quint32 id = 0);
 	~ShoeView();
-
+	void showEvent(QShowEvent *);
 
 private slots:
 	void on_addPushButton_clicked();

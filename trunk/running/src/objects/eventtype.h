@@ -42,8 +42,6 @@ public:
 
 	Types::Type type() const { return Types::EventType; }
 
-	QString toString() const;
-
 private:
 	EventType();
 	virtual ~EventType();
@@ -51,8 +49,6 @@ private:
 	bool m_hasMedal;
 	bool m_hasIntervals;
 };
-
-QDebug operator<<(QDebug, const Objects::EventType &);
 
 }
 

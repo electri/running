@@ -35,13 +35,11 @@ friend class Services::ObjectFactory;
 
 public:
 	ShoeMaker *shoeMaker() const { return m_shoeMaker; }
-	void setShoeMaker(ShoeMaker *);
+	void setShoeMaker(BaseObject *);
 
 	Types::Type type() const { return Types::ShoeModel; }
 
 	QList<Objects::BaseObject *> children() const;
-
-	QString toString() const;
 
 private:
 	ShoeModel();
@@ -49,8 +47,6 @@ private:
 
 	ShoeMaker *m_shoeMaker;
 };
-
-QDebug operator<<(QDebug, const ShoeModel &);
 
 }
 

@@ -18,33 +18,40 @@
 
 ****************************************************************************/
 
-#include <QtDebug>
+#ifndef OPTIONSVIEW_H
+#define OPTIONSVIEW_H
 
-#include "shoemaker.h"
+#include <QWidget>
 
-namespace Objects {
+#include "../../obj/ui_optionsview.h"
 
-ShoeMaker::ShoeMaker()
+class QStringListModel;
+namespace Objects { class Cfg; }
+namespace Services { class Memento; }
+
+class OptionsView : public QDialog, public Ui::OptionsView
 {
-}
+	Q_OBJECT
 
-ShoeMaker::~ShoeMaker()
-{
-}
+public:
+	OptionsView(QWidget *parent = 0);
+	~OptionsView();
 
+private slots:
+	void on_resetPushButton_clicked();
+	void on_savePushButton_clicked();
+	void on_cancelPushButton_clicked();
 
+	void on_treeView_clicked(const QModelIndex &);
 
-QString ShoeMaker::toString() const
-{
-	QString comboObject = static_cast<const ComboObject *>(this)->toString();
-	QString s = QString("ShoeMaker{%1}").arg(comboObject);
-	return s;
-}
+private:
+	void getProperties(Objects::Cfg *);
+	void setProperties(Objects::Cfg *);
+	void refreshComboBoxes();
 
-QDebug operator<<(QDebug dbg, const ShoeMaker &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
-}
+	QStringListModel *m_model;
+	Objects::Cfg *m_cfg;
+	Services::Memento *m_memento;
+};
 
-}
+#endif

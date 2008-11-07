@@ -22,15 +22,8 @@
 
 #include "mainview.h"
 
-#include "../objects/event.h"
-#include "../objects/eventtype.h"
-#include "../objects/shoe.h"
-#include "../objects/shoemaker.h"
-#include "../objects/shoemodel.h"
-#include "../objects/weather.h"
-#include "../services/objectmap.h"
-#include "../services/memento.h"
-#include "../services/objectrepository.h"
+#include "../application.h"
+#include "../objects/objects.h"
 #include "../utility/statisticsservice.h"
 #include "../utility/utility.h"
 #include "../views/votepopupview.h"
@@ -43,6 +36,8 @@
 #include "../views/weatherview.h"
 #include "../views/intervalview.h"
 #include "../views/intervaltypeview.h"
+#include "../views/optionsview.h"
+#include "../views/viewhelper.h"
 #include "../widgets/qxtstars/qxtstars.h"
 
 MainView::MainView(QWidget *parent)
@@ -50,7 +45,12 @@ MainView::MainView(QWidget *parent)
 {
 	setupUi(this);
 
-	this->showCalendar();
+	m_currentEvent = NULL;
+	m_memento = NULL;
+	m_votepopupview = NULL;
+	m_intervalview = NULL;
+	m_runnerinfopopupview = NULL;
+	m_weatherinfopopupview = NULL;
 
 	starsSlider->setMinimum(0);
 	starsSlider->setMaximum(5);
@@ -60,10 +60,13 @@ MainView::MainView(QWidget *parent)
 	palette.setColor(QPalette::Highlight, QColor("yellow"));
 	starsSlider->setPalette(palette);
 
+	connect(actionSystemInformation, SIGNAL(triggered()), this, SLOT(systemInformation()));
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-	if (Services::ObjectRepository::instance()->isActive()) {
+	if (APP->init()) {
+		calendarWidget->setFirstDayOfWeek(APP->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+
 		connect(actionShowCalendar, SIGNAL(triggered()), this, SLOT(showCalendar()));
 		connect(actionShowStatistics, SIGNAL(triggered()), this, SLOT(showStatistics()));
 		connect(actionAdd, SIGNAL(triggered()), this, SLOT(addEvent()));
@@ -75,6 +78,7 @@ MainView::MainView(QWidget *parent)
 		connect(actionEditShoeModel, SIGNAL(triggered()), this, SLOT(editShoeModel()));
 		connect(actionEditWeather, SIGNAL(triggered()), this, SLOT(editWeather()));
 		connect(actionEditIntervalType, SIGNAL(triggered()), this, SLOT(editIntervalType()));
+		connect(actionOptions, SIGNAL(triggered()), this, SLOT(options()));
 	} else {
 		actionShowCalendar->setEnabled(false);
 		actionShowStatistics->setEnabled(false);
@@ -88,17 +92,18 @@ MainView::MainView(QWidget *parent)
 		actionEditWeather->setEnabled(false);
 		actionEditIntervalType->setEnabled(false);
 
-		QMessageBox::critical(0, tr("Error"), tr("Unable to open or read the database file."),
-																	QMessageBox::Ok, QMessageBox::NoButton);
+		QMessageBox::critical(0, tr("Error"), tr("Unable to open or read the database file."), QMessageBox::Ok, QMessageBox::NoButton);
 	}
 
 #ifdef QT_DEBUG
 	calendarWidget->setSelectedDate(QDate(2006, 11, 1));
 #endif
 
+#ifdef QT_DEBUG
 	QTimer *timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(showDebugOnConsole()));
+	QObject::connect(timer, SIGNAL(timeout()), this, SLOT(showDebugOnConsole()));
 	timer->start(3000);
+#endif
 }
 
 
@@ -120,7 +125,7 @@ void MainView::showCalendar()
 
 void MainView::on_calendarWidget_selectionChanged()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+	Services::ObjectMap *session = APP->objectMap();
 
 	if (m_currentEvent) {
 		session->discardObject(m_currentEvent);
@@ -179,7 +184,7 @@ void MainView::addEvent()
 	if (m_currentEvent) {
 		QMessageBox::warning(this, tr("Add a new event"), tr("The selected day already has an event."));
 	} else {
-		m_currentEvent = static_cast<Objects::Event *>(Services::ObjectMap::instance()->createObject(Objects::Types::Event));
+		m_currentEvent = static_cast<Objects::Event *>(APP->objectMap()->createObject(Objects::Types::Event));
 		m_currentEvent->setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
 
 		editEventBegin(m_currentEvent);
@@ -198,9 +203,14 @@ void MainView::removeEvent()
 			return;
 		}
 
-		if (!Services::ObjectMap::instance()->deleteObject(m_currentEvent)) {
-			QMessageBox::critical(this, tr("Remove an event"),
-							tr("An error has occoured during saving modifications in the database."));
+		foreach (Objects::BaseObject *interval, m_currentEvent->intervals()) {
+			if (!APP->objectMap()->deleteObject(interval)) {
+				QMessageBox::critical(this, tr("Remove an event"), APP->objectRepository()->lastError());
+			}
+		}
+
+		if (!APP->objectMap()->deleteObject(m_currentEvent)) {
+			QMessageBox::critical(this, tr("Remove an event"), APP->objectRepository()->lastError());
 		}
 
 		this->on_calendarWidget_selectionChanged();
@@ -217,39 +227,43 @@ void MainView::editEvent()
 		QString message = tr("Edit event: %1.").arg(m_currentEvent->start().date().toString("d MMMM yyyy"));
 		statusbar->showMessage(message);
 	} else {
-		QMessageBox::warning(this, tr("Edit an event"),
-						tr("The selected day don't have an event."));
+		QMessageBox::warning(this, tr("Edit an event"), tr("The selected day don't have an event."));
 	}
 }
 
 void MainView::editEventBegin(Objects::Event *object)
 {
-		m_votepopupview = new VotePopupView(this);
-		m_votepopupview->setWindowFlags(Qt::Popup);
+	m_votepopupview = new VotePopupView(this);
+	m_votepopupview->setWindowFlags(Qt::Popup);
 
-		m_intervalview = new IntervalView(object, this);
-		m_intervalview->setWindowFlags(Qt::Popup);
+	m_intervalview = new IntervalView(object, this);
+	m_intervalview->setWindowFlags(Qt::Popup);
 
-		m_runnerinfopopupview = new RunnerInfoPopupView(this);
-		m_runnerinfopopupview->setWindowFlags(Qt::Popup);
+	m_runnerinfopopupview = new RunnerInfoPopupView(this);
+	m_runnerinfopopupview->setWindowFlags(Qt::Popup);
 
-		m_weatherinfopopupview = new WeatherInfoPopupView(this);
-		m_weatherinfopopupview->setWindowFlags(Qt::Popup);
+	m_weatherinfopopupview = new WeatherInfoPopupView(this);
+	m_weatherinfopopupview->setWindowFlags(Qt::Popup);
 
-		editEventRefreshComboBoxes();
+	editEventRefreshComboBoxes();
 
-		m_memento = new Services::Memento(object);
+	m_memento = new Services::Memento(object);
 
-		Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
-		editEventSetProperties(event);
+	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
+	editEventSetProperties(event);
 
-		stackedWidget->setCurrentIndex(stackedWidget->indexOf(eventPage));
+	stackedWidget->setCurrentIndex(stackedWidget->indexOf(eventPage));
 
-		actionShowCalendar->setEnabled(false);
-		actionShowStatistics->setEnabled(false);
-		actionAdd->setEnabled(false);
-		actionEdit->setEnabled(false);
-		actionRemove->setEnabled(false);
+	actionShowCalendar->setEnabled(false);
+	actionShowStatistics->setEnabled(false);
+	actionAdd->setEnabled(false);
+	actionEdit->setEnabled(false);
+	actionRemove->setEnabled(false);
+
+	nameLineEdit->setCompleter(ViewHelper::completer(nameLineEdit, "Event", "Name"));
+	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "Event", "Description"));
+
+	distanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
 }
 
 void MainView::editEventEnd()
@@ -267,43 +281,19 @@ void MainView::editEventEnd()
 void MainView::editEventGetProperties(Objects::Event *object)
 {
 	if (object) {
-		Services::ObjectMap *session = Services::ObjectMap::instance();
-
 		object->setStart(QDateTime(object->start().date(), startTimeEdit->time()));
 		object->setName(nameLineEdit->text());
 		object->setDescription(descriptionLineEdit->text());
-		quint32 eventTypeId = eventTypeComboBox->itemData(eventTypeComboBox->currentIndex()).toInt();
-		if ((object->eventType()) && (object->eventType()->id() != eventTypeId)) {
-			session->discardObject(object->eventType());
-			object->setEventType(NULL);
-		}
-		if ((!object->eventType()) && (eventTypeId != 0)) {
-			object->setEventType(static_cast<Objects::EventType *>(session->getObjectById(Objects::Types::EventType, eventTypeId)));
-		}
+		object->setEventType(ViewHelper::getObjectOnComboBox(eventTypeComboBox, Objects::Types::EventType, object->eventType()));
 		object->setDistance(distanceDoubleSpinBox->value());
 		object->setDuration(durationTimeEdit->time());
 		object->setNotes(notesPlainTextEdit->toPlainText());
-		quint32 shoeId = shoeComboBox->itemData(shoeComboBox->currentIndex()).toInt();
-		if ((object->shoe()) && (object->shoe()->id() != shoeId)) {
-			session->discardObject(object->shoe());
-			object->setShoe(NULL);
-		}
-		if ((!object->shoe()) && (shoeId != 0)) {
-			object->setShoe(static_cast<Objects::Shoe *>(session->getObjectById(Objects::Types::Shoe, shoeId)));
-		}
+		object->setShoe(ViewHelper::getObjectOnComboBox(shoeComboBox, Objects::Types::Shoe, object->shoe()));
 		object->setVote(starsSlider->value());
 		object->setQuality(m_votepopupview->qualitySpinBox->value());
 		object->setEffort(m_votepopupview->effortSpinBox->value());
 		object->setWeight(m_runnerinfopopupview->weightDoubleSpinBox->value());
-		quint32 weatherId = m_weatherinfopopupview->weatherComboBox->itemData(m_weatherinfopopupview->weatherComboBox->currentIndex()).toInt();
-		if ((object->weather()) && (object->weather()->id() != weatherId)) {
-			session->discardObject(object->weather());
-			object->setWeather(NULL);
-		}
-		if ((!object->weather()) && (weatherId != 0)) {
-			object->setWeather(static_cast<Objects::Weather *>(session->getObjectById(Objects::Types::Weather, weatherId)));
-		}
-		object->setTemperature(m_weatherinfopopupview->temperatureDoubleSpinBox->value());
+		object->setWeather(ViewHelper::getObjectOnComboBox(m_weatherinfopopupview->weatherComboBox, Objects::Types::Weather, object->weather()));
 	}
 }
 
@@ -313,52 +303,24 @@ void MainView::editEventSetProperties(Objects::Event *object)
 		startTimeEdit->setTime(object->start().time());
 		nameLineEdit->setText(object->name());
 		descriptionLineEdit->setText(object->description());
-		if (object->eventType()) {
-			eventTypeComboBox->setCurrentIndex(eventTypeComboBox->findData(object->eventType()->id()));
-		}
+		ViewHelper::setIndexOnComboBox(eventTypeComboBox, object->eventType());
 		distanceDoubleSpinBox->setValue(object->distance());
 		durationTimeEdit->setTime(object->duration());
 		notesPlainTextEdit->setPlainText(object->notes());
-		if (object->shoe()) {
-			shoeComboBox->setCurrentIndex(shoeComboBox->findData(object->shoe()->id()));
-		}
+		ViewHelper::setIndexOnComboBox(shoeComboBox, object->shoe());
 		starsSlider->setValue(object->vote());
 		m_votepopupview->qualitySpinBox->setValue(object->quality());
 		m_votepopupview->effortSpinBox->setValue(object->effort());
 		m_runnerinfopopupview->weightDoubleSpinBox->setValue(object->weight());
-		if (object->weather()) {
-			m_weatherinfopopupview->weatherComboBox->setCurrentIndex(m_weatherinfopopupview->weatherComboBox->findData(object->weather()->id()));
-		}
+		ViewHelper::setIndexOnComboBox(m_weatherinfopopupview->weatherComboBox, object->weather());
 		m_weatherinfopopupview->temperatureDoubleSpinBox->setValue(object->temperature());
 	}
 }
 
 void MainView::editEventRefreshComboBoxes()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-	{
-		quint32 id = eventTypeComboBox->itemData(eventTypeComboBox->currentIndex()).toInt();
-		eventTypeComboBox->clear();
-		QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::EventType);
-		foreach (Objects::BaseObject *object, list) {
-			Objects::EventType *item = static_cast<Objects::EventType *>(object);
-			eventTypeComboBox->addItem(item->description(), item->id());
-		}
-		session->discardObjects(list);
-		eventTypeComboBox->setCurrentIndex(eventTypeComboBox->findData(id));
-	}
-	{
-		quint32 id = shoeComboBox->itemData(shoeComboBox->currentIndex()).toInt();
-		shoeComboBox->clear();
-		QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::Shoe);
-		foreach (Objects::BaseObject *object, list) {
-			Objects::Shoe *item = static_cast<Objects::Shoe *>(object);
-			shoeComboBox->addItem(QString("%1 %2").arg(item->shoeModel()->shoeMaker()->description())
-													.arg(item->shoeModel()->description()), item->id());
-		}
-		session->discardObjects(list);
-		shoeComboBox->setCurrentIndex(shoeComboBox->findData(id));
-	}
+	ViewHelper::fillComboBox(eventTypeComboBox, Objects::Types::EventType);
+	ViewHelper::fillComboBox(shoeComboBox, Objects::Types::Shoe);
 	if (m_weatherinfopopupview) {
 		m_weatherinfopopupview->refreshComboBoxes();
 	}
@@ -378,18 +340,14 @@ void MainView::on_savePushButton_clicked()
 	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
 	editEventGetProperties(event);
 
-	if (!Services::ObjectMap::instance()->saveObject(m_memento->copy())) {
-		QMessageBox::critical(this, tr("Add/Edit an event"),
-						tr("An error has occoured during saving modifications in the database.") +
-						"\n\n" + Services::ObjectRepository::instance()->lastError());
+	if (!APP->objectMap()->saveObject(m_memento->copy())) {
+		QMessageBox::critical(this, tr("Add/Edit an event"), APP->objectRepository()->lastError());
 		return;
 	}
 	m_memento->submit();
 
 	if (!m_intervalview->saveAll()) {
-		QMessageBox::critical(this, tr("Add/Edit an event"),
-						tr("An error has occoured during saving modifications in the database.") +
-						"\n\n" + Services::ObjectRepository::instance()->lastError());
+		QMessageBox::critical(this, tr("Add/Edit an event"), APP->objectRepository()->lastError());
 		return;
 	}
 
@@ -401,9 +359,9 @@ void MainView::on_cancelPushButton_clicked()
 	editEventEnd();
 }
 
-void MainView::on_eventTypeComboBox_currentIndexChanged(int index)
+void MainView::on_eventTypeComboBox_currentIndexChanged(int)
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+	Services::ObjectMap *session = APP->objectMap();
 
 	quint32 eventTypeId = eventTypeComboBox->itemData(eventTypeComboBox->currentIndex()).toInt();
 	if (eventTypeId != 0) {
@@ -420,19 +378,21 @@ void MainView::on_eventTypeComboBox_currentIndexChanged(int index)
 void MainView::on_distanceDoubleSpinBox_valueChanged(double value)
 {
 	QTime time = durationTimeEdit->time();
-	QTime paceTime = Utility::paceTime(value, time);
-	double paceSpeed = Utility::paceSpeed(value, time);
-	paceLineEdit->setText(tr("%1 min/km or %2 km/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)));
+	this->refreshPaceLineEdit(value, time);
 }
 
 void MainView::on_durationTimeEdit_timeChanged(const QTime &value)
 {
 	double distance = distanceDoubleSpinBox->value();
-	QTime paceTime = Utility::paceTime(distance, value);
-	double paceSpeed = Utility::paceSpeed(distance, value);
-	paceLineEdit->setText(tr("%1 min/km or %2 km/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)));
+	this->refreshPaceLineEdit(distance, value);
+}
+
+void MainView::refreshPaceLineEdit(double distance, const QTime &time)
+{
+	QTime paceTime = Utility::paceTime(distance, time);
+	double paceSpeed = Utility::paceSpeed(distance, time);
+	paceLineEdit->setText(tr("%1 min/%3 or %2 %3/h")
+			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)).arg(APP->cfg()->cfgDistanceUnit()->description()));
 }
 
 void MainView::on_eventTypeToolButton_clicked()
@@ -443,7 +403,7 @@ void MainView::on_eventTypeToolButton_clicked()
 
 void MainView::on_votePushButton_clicked()
 {
-	m_votepopupview->move(votePushButton->mapToGlobal(QPoint(0, m_votepopupview->height() + 10)));
+	m_votepopupview->move(votePushButton->mapToGlobal(QPoint(0, votePushButton->height() + 10)));
 	m_votepopupview->show();
 }
 
@@ -451,13 +411,6 @@ void MainView::on_intervalsPushButton_clicked()
 {
 	m_intervalview->move(intervalsPushButton->mapToGlobal(QPoint(0, (m_intervalview->height() + 10) * -1)));
 	m_intervalview->show();
-
-//	IntervalView *view = new IntervalView(m_currentEvent, this);
-//	int result = view->exec();
-//	if (result == QDialog::Accepted) {
-//		calendarWidget->update();
-//	}
-//	delete view;
 }
 
 void MainView::on_runnerInfoPushButton_clicked()
@@ -552,27 +505,27 @@ void MainView::editIntervalType(quint32 id)
 	delete view;
 }
 
+void MainView::options()
+{
+	OptionsView *view = new OptionsView(this);
+	int result = view->exec();
+	if (result == QDialog::Accepted) {
+		calendarWidget->setFirstDayOfWeek(APP->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+		calendarWidget->update();
+	}
+	delete view;
+}
+
 // MAINVIEW
+
+void MainView::systemInformation()
+{
+	QMessageBox::information(this, tr("System Information"), APP->systemInformation());
+}
 
 void MainView::about()
 {
-	QString message = "<html><head></head><body>\n";
-	message += "<h1>" + qApp->applicationName() + "</h1>\n";
-	message += qApp->applicationVersion() + "<br><br>\n";
-	message += tr("A simple program for runners based on a calendar and an event list.") + "<br>\n";
-	message += "<hr><br>\n";
-	message += tr("Made with:") + "<br>\n";
-	message += "<a href='http://www.mingw.org'>MinGW</a> Compiler<br>\n";
-	message += "<a href='http://www.eclipse.org'>Eclipse</a> Integrated development environment<br>\n";
-	message += "<a href='http://trolltech.com'>Trolltech Qt</a> Framework<br>\n";
-	message += "<a href='http://www.sqlite.org'>SQLite</a> Database engine<br>\n";
-	message += "QxtStars widget from <a href='http://libqxt.org'>Qxt library</a> Framework extension<br>\n";
-	message += "Icons from <a href='http://www.famfamfam.com/lab/icons/silk'>Silk</a> Icon set<br>\n";
-	message += "<hr><br>\n";
-	message += "<a href='" + qApp->organizationDomain() + "'>" + qApp->organizationName() + "</a><br>\n";
-	message += "</body></html>\n";
-
-	QMessageBox::about(this, tr("About"), message);
+	QMessageBox::about(this, tr("About"), APP->about());
 }
 
 void MainView::updateStatusbar()
@@ -583,8 +536,8 @@ void MainView::updateStatusbar()
 		if (!m_currentEvent->name().isEmpty()) {
 			message += tr(" - %1").arg(m_currentEvent->name());
 		}
-		message += tr(" - %1 km in %2").arg(Utility::formatDistance(m_currentEvent->distance(), 3))
-									.arg(Utility::formatDuration(m_currentEvent->duration()));
+		message += tr(" - %1 %2 in %3").arg(Utility::formatDistance(m_currentEvent->distance(), 3))
+			.arg(APP->cfg()->cfgDistanceUnit()->description()).arg(Utility::formatDuration(m_currentEvent->duration()));
 
 		statusbar->showMessage(tr("Event: %1.").arg(message));
 
@@ -593,7 +546,8 @@ void MainView::updateStatusbar()
 
 	StatisticsResults::EventsPerDate r = Utility::StatisticsService::instance()->event(calendarWidget->yearShown(), calendarWidget->monthShown());
 	if (r.events > 0) {
-		QString message = tr("Events: %L1 for a total of %L2 km.").arg(r.events).arg(Utility::formatDistance(r.distance, 3));
+		QString message = tr("Events: %L1 for a total of %L2 %3.").arg(r.events)
+			.arg(Utility::formatDistance(r.distance, 3)).arg(APP->cfg()->cfgDistanceUnit()->description());
 		statusbar->showMessage(message);
 		return;
 	}
@@ -604,7 +558,7 @@ void MainView::updateStatusbar()
 
 void MainView::showDebugOnConsole()
 {
-//	Services::ObjectMap::instance()->free();
+//	APP->objectMap()->free();
 
-//	qDebug() << Services::ObjectMap::instance()->toString();
+	qDebug() << APP->objectMap()->toString();
 }

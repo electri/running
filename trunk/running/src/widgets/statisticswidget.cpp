@@ -21,6 +21,7 @@
 #include <QtGui>
 
 #include "statisticswidget.h"
+
 #include "../utility/utility.h"
 
 StatisticsWidget::StatisticsWidget(QWidget *parent)
@@ -56,7 +57,7 @@ void StatisticsWidget::drawHeader(QPainter &painter, int x, int y, int cw, int c
 			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("AVR. SPEED\n(min/km - km/h)"));
 			break;
 		case StatisticsPages::Shoes:
-			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(€/km)"));
+			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(/km)"));
 			break;
 	}
 
@@ -127,6 +128,8 @@ void StatisticsWidget::drawRow(QPainter &painter, int x, int y, int cw, int ch, 
 
 void StatisticsWidget::paintEvent(QPaintEvent *event)
 {
+	Q_UNUSED(event);
+
 	QPainter painter(this);
 
 	painter.setFont(QFont("MS Shell Dlg 2", 9));

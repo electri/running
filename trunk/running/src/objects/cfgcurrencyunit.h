@@ -18,33 +18,27 @@
 
 ****************************************************************************/
 
-#include <QtDebug>
+#ifndef CFGCURRENCYUNIT_H
+#define CFGCURRENCYUNIT_H
 
-#include "weather.h"
+#include "comboobject.h"
+
+namespace Services { class ObjectFactory; }
 
 namespace Objects {
 
-Weather::Weather()
+class CfgCurrencyUnit : public ComboObject
 {
-}
+friend class Services::ObjectFactory;
 
-Weather::~Weather()
-{
-}
+public:
+	Types::Type type() const { return Types::CfgCurrencyUnit; }
 
-
-
-QString Weather::toString() const
-{
-	QString comboObject = static_cast<const ComboObject *>(this)->toString();
-	QString s = QString("Weather{%1}").arg(comboObject);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const Weather &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
-}
+private:
+	CfgCurrencyUnit() {};
+	virtual ~CfgCurrencyUnit() {};
+};
 
 }
+
+#endif

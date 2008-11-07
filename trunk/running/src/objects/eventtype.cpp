@@ -52,19 +52,4 @@ void EventType::setIntervals(bool value)
 	}
 }
 
-
-
-QString EventType::toString() const
-{
-	QString comboObject = static_cast<const ComboObject *>(this)->toString();
-	QString s = QString("EventType{%1|%2|%3}").arg(comboObject).arg(m_hasMedal).arg(m_hasIntervals);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const EventType &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
-}
-
 }

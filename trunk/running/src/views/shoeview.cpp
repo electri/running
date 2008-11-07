@@ -22,16 +22,16 @@
 
 #include "shoeview.h"
 
+#include "../application.h"
 #include "../objects/shoe.h"
 #include "../objects/shoemaker.h"
 #include "../objects/shoemodel.h"
+#include "../models/shoetablemodel.h"
 #include "../delegates/booleanimageitemdelegate.h"
 #include "../delegates/comboobjectitemdelegate.h"
-#include "../models/shoetablemodel.h"
-#include "../services/objectmap.h"
-#include "../services/objectrepository.h"
 #include "../views/shoemakerview.h"
 #include "../views/shoemodelview.h"
+#include "../views/viewhelper.h"
 #include "../utility/statisticsservice.h"
 
 ShoeView::ShoeView(QWidget *parent, quint32 id)
@@ -43,15 +43,15 @@ ShoeView::ShoeView(QWidget *parent, quint32 id)
 
 	tableView->setModel(m_model);
 	tableView->hideColumn(0);
-	tableView->setColumnWidth(1, 70);
+	tableView->setColumnWidth(1, 100);
 	tableView->setItemDelegateForColumn(1, new ComboObjectItemDelegate(Objects::Types::ShoeMaker, tableView));
-	tableView->setColumnWidth(2, 100);
+	tableView->setColumnWidth(2, 150);
 	tableView->setItemDelegateForColumn(2, new ComboObjectItemDelegate(Objects::Types::ShoeModel, tableView));
 	tableView->setColumnWidth(3, 50);
 	tableView->setColumnWidth(4, 80);
 	tableView->hideColumn(5);
 	tableView->hideColumn(6);
-	tableView->setColumnWidth(7, 30);
+	tableView->setColumnWidth(7, 60);
 	tableView->setItemDelegateForColumn(7, new BooleanImageItemDelegate(":yes", tableView));
 	tableView->hideColumn(8);
 
@@ -74,6 +74,15 @@ ShoeView::ShoeView(QWidget *parent, quint32 id)
 ShoeView::~ShoeView()
 {
 	delete m_model;
+}
+
+void ShoeView::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+
+	initialDistanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
+	distanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
+	pricePerDistanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgCurrencyUnit()->description() + "/" + APP->cfg()->cfgDistanceUnit()->description());
 }
 
 
@@ -119,9 +128,7 @@ void ShoeView::on_savePushButton_clicked()
 {
 	bool result = m_model->submitAll();
 	if (!result) {
-		QMessageBox::critical(this, tr("Error"),
-				tr("An error has occoured during saving modifications in the database.") +
-				"\n\n" + Services::ObjectRepository::instance()->lastError());
+		QMessageBox::critical(this, tr("Error"), m_model->lastError());
 		return;
 	}
 	this->accept();
@@ -136,8 +143,10 @@ void ShoeView::on_cancelPushButton_clicked()
 
 void ShoeView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
-	shoeMakerComboBox->setCurrentIndex(shoeMakerComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
-	shoeModelComboBox->setCurrentIndex(shoeModelComboBox->findData(current.sibling(current.row(), 2).data().toInt()));
+	Q_UNUSED(previous);
+
+	ViewHelper::setIndexOnComboBox(shoeMakerComboBox, current.sibling(current.row(), 1).data().toInt());
+	ViewHelper::setIndexOnComboBox(shoeModelComboBox, current.sibling(current.row(), 2).data().toInt());
 	sizeDoubleSpinBox->setValue(current.sibling(current.row(), 3).data().toDouble());
 	purchaseDateDateEdit->setDate(current.sibling(current.row(), 4).data().toDate());
 	priceDoubleSpinBox->setValue(current.sibling(current.row(), 5).data().toDouble());
@@ -159,13 +168,12 @@ void ShoeView::on_shoeMakerComboBox_currentIndexChanged(int index)
 {
 	quint32 shoeMakerId = shoeMakerComboBox->itemData(index).toInt();
 
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+	Services::ObjectMap *session = APP->objectMap();
 
 	shoeModelComboBox->clear();
 	QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::ShoeModel);
-	QList<Objects::BaseObject *>::const_iterator it = list.constBegin();
-	while (it != list.constEnd()) {
-		Objects::ShoeModel *item = static_cast<Objects::ShoeModel *>(*it++);
+	foreach (Objects::BaseObject *object, list) {
+		Objects::ShoeModel *item = static_cast<Objects::ShoeModel *>(object);
 		if (item->shoeMaker()->id() == shoeMakerId) {
 			shoeModelComboBox->addItem(item->description(), item->id());
 		}
@@ -264,15 +272,5 @@ void ShoeView::setControlsEnabled(bool enable)
 
 void ShoeView::refreshComboBoxes()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
-	quint32 id = shoeMakerComboBox->itemData(shoeMakerComboBox->currentIndex()).toInt();
-	shoeMakerComboBox->clear();
-	QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::ShoeMaker);
-	foreach (Objects::BaseObject *object, list) {
-		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(object);
-		shoeMakerComboBox->addItem(item->description(), item->id());
-	}
-	session->discardObjects(list);
-	shoeMakerComboBox->setCurrentIndex(shoeMakerComboBox->findData(id));
+	ViewHelper::fillComboBox(shoeMakerComboBox, Objects::Types::ShoeMaker);
 }

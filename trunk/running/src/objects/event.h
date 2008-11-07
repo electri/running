@@ -49,7 +49,7 @@ public:
 	void setDescription(const QString &);
 
 	EventType *eventType() const { return m_eventType; }
-	void setEventType(EventType *);
+	void setEventType(BaseObject *);
 
 	qreal distance() const { return m_distance; }
 	void setDistance(qreal);
@@ -61,7 +61,7 @@ public:
 	void setNotes(const QString &);
 
 	Shoe *shoe() const { return m_shoe; }
-	void setShoe(Shoe *);
+	void setShoe(BaseObject *);
 
 	quint8 vote() const { return m_vote; }
 	void setVote(quint8);
@@ -76,12 +76,12 @@ public:
 	void setWeight(qreal);
 
 	Weather *weather() const { return m_weather; }
-	void setWeather(Weather *);
+	void setWeather(BaseObject *);
 
 	qreal temperature() const { return m_temperature; }
 	void setTemperature(qreal);
 
-	QList<Interval *> intervals() const { return m_intervals; }
+	QList<BaseObject *> intervals() const { return m_intervals; }
 	void addInterval(Interval *);
 	void removeInterval(Interval *);
 	void clearIntervals();
@@ -96,8 +96,6 @@ public:
 	Types::Type type() const { return Types::Event; }
 
 	QList<Objects::BaseObject *> children() const;
-
-	QString toString() const;
 
 private:
 	Event();
@@ -117,10 +115,8 @@ private:
 	qreal m_weight;
 	Weather *m_weather;
 	qreal m_temperature;
-	QList<Interval *> m_intervals, m_intervals_removed;
+	QList<BaseObject *> m_intervals, m_intervals_removed;
 };
-
-QDebug operator<<(QDebug, const Event &);
 
 }
 

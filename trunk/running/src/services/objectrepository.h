@@ -28,16 +28,18 @@
 
 #include "../objects/baseobject.h"
 
+class Application;
+
 namespace Mappers { class BaseObjectMapper; }
 
 namespace Services {
 
 class ObjectRepository
 {
+friend class ::Application;
+
 public:
 	virtual ~ObjectRepository();
-
-	static ObjectRepository* instance();
 
 	bool isActive() const { return m_active; }
 	QString lastError() const;
@@ -61,7 +63,10 @@ public:
 private:
 	ObjectRepository();
 
-	static ObjectRepository* sm_instance;
+	int databaseVersion() const;
+	bool createDatabase();
+	bool upgradeDatabase(int oldVersion);
+	bool alterDatabase(const QString &scriptName, const QString &message);
 
 	bool m_active;
 	QSqlDatabase m_database;

@@ -31,6 +31,8 @@ class WeatherInfoPopupView : public QWidget, public Ui::WeatherInfoPopupView
 
 public:
 	WeatherInfoPopupView(QWidget *parent = 0);
+	void showEvent(QShowEvent *);
+
 	void refreshComboBoxes();
 
 private slots:

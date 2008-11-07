@@ -44,18 +44,12 @@ Interval::~Interval()
 
 
 
-void Interval::setEvent(Event *value)
+void Interval::setIntervalType(BaseObject *value)
 {
-	if (m_event != value) {
-		m_event = value;
-		modified();
-	}
-}
+	IntervalType *object = static_cast<IntervalType *>(value);
 
-void Interval::setIntervalType(IntervalType *value)
-{
-	if (m_intervalType != value) {
-		m_intervalType = value;
+	if (m_intervalType != object) {
+		m_intervalType = object;
 		modified();
 	}
 }
@@ -103,33 +97,21 @@ Objects::BaseObject *Interval::parent() const
 	return m_event;
 }
 
-void Interval::setParent(Objects::BaseObject *parent)
+void Interval::setParent(Objects::BaseObject *value)
 {
-	m_event = static_cast<Event *>(parent);
+	Event *object = static_cast<Event *>(value);
+
+	if (m_event != object) {
+		m_event = object;
+		modified();
+	}
 }
 
 QList<Objects::BaseObject *> Interval::children() const
 {
 	QList<Objects::BaseObject *> list;
-//	list.append(m_event);
-	list.append(m_intervalType);
+	list << m_intervalType;
 	return list;
-}
-
-QString Interval::toString() const
-{
-	QString baseObject = static_cast<const BaseObject *>(this)->toString();
-	//QString event = m_event ? m_event->toString() : "";
-	QString intervalType = m_intervalType ? m_intervalType->toString() : "";
-	QString s = QString("Interval{%1|%2|%3|%4|%5}")
-		.arg(baseObject).arg(intervalType).arg(m_distance).arg(m_duration.toString()).arg(m_notes);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const Interval &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
 }
 
 }

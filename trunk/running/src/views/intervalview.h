@@ -35,6 +35,7 @@ class IntervalView : public QWidget, public Ui::IntervalView
 public:
 	IntervalView(Objects::Event *event, QWidget *parent = 0, quint32 id = 0);
 	~IntervalView();
+	void showEvent(QShowEvent *);
 
 	void resetAll();
 	bool saveAll();
@@ -62,6 +63,7 @@ private:
 	void setControlsEnabled(bool enable);
 	void refreshComboBoxes();
 	void swapRows(int row1, int row2);
+	void refreshPaceLineEdit(double distance, QTime time);
 
 	IntervalTableModel *m_model;
 };

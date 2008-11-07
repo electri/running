@@ -20,32 +20,30 @@
 
 #include "baseobjecttablemodel.h"
 
-#include "../services/objectmap.h"
-#include "../services/objectrepository.h"
+#include "../application.h"
 
 BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, QObject *parent)
 	: QAbstractTableModel(parent)
 {
 	m_type = type;
-	m_parent = NULL;
+	m_objects.clear();
+	m_objectsParent = NULL;
 
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+    QList<Objects::BaseObject *> objects = APP->objectMap()->getAllObjects(m_type);
 
-	QList<Objects::BaseObject *> objects = session->getAllObjects(m_type);
 	foreach (Objects::BaseObject *object, objects) {
 		m_list.append(new Services::Memento(object));
 	}
 }
 
-BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, Objects::BaseObject *parentObject, QObject *parent)
+BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects,
+	Objects::BaseObject *objectsParent, QObject *parent)
 	: QAbstractTableModel(parent)
 {
 	m_type = type;
-	m_parent = parentObject;
+	m_objects = objects;
+	m_objectsParent = objectsParent;
 
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
-	QList<Objects::BaseObject *> objects = session->getObjectsByParent(m_type, m_parent);
 	foreach (Objects::BaseObject *object, objects) {
 		m_list.append(new Services::Memento(object));
 	}
@@ -53,24 +51,28 @@ BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, Objects::B
 
 BaseObjectTableModel::~BaseObjectTableModel()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+    Services::ObjectMap *session = APP->objectMap();
 
 	foreach (Services::Memento *memento, m_list) {
-		session->discardObject(memento->original());
+		if (m_objects.contains(memento->original()) == false) {
+			session->discardObject(memento->original());
+		}
 		delete memento;
 	}
 	foreach (Services::Memento *memento, m_removed) {
-		session->discardObject(memento->original());
+		if (m_objects.contains(memento->original()) == false) {
+			session->discardObject(memento->original());
+		}
 		delete memento;
 	}
 }
 
-int BaseObjectTableModel::rowCount(const QModelIndex &parent) const
+int BaseObjectTableModel::rowCount(const QModelIndex &) const
 {
 	return m_list.count();
 }
 
-int BaseObjectTableModel::columnCount(const QModelIndex &parent) const
+int BaseObjectTableModel::columnCount(const QModelIndex &) const
 {
 	return getColumnCount();
 }
@@ -121,16 +123,16 @@ bool BaseObjectTableModel::setData(const QModelIndex &index, const QVariant &val
 	return false;
 }
 
-bool BaseObjectTableModel::insertRows(int position, int rows, const QModelIndex &parent)
+bool BaseObjectTableModel::insertRows(int position, int rows, const QModelIndex &)
 {
 	beginInsertRows(QModelIndex(), position, position+rows-1);
 
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+    Services::ObjectMap *session = APP->objectMap();
 
 	for (int row = 0; row < rows; ++row) {
 		Objects::BaseObject *object = session->createObject(m_type);
-		if (m_parent) {
-			object->setParent(m_parent);
+		if (m_objectsParent) {
+			object->setParent(m_objectsParent);
 		}
 		m_list.insert(position, new Services::Memento(object));
 	}
@@ -139,7 +141,7 @@ bool BaseObjectTableModel::insertRows(int position, int rows, const QModelIndex 
 	return true;
 }
 
-bool BaseObjectTableModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool BaseObjectTableModel::removeRows(int position, int rows, const QModelIndex &)
 {
 	beginRemoveRows(QModelIndex(), position, position+rows-1);
 
@@ -153,7 +155,7 @@ bool BaseObjectTableModel::removeRows(int position, int rows, const QModelIndex 
 
 void BaseObjectTableModel::revertAll()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+    Services::ObjectMap *session = APP->objectMap();
 
 	foreach (Services::Memento *memento, m_removed) {
 		m_list.append(memento);
@@ -177,8 +179,8 @@ void BaseObjectTableModel::revertAll()
 
 bool BaseObjectTableModel::submitAll()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-	Services::ObjectRepository *repository = Services::ObjectRepository::instance();
+    Services::ObjectMap *session = APP->objectMap();
+    Services::ObjectRepository *repository = APP->objectRepository();
 	if (repository->transaction()) {
 		foreach (Services::Memento *memento, m_list) {
 			if (!session->saveObject(memento->copy())) {
@@ -211,7 +213,10 @@ QModelIndex BaseObjectTableModel::indexById(quint32 id) const
 	return QModelIndex();
 }
 
-
+QString BaseObjectTableModel::lastError() const
+{
+    return APP->objectRepository()->lastError();
+}
 
 int BaseObjectTableModel::getColumnCount() const
 {
@@ -237,7 +242,7 @@ QVariant BaseObjectTableModel::getColumnValue(Objects::BaseObject *object, int c
 	return value;
 }
 
-void BaseObjectTableModel::setColumnValue(Objects::BaseObject *object, int column, const QVariant &value)
+void BaseObjectTableModel::setColumnValue(Objects::BaseObject *object, int column, const QVariant &)
 {
 	if (object) {
 		switch (column) {
@@ -249,4 +254,19 @@ void BaseObjectTableModel::setColumnValue(Objects::BaseObject *object, int colum
 int BaseObjectTableModel::forceColumnChange(int /*column*/)
 {
 	return 0;
+}
+
+
+
+Objects::BaseObject *BaseObjectTableModel::child(Objects::Types::Type type, quint32 id, Objects::BaseObject *old_child)
+{
+	if (old_child) {
+		if (old_child->id() == id) {
+			return old_child;
+		} else {
+            APP->objectMap()->discardObject(old_child);
+		}
+	}
+
+    return APP->objectMap()->getObjectById(type, id);
 }

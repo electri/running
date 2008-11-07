@@ -23,8 +23,9 @@
 #include "calendarwidget.h"
 
 #include "../delegates/calendardelegate.h"
+
+#include "../application.h"
 #include "../objects/event.h"
-#include "../services/objectmap.h"
 
 CalendarWidget::CalendarWidget(QWidget *parent)
 	: QCalendarWidget(parent)
@@ -57,18 +58,24 @@ void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate
 		}
 	}
 
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+	Objects::Event *currentEvent = NULL;
+    Services::ObjectMap *session = APP->objectMap();
+
 	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
-	if (list.count() > 0) {
-		Objects::Event *event = static_cast<Objects::Event *>(list.at(0));
-		m_delegate->paint(painter, option, date, event);
+	if (!list.isEmpty()) {
+		currentEvent = static_cast<Objects::Event *>(list.takeFirst());
+	}
+	if (!list.isEmpty()) {
+		foreach (Objects::BaseObject *object, list) {
+			session->discardObject(object);
+		}
+	}
+
+	if (currentEvent) {
+		m_delegate->paint(painter, option, date, currentEvent);
+		session->discardObject(currentEvent);
 	}
 	else {
 		m_delegate->paint(painter, option, date);
-	}
-	QList<Objects::BaseObject *>::const_iterator i = list.constBegin();
-	while (i != list.constEnd()) {
-		session->discardObject(*i);
-		++i;
 	}
 }

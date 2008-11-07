@@ -22,17 +22,26 @@
 #define BASEOBJECT_H
 
 #include <QObject>
+#include <QString>
 
 namespace Mappers { class BaseObjectMapper; }
 
 namespace Objects {
 
 namespace Types {
-	enum Type { Event, EventType, Shoe, ShoeMaker, ShoeModel, Weather, Interval, IntervalType };
+	enum Type {
+		Event, EventType, Shoe, ShoeMaker, ShoeModel, Weather, Interval, IntervalType,
+		Cfg, CfgDistanceUnit, CfgWeightUnit, CfgTemperatureUnit, CfgCurrencyUnit
+	};
+	const QString TypeNames[] = {
+		"Event", "EventType", "Shoe", "ShoeMaker", "ShoeModel", "Weather", "Interval", "IntervalType",
+		"Cfg", "CfgDistanceUnit", "CfgWeightUnit", "CfgTemperatureUnit", "CfgCurrencyUnit"
+	};
 }
 
 namespace States {
 	enum State { Selected, Created, Modified, Deleted };
+	const QString StateNames[] = { "Sel", "Cre", "Mod", "Del" };
 }
 
 class BaseObject

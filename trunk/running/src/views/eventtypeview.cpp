@@ -24,7 +24,7 @@
 
 #include "../delegates/booleanimageitemdelegate.h"
 #include "../models/eventtypetablemodel.h"
-#include "../services/objectrepository.h"
+#include "../views/viewhelper.h"
 
 EventTypeView::EventTypeView(QWidget *parent, quint32 id)
 	: QDialog(parent)
@@ -43,6 +43,8 @@ EventTypeView::EventTypeView(QWidget *parent, quint32 id)
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
 									 this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
+
+	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "EventType", "Description"));
 
 	if (m_model->rowCount() > 0) {
 		if (id) {
@@ -103,9 +105,7 @@ void EventTypeView::on_savePushButton_clicked()
 {
 	bool result = m_model->submitAll();
 	if (!result) {
-		QMessageBox::critical(this, tr("Error"),
-				tr("An error has occoured during saving modifications in the database.") +
-				"\n\n" + Services::ObjectRepository::instance()->lastError());
+		QMessageBox::critical(this, tr("Error"), m_model->lastError());
 		return;
 	}
 	this->accept();
@@ -120,6 +120,8 @@ void EventTypeView::on_cancelPushButton_clicked()
 
 void EventTypeView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+	Q_UNUSED(previous);
+
 	descriptionLineEdit->setText(current.sibling(current.row(), 1).data().toString());
 	hasMedalCheckBox->setChecked(current.sibling(current.row(), 2).data().toBool());
 	hasIntervalsCheckBox->setChecked(current.sibling(current.row(), 3).data().toBool());

@@ -22,14 +22,14 @@
 
 #include "intervalview.h"
 
+#include "../application.h"
 #include "../objects/event.h"
 #include "../objects/interval.h"
 #include "../objects/intervaltype.h"
-#include "../services/objectmap.h"
+#include "../models/intervaltablemodel.h"
 #include "../delegates/comboobjectitemdelegate.h"
 #include "../delegates/distancestyleditemdelegate.h"
 #include "../delegates/durationstyleditemdelegate.h"
-#include "../models/intervaltablemodel.h"
 #include "../views/intervaltypeview.h"
 #include "../utility/utility.h"
 
@@ -45,7 +45,7 @@ IntervalView::IntervalView(Objects::Event *event, QWidget *parent, quint32 id)
 	tableView->setColumnWidth(1, 130);
 	tableView->setItemDelegateForColumn(1, new ComboObjectItemDelegate(Objects::Types::IntervalType, tableView));
 	tableView->setColumnWidth(2, 100);
-	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", tr(" km")));
+	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", " " + APP->cfg()->cfgDistanceUnit()->description()));
 	tableView->setColumnWidth(3, 100);
 	tableView->setItemDelegateForColumn(3, new DurationStyledItemDelegate(tableView));
 	tableView->hideColumn(4);
@@ -69,6 +69,17 @@ IntervalView::IntervalView(Objects::Event *event, QWidget *parent, quint32 id)
 IntervalView::~IntervalView()
 {
 	delete m_model;
+}
+
+void IntervalView::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+
+	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", " " + APP->cfg()->cfgDistanceUnit()->description()));
+
+	distanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
+
+	this->refreshPaceLineEdit(distanceDoubleSpinBox->value(), durationTimeEdit->time());
 }
 
 
@@ -99,7 +110,6 @@ void IntervalView::on_removePushButton_clicked()
 	}
 }
 
-//void IntervalView::on_resetPushButton_clicked()
 void IntervalView::resetAll()
 {
 	m_model->revertAll();
@@ -111,23 +121,14 @@ void IntervalView::resetAll()
 	}
 }
 
-//void IntervalView::on_savePushButton_clicked()
 bool IntervalView::saveAll()
 {
 	bool result = m_model->submitAll();
 	if (!result) {
-//		QMessageBox::critical(this, tr("Error"),
-//				tr("An error has occoured during saving modifications in the database."));
 		return false;
 	}
-//	this->accept();
 	return true;
 }
-
-//void IntervalView::on_cancelPushButton_clicked()
-//{
-//	this->reject();
-//}
 
 
 
@@ -151,7 +152,7 @@ void IntervalView::on_rowDownPushButton_clicked()
 
 
 
-void IntervalView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
+void IntervalView::currentRowChanged(const QModelIndex &current, const QModelIndex &)
 {
 	intervalTypeComboBox->setCurrentIndex(intervalTypeComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
 	distanceDoubleSpinBox->setValue(current.sibling(current.row(), 2).data().toDouble());
@@ -171,22 +172,14 @@ void IntervalView::on_distanceDoubleSpinBox_valueChanged(double value)
 {
 	m_model->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 2), value);
 
-	QTime time = durationTimeEdit->time();
-	QTime paceTime = Utility::paceTime(value, time);
-	double paceSpeed = Utility::paceSpeed(value, time);
-	paceLineEdit->setText(tr("%1 min/km or %2 km/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)));
+	this->refreshPaceLineEdit(value, durationTimeEdit->time());
 }
 
 void IntervalView::on_durationTimeEdit_timeChanged(const QTime &value)
 {
 	m_model->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 3), value);
 
-	double distance = distanceDoubleSpinBox->value();
-	QTime paceTime = Utility::paceTime(distance, value);
-	double paceSpeed = Utility::paceSpeed(distance, value);
-	paceLineEdit->setText(tr("%1 min/km or %2 km/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)));
+	this->refreshPaceLineEdit(distanceDoubleSpinBox->value(), value);
 }
 
 void IntervalView::on_notesPlainTextEdit_textChanged()
@@ -220,7 +213,7 @@ void IntervalView::setControlsEnabled(bool enable)
 
 void IntervalView::refreshComboBoxes()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
+	Services::ObjectMap *session = APP->objectMap();
 
 	quint32 id = intervalTypeComboBox->itemData(intervalTypeComboBox->currentIndex()).toInt();
 	intervalTypeComboBox->clear();
@@ -241,4 +234,13 @@ void IntervalView::swapRows(int row1, int row2)
 		m_model->setData(m_model->index(row1, i), m_model->index(row2, i).data());
 		m_model->setData(m_model->index(row2, i), value);
 	}
+}
+
+void IntervalView::refreshPaceLineEdit(double distance, QTime time)
+{
+	QTime paceTime = Utility::paceTime(distance, time);
+	double paceSpeed = Utility::paceSpeed(distance, time);
+	paceLineEdit->setText(tr("%1 min/%3 or %2 %3/h")
+			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2))
+			.arg(APP->cfg()->cfgDistanceUnit()->description()));
 }

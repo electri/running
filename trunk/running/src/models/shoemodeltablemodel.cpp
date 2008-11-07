@@ -22,7 +22,6 @@
 
 #include "../objects/shoemodel.h"
 #include "../objects/shoemaker.h"
-#include "../services/objectmap.h"
 
 ShoeModelTableModel::ShoeModelTableModel(QObject *parent)
 	: ComboObjectTableModel(Objects::Types::ShoeModel, parent)
@@ -55,8 +54,7 @@ QVariant ShoeModelTableModel::getColumnValue(Objects::BaseObject *object, int co
 	QVariant value;
 	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(object);
 	if (shoeModel) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		value = shoeModel->id();			break;
 			case 1:		value = shoeModel->shoeMaker() ? shoeModel->shoeMaker()->id() : 0;		break;
 			case 2:		value = shoeModel->description();	break;
@@ -67,15 +65,12 @@ QVariant ShoeModelTableModel::getColumnValue(Objects::BaseObject *object, int co
 
 void ShoeModelTableModel::setColumnValue(Objects::BaseObject *object, int column, const QVariant &value)
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
 	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(object);
 	if (shoeModel) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		break;
 			case 1:		shoeModel->setShoeMaker(static_cast<Objects::ShoeMaker *>(
-							session->getObjectById(shoeModel->shoeMaker(), Objects::Types::ShoeMaker, value.toInt())));	break;
+							this->child(Objects::Types::ShoeMaker, value.toInt(), shoeModel->shoeMaker())));	break;
 			case 2:		shoeModel->setDescription(value.toString());	break;
 		}
 	}

@@ -18,33 +18,27 @@
 
 ****************************************************************************/
 
-#include <QtDebug>
+#ifndef CFGTEMPERATUREUNIT_H
+#define CFGTEMPERATUREUNIT_H
 
-#include "intervaltype.h"
+#include "comboobject.h"
+
+namespace Services { class ObjectFactory; }
 
 namespace Objects {
 
-IntervalType::IntervalType()
+class CfgTemperatureUnit : public ComboObject
 {
-}
+friend class Services::ObjectFactory;
 
-IntervalType::~IntervalType()
-{
-}
+public:
+	Types::Type type() const { return Types::CfgTemperatureUnit; }
 
-
-
-QString IntervalType::toString() const
-{
-	QString comboObject = static_cast<const ComboObject *>(this)->toString();
-	QString s = QString("IntervalType{%1}").arg(comboObject);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const IntervalType &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
-}
+private:
+	CfgTemperatureUnit() {};
+	virtual ~CfgTemperatureUnit() {};
+};
 
 }
+
+#endif

@@ -26,8 +26,6 @@
 #include "../../objects/intervaltype.h"
 #include "../../objects/event.h"
 
-#include "../objectmap.h"
-
 namespace Mappers {
 
 IntervalMapper::IntervalMapper()
@@ -42,28 +40,24 @@ IntervalMapper::IntervalMapper()
 
 
 
-void IntervalMapper::get(Objects::BaseObject *object, QSqlQuery &query)
+void IntervalMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 
-	Objects::Event *event = static_cast<Objects::Event *>(
-		Services::ObjectMap::instance()->getObjectById(interval->event(), Objects::Types::Event, query.record().value("EventId").toInt()));
+	Objects::BaseObject *intervalType = this->child(query.record().value("IntervalTypeId").toInt(),
+		Objects::Types::IntervalType, interval->intervalType());
 
-	Objects::IntervalType *intervalType = static_cast<Objects::IntervalType *>(
-		Services::ObjectMap::instance()->getObjectById(interval->intervalType(), Objects::Types::IntervalType, query.record().value("IntervalTypeId").toInt()));
-
-	interval->setEvent(event ? event : 0);
 	interval->setIntervalType(intervalType ? intervalType : 0);
 	interval->setDistance(query.record().value("Distance").toDouble());
 	interval->setDuration(query.record().value("Duration").toTime());
 	interval->setNotes(query.record().value("Notes").toString());
 }
 
-void IntervalMapper::set(Objects::BaseObject *object, QSqlQuery &query)
+void IntervalMapper::setFieldsFromValues(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 
-	query.bindValue(":eventid", interval->event() ? interval->event()->id() : 0);
+	query.bindValue(":eventid", interval->parent() ? interval->parent()->id() : 0);
 	query.bindValue(":intervaltypeid", interval->intervalType() ? interval->intervalType()->id() : 0);
 	query.bindValue(":distance", interval->distance());
 	query.bindValue(":duration", interval->duration());

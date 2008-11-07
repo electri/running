@@ -23,7 +23,7 @@
 #include "intervaltypeview.h"
 
 #include "../models/comboobjecttablemodel.h"
-#include "../services/objectrepository.h"
+#include "../views/viewhelper.h"
 
 IntervalTypeView::IntervalTypeView(QWidget *parent, quint32 id)
 	: QDialog(parent)
@@ -38,6 +38,8 @@ IntervalTypeView::IntervalTypeView(QWidget *parent, quint32 id)
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
 									 this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
+
+	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "IntervalType", "Description"));
 
 	if (m_model->rowCount() > 0) {
 		if (id) {
@@ -98,9 +100,7 @@ void IntervalTypeView::on_savePushButton_clicked()
 {
 	bool result = m_model->submitAll();
 	if (!result) {
-		QMessageBox::critical(this, tr("Error"),
-				tr("An error has occoured during saving modifications in the database.") +
-				"\n\n" + Services::ObjectRepository::instance()->lastError());
+		QMessageBox::critical(this, tr("Error"), m_model->lastError());
 		return;
 	}
 	this->accept();
@@ -115,6 +115,8 @@ void IntervalTypeView::on_cancelPushButton_clicked()
 
 void IntervalTypeView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+	Q_UNUSED(previous);
+
 	descriptionLineEdit->setText(current.sibling(current.row(), 1).data().toString());
 }
 

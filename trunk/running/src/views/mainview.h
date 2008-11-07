@@ -23,7 +23,6 @@
 
 #include <QMainWindow>
 
-
 #include "../../obj/ui_mainview.h"
 
 namespace Objects { class Event; }
@@ -74,6 +73,8 @@ private slots:
 	void editWeather(quint32 id = 0);
 	void editIntervalType(quint32 id = 0);
 
+	void options();
+	void systemInformation();
 	void about();
 	void showDebugOnConsole();
 
@@ -83,7 +84,8 @@ private:
 	void editEventGetProperties(Objects::Event *);
 	void editEventSetProperties(Objects::Event *);
 	void editEventRefreshComboBoxes();
-	
+	void refreshPaceLineEdit(double distance, const QTime &time);
+
 	void updateStatusbar();
 
 	Objects::Event *m_currentEvent;

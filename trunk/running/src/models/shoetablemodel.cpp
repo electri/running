@@ -23,7 +23,6 @@
 #include "../objects/shoe.h"
 #include "../objects/shoemaker.h"
 #include "../objects/shoemodel.h"
-#include "../services/objectmap.h"
 
 ShoeTableModel::ShoeTableModel(QObject *parent)
 	: BaseObjectTableModel(Objects::Types::Shoe, parent)
@@ -48,7 +47,7 @@ QString ShoeTableModel::getColumnHeader(int column) const
 		case 1:		return tr("Maker");
 		case 2:		return tr("Model");
 		case 3:		return tr("Size");
-		case 4:		return tr("Purchase date");
+		case 4:		return tr("Purchase");
 		case 5:		return tr("Price");
 		case 6:		return tr("Initial distance");
 		case 7:		return tr("Retired");
@@ -62,8 +61,7 @@ QVariant ShoeTableModel::getColumnValue(Objects::BaseObject *object, int column)
 	QVariant value;
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 	if (shoe) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		value = shoe->id();					break;
 			case 1:		value = shoe->shoeModel() ? shoe->shoeModel()->shoeMaker() ? shoe->shoeModel()->shoeMaker()->id() : 0 : 0;		break;
 			case 2:		value = shoe->shoeModel() ? shoe->shoeModel()->id() : 0;		break;
@@ -80,18 +78,14 @@ QVariant ShoeTableModel::getColumnValue(Objects::BaseObject *object, int column)
 
 void ShoeTableModel::setColumnValue(Objects::BaseObject *object, int column, const QVariant &value)
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 	if (shoe) {
-		switch (column)
-		{
+		switch (column) {
 			case 0:		break;
 			case 1:		break;
-			case 2:		shoe->setShoeModel(static_cast<Objects::ShoeModel *>(
-							session->getObjectById(shoe->shoeModel(), Objects::Types::ShoeModel, value.toInt())));	break;
+			case 2:		shoe->setShoeModel(static_cast<Objects::ShoeModel *>(this->child(Objects::Types::ShoeModel, value.toInt(), shoe->shoeModel())));	break;
 			case 3:		shoe->setSize(value.toDouble());			break;
-			case 4:		shoe->setPurchaseDate(value.toDate());	break;
+			case 4:		shoe->setPurchaseDate(value.toDate());		break;
 			case 5:		shoe->setPrice(value.toDouble());			break;
 			case 6:		shoe->setInitialDistance(value.toDouble());	break;
 			case 7:		shoe->setRetired(value.toBool());			break;
