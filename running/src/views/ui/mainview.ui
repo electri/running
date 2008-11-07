@@ -24,7 +24,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget" >
       <property name="currentIndex" >
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="calendarPage" >
        <layout class="QHBoxLayout" name="horizontalLayout_3" >
@@ -33,9 +33,6 @@
         </property>
         <item>
          <widget class="CalendarWidget" name="calendarWidget" >
-          <property name="firstDayOfWeek" >
-           <enum>Qt::Monday</enum>
-          </property>
           <property name="gridVisible" >
            <bool>true</bool>
           </property>
@@ -652,17 +649,14 @@
     <property name="title" >
      <string>&amp;?</string>
     </property>
+    <addaction name="actionSystemInformation" />
     <addaction name="actionAbout" />
    </widget>
    <widget class="QMenu" name="menuTools" >
     <property name="title" >
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionEditEventType" />
-    <addaction name="actionEditShoeMaker" />
-    <addaction name="actionEditShoeModel" />
-    <addaction name="actionEditWeather" />
-    <addaction name="actionEditIntervalType" />
+    <addaction name="actionOptions" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -824,6 +818,24 @@
    </property>
    <property name="text" >
     <string>Edit "Interval"</string>
+   </property>
+  </action>
+  <action name="actionOptions" >
+   <property name="icon" >
+    <iconset resource="../../../resources/application.qrc" >
+     <normaloff>:/options</normaloff>:/options</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Options ...</string>
+   </property>
+  </action>
+  <action name="actionSystemInformation" >
+   <property name="icon" >
+    <iconset resource="../../../resources/application.qrc" >
+     <normaloff>:/information</normaloff>:/information</iconset>
+   </property>
+   <property name="text" >
+    <string>System Information ...</string>
    </property>
   </action>
  </widget>

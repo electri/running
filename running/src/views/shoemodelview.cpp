@@ -24,8 +24,7 @@
 
 #include "../delegates/comboobjectitemdelegate.h"
 #include "../models/shoemodeltablemodel.h"
-#include "../services/objectmap.h"
-#include "../services/objectrepository.h"
+#include "../views/viewhelper.h"
 
 ShoeModelView::ShoeModelView(QWidget *parent, quint32 id)
 	: QDialog(parent)
@@ -42,6 +41,8 @@ ShoeModelView::ShoeModelView(QWidget *parent, quint32 id)
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
 									 this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
+
+	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "ShoeModel", "Description"));
 
 	refreshComboBoxes();
 
@@ -104,9 +105,7 @@ void ShoeModelView::on_savePushButton_clicked()
 {
 	bool result = m_model->submitAll();
 	if (!result) {
-		QMessageBox::critical(this, tr("Error"),
-				tr("An error has occoured during saving modifications in the database.") +
-				"\n\n" + Services::ObjectRepository::instance()->lastError());
+		QMessageBox::critical(this, tr("Error"), m_model->lastError());
 		return;
 	}
 	this->accept();
@@ -121,6 +120,8 @@ void ShoeModelView::on_cancelPushButton_clicked()
 
 void ShoeModelView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+	Q_UNUSED(previous);
+
 	shoeMakerComboBox->setCurrentIndex(shoeMakerComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
 	descriptionLineEdit->setText(current.sibling(current.row(), 2).data().toString());
 }
@@ -134,6 +135,8 @@ void ShoeModelView::on_descriptionLineEdit_textChanged(const QString &text)
 
 void ShoeModelView::on_shoeMakerComboBox_currentIndexChanged(int state)
 {
+	Q_UNUSED(state);
+
 	quint32 shoeMakerId = shoeMakerComboBox->itemData(shoeMakerComboBox->currentIndex()).toInt();
 	tableView->model()->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 1), shoeMakerId);
 }
@@ -148,15 +151,5 @@ void ShoeModelView::setControlsEnabled(bool enable)
 
 void ShoeModelView::refreshComboBoxes()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
-	quint32 id = shoeMakerComboBox->itemData(shoeMakerComboBox->currentIndex()).toInt();
-	shoeMakerComboBox->clear();
-	QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::ShoeMaker);
-	foreach (Objects::BaseObject *object, list) {
-		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(object);
-		shoeMakerComboBox->addItem(item->description(), item->id());
-	}
-	session->discardObjects(list);
-	shoeMakerComboBox->setCurrentIndex(shoeMakerComboBox->findData(id));
+	ViewHelper::fillComboBox(shoeMakerComboBox, Objects::Types::ShoeMaker);
 }

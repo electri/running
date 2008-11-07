@@ -32,6 +32,8 @@ DistanceStyledItemDelegate::DistanceStyledItemDelegate(QObject *parent, quint8 p
 
 QString DistanceStyledItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
+	Q_UNUSED(locale);
+
 	if (value.isNull()) return "";
 
 	QString s = "";

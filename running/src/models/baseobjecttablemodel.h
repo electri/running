@@ -32,7 +32,8 @@ class BaseObjectTableModel : public QAbstractTableModel
 
 public:
 	BaseObjectTableModel(Objects::Types::Type type, QObject *parent = 0);
-	BaseObjectTableModel(Objects::Types::Type type, Objects::BaseObject *parentObject = NULL, QObject *parent = 0);
+	BaseObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects,
+		 Objects::BaseObject *objectsParent, QObject *parent = 0);
 	~BaseObjectTableModel();
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -50,6 +51,7 @@ public:
 	bool submitAll();
 	
 	QModelIndex indexById(quint32 id) const;
+	QString lastError() const;
 
 protected:
 	virtual int getColumnCount() const;
@@ -59,10 +61,13 @@ protected:
 
 	virtual int forceColumnChange(int column);
 
+	Objects::BaseObject *child(Objects::Types::Type type, quint32 id, Objects::BaseObject *old_child);
+
 	QList<Services::Memento *> m_list;
 	QList<Services::Memento *> m_removed;
 	Objects::Types::Type m_type;
-	Objects::BaseObject *m_parent;
+	QList<Objects::BaseObject *> m_objects;
+	Objects::BaseObject *m_objectsParent;
 };
 
 #endif

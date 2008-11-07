@@ -34,14 +34,10 @@ friend class Services::ObjectFactory;
 public:
 	Types::Type type() const { return Types::ShoeMaker; }
 
-	QString toString() const;
-
 private:
-	ShoeMaker();
-	virtual ~ShoeMaker();
+	ShoeMaker() {};
+	virtual ~ShoeMaker() {};
 };
-
-QDebug operator<<(QDebug, const ShoeMaker &);
 
 }
 

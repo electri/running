@@ -22,6 +22,8 @@
 
 #include "baseobjectmapper.h"
 
+#include "../../application.h"
+
 namespace Mappers {
 
 BaseObjectMapper::BaseObjectMapper()
@@ -81,7 +83,7 @@ bool BaseObjectMapper::selectObject(Objects::BaseObject *object, quint32 id)
 	query.exec(text);
 	if (query.next()) {
 		object->m_id = query.value(0).toInt();
-		get(object, query);
+		setValuesFromFields(object, query);
 		object->m_state = Objects::States::Selected;
 		m_lastError = "";
 		return true;
@@ -94,7 +96,7 @@ bool BaseObjectMapper::insertObject(Objects::BaseObject *object)
 	QString text = QString("INSERT INTO %1 (%2) VALUES (%3)").arg(m_table).arg(m_columnList).arg(m_valueList);
 	QSqlQuery query;
 	query.prepare(text);
-	set(object, query);
+	setFieldsFromValues(object, query);
 	query.exec();
 	if (query.numRowsAffected() == 1) {
 		object->m_id = query.lastInsertId().toInt();
@@ -112,7 +114,7 @@ bool BaseObjectMapper::updateObject(Objects::BaseObject *object)
 	QSqlQuery query;
 	query.prepare(text);
 	query.bindValue(":id", object->id());
-	set(object, query);
+	setFieldsFromValues(object, query);
 	query.exec();
 	if (query.numRowsAffected() == 1) {
 		object->m_state = Objects::States::Selected;
@@ -135,6 +137,25 @@ bool BaseObjectMapper::deleteObject(Objects::BaseObject *object)
 	}
 	m_lastError = query.lastError().databaseText();
 	return false;
+}
+
+Objects::BaseObject *BaseObjectMapper::child(quint32 id, Objects::Types::Type type, Objects::BaseObject *old_child)
+{
+	if (old_child) {
+		if (old_child->id() == id) {
+			return old_child;
+		} else {
+            APP->objectMap()->discardObject(old_child);
+		}
+	}
+
+	Objects::BaseObject *child;
+
+    child = APP->objectMap()->getObjectById(type, id);
+//	child = Services::ObjectFactory::instance()->createObject(Objects::Types::EventType);
+//	APP->objectRepository()->selectObject(child, id);
+
+	return child;
 }
 
 }

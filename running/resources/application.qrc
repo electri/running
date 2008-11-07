@@ -1,34 +1,48 @@
 <RCC>
-  <qresource prefix="/" >
-    <file alias="mainicon" >images/running.png</file>
-    <file alias="exit" >images/door_out.png</file>
-    <file alias="about" >images/lightbulb.png</file>
-    <file alias="calendar" >images/calendar_view_month.png</file>
-    <file alias="statistics" >images/chart_curve.png</file>
-    <file alias="event_edit" >images/date_edit.png</file>
-    <file alias="event_add" >images/date_add.png</file>
-    <file alias="event_delete" >images/date_delete.png</file>
-    <file alias="resultset_first" >images/resultset_first.png</file>
-    <file alias="resultset_last" >images/resultset_last.png</file>
-    <file alias="resultset_next" >images/resultset_next.png</file>
-    <file alias="resultset_previous" >images/resultset_previous.png</file>
-    <file alias="table_edit" >images/table_edit.png</file>
-    <file alias="table_add" >images/table_add.png</file>
-    <file alias="table_delete" >images/table_delete.png</file>
-    <file alias="reset" >images/arrow_refresh.png</file>
-    <file alias="save" >images/disk.png</file>
-    <file alias="cancel" >images/cancel.png</file>
-    <file alias="star" >images/star.png</file>
-    <file alias="medal" >images/rosette.png</file>
-    <file alias="intervals" >images/arrow_rotate_clockwise.png</file>
-    <file alias="yes" >images/tick.png</file>
-    <file alias="vote_high" >images/emoticon_smile.png</file>
-    <file alias="vote_low" >images/emoticon_unhappy.png</file>
-    <file alias="table_row_up" >images/arrow_up.png</file>
-    <file alias="table_row_down" >images/arrow_down.png</file>
-  </qresource>
-  <qresource>
-    <file>translations/running_en_US.qm</file>
-    <file>translations/running_it_IT.qm</file>
-  </qresource>
+	<qresource prefix="/">
+		<file alias="options">images/cog.png</file>
+		<file alias="mainicon">images/running.png</file>
+		<file alias="exit">images/door_out.png</file>
+		<file alias="about">images/lightbulb.png</file>
+		<file alias="information">images/information.png</file>
+		<file alias="calendar">images/calendar_view_month.png</file>
+		<file alias="statistics">images/chart_curve.png</file>
+		<file alias="event_edit">images/date_edit.png</file>
+		<file alias="event_add">images/date_add.png</file>
+		<file alias="event_delete">images/date_delete.png</file>
+		<file alias="resultset_first">images/resultset_first.png</file>
+		<file alias="resultset_last">images/resultset_last.png</file>
+		<file alias="resultset_next">images/resultset_next.png</file>
+		<file alias="resultset_previous">images/resultset_previous.png</file>
+		<file alias="table_edit">images/table_edit.png</file>
+		<file alias="table_add">images/table_add.png</file>
+		<file alias="table_delete">images/table_delete.png</file>
+		<file alias="reset">images/arrow_refresh.png</file>
+		<file alias="save">images/disk.png</file>
+		<file alias="cancel">images/cancel.png</file>
+		<file alias="star">images/star.png</file>
+		<file alias="medal">images/rosette.png</file>
+		<file alias="intervals">images/arrow_rotate_clockwise.png</file>
+		<file alias="yes">images/tick.png</file>
+		<file alias="vote_high">images/emoticon_smile.png</file>
+		<file alias="vote_low">images/emoticon_unhappy.png</file>
+		<file alias="table_row_up">images/arrow_up.png</file>
+		<file alias="table_row_down">images/arrow_down.png</file>
+	</qresource>
+	<qresource prefix="/">
+		<file>sql/create.sql</file>
+		<file>sql/create_init.sql</file>
+		<file>sql/upgrade_0-1.sql</file>
+		<file>sql/upgrade_0-1_init.sql</file>
+	</qresource>
+	<qresource lang="en">
+		<file alias="translations/running.qm">translations/running_en_US.qm</file>
+		<file alias="sql/create_init.sql">sql/create_init_en_US.sql</file>
+		<file alias="sql/upgrade_0-1_init.sql">sql/upgrade_0-1_init_en_US.sql</file>
+	</qresource>
+	<qresource lang="it">
+		<file alias="translations/running.qm">translations/running_it_IT.qm</file>
+		<file alias="sql/create_init.sql">sql/create_init_it_IT.sql</file>
+		<file alias="sql/upgrade_0-1_init.sql">sql/upgrade_0-1_init_it_IT.sql</file>
+	</qresource>
 </RCC>

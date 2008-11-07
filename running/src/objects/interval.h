@@ -37,11 +37,8 @@ class Interval : public BaseObject
 friend class Services::ObjectFactory;
 
 public:
-	Event *event() const { return m_event; }
-	void setEvent(Event *);
-
 	IntervalType *intervalType() const { return m_intervalType; }
-	void setIntervalType(IntervalType *);
+	void setIntervalType(BaseObject *);
 
 	qreal distance() const { return m_distance; }
 	void setDistance(qreal);
@@ -63,8 +60,6 @@ public:
 	void setParent(Objects::BaseObject *);
 	QList<Objects::BaseObject *> children() const;
 
-	QString toString() const;
-
 private:
 	Interval();
 	virtual ~Interval();
@@ -75,8 +70,6 @@ private:
 	QTime m_duration;
 	QString m_notes;
 };
-
-QDebug operator<<(QDebug, const Interval &);
 
 }
 

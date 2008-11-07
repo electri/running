@@ -34,14 +34,10 @@ friend class Services::ObjectFactory;
 public:
 	Types::Type type() const { return Types::Weather; }
 
-	QString toString() const;
-
 private:
-	Weather();
-	virtual ~Weather();
+	Weather() {};
+	virtual ~Weather() {};
 };
-
-QDebug operator<<(QDebug, const Weather &);
 
 }
 

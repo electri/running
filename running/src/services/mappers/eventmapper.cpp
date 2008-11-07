@@ -22,15 +22,13 @@
 
 #include "eventmapper.h"
 
+#include "../../application.h"
+
 #include "../../objects/event.h"
 #include "../../objects/eventtype.h"
 #include "../../objects/shoe.h"
 #include "../../objects/weather.h"
 #include "../../objects/interval.h"
-
-#include "../objectmap.h"
-//#include "../objectfactory.h"
-//#include "../objectrepository.h"
 
 namespace Mappers {
 
@@ -66,24 +64,54 @@ QList<quint32> EventMapper::selectIdListByDate(const QDate &start, const QDate &
 
 
 
-void EventMapper::get(Objects::BaseObject *object, QSqlQuery &query)
+void EventMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Event *event = static_cast<Objects::Event *>(object);
 
-	Objects::EventType *eventType = static_cast<Objects::EventType *>(
-		Services::ObjectMap::instance()->getObjectById(event->eventType(), Objects::Types::EventType, query.record().value("EventTypeId").toInt()));
-//	Objects::EventType *eventType = static_cast<Objects::EventType *>(
-//										Services::ObjectFactory::instance()->createObject(Objects::Types::EventType));
-//	Services::ObjectRepository::instance()->selectObject(eventType, query.record().value("EventTypeId").toInt());
+	Objects::BaseObject *eventType = this->child(query.record().value("EventTypeId").toInt(),
+		Objects::Types::EventType, event->eventType());
+	Objects::BaseObject *shoe = this->child(query.record().value("ShoeId").toInt(),
+		Objects::Types::Shoe, event->shoe());
+	Objects::BaseObject *weather = this->child(query.record().value("WeatherId").toInt(),
+		Objects::Types::Weather, event->weather());
 
-	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(
-		Services::ObjectMap::instance()->getObjectById(event->shoe(), Objects::Types::Shoe, query.record().value("ShoeId").toInt()));
-//	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(
-//										Services::ObjectFactory::instance()->createObject(Objects::Types::Shoe));
-//	Services::ObjectRepository::instance()->selectObject(shoe, query.record().value("ShoeId").toInt());
 
-	Objects::Weather *weather = static_cast<Objects::Weather *>(
-		Services::ObjectMap::instance()->getObjectById(event->weather(), Objects::Types::Weather, query.record().value("WeatherId").toInt()));
+
+	// TODO move code below to an appropriate base method
+
+    QList<Objects::BaseObject *> intervals = APP->objectMap()->getObjectsByParent(
+		Objects::Types::Interval, event);
+
+	for (int i = event->intervals().size(); i > 0; --i) {
+		Objects::Interval *old_interval = static_cast<Objects::Interval *>(event->intervals()[i - 1]);
+		bool found = false;
+		for (int j = intervals.size(); j > 0; --j) {
+			Objects::Interval *interval = static_cast<Objects::Interval *>(intervals[j - 1]);
+			if (interval->id() == old_interval->id()) {
+				found = true;
+				intervals.removeAll(interval);
+                APP->objectMap()->discardObject(interval);
+				break;
+			}
+		}
+		if (!found) {
+			event->removeInterval(old_interval);
+            APP->objectMap()->discardObject(old_interval);
+		}
+	}
+	for (int j = intervals.size(); j > 0; --j) {
+		Objects::Interval *interval = static_cast<Objects::Interval *>(intervals[j - 1]);
+		event->addInterval(interval);
+	}
+
+//	APP->objectMap()->discardObjects(event->intervals());
+//	event->clearIntervals();
+//
+//	foreach (Objects::BaseObject *interval, intervals) {
+//		event->addInterval(static_cast<Objects::Interval *>(interval));
+//	}
+
+
 
 	event->setStart(query.record().value("Start").toDateTime());
 	event->setName(query.record().value("Name").toString());
@@ -101,7 +129,7 @@ void EventMapper::get(Objects::BaseObject *object, QSqlQuery &query)
 	event->setTemperature(query.record().value("Temperature").toDouble());
 }
 
-void EventMapper::set(Objects::BaseObject *object, QSqlQuery &query)
+void EventMapper::setFieldsFromValues(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Event *event = static_cast<Objects::Event *>(object);
 

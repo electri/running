@@ -36,7 +36,7 @@ EventTypeMapper::EventTypeMapper()
 
 
 
-void EventTypeMapper::get(Objects::BaseObject *object, QSqlQuery &query)
+void EventTypeMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::EventType *eventType = static_cast<Objects::EventType *>(object);
 
@@ -46,7 +46,7 @@ void EventTypeMapper::get(Objects::BaseObject *object, QSqlQuery &query)
 	eventType->setIntervals(query.record().value("HasIntervals").toBool());
 }
 
-void EventTypeMapper::set(Objects::BaseObject *object, QSqlQuery &query)
+void EventTypeMapper::setFieldsFromValues(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::EventType *eventType = static_cast<Objects::EventType *>(object);
 

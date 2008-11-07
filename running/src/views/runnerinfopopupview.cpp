@@ -22,8 +22,15 @@
 
 #include "runnerinfopopupview.h"
 
+#include "../application.h"
+
 RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+}
+
+void RunnerInfoPopupView::showEvent(QShowEvent *)
+{
+	weightDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgWeightUnit()->description());
 }

@@ -31,6 +31,7 @@ class RunnerInfoPopupView : public QWidget, public Ui::RunnerInfoPopupView
 
 public:
 	RunnerInfoPopupView(QWidget *parent = 0);
+	void showEvent(QShowEvent *);
 };
 
 #endif

@@ -22,35 +22,22 @@
 
 #include "objectmap.h"
 
+#include "../application.h"
 #include "objectfactory.h"
-#include "objectrepository.h"
 
 namespace Services {
-
-ObjectMap* ObjectMap::sm_instance = NULL;
 
 ObjectMap::ObjectMap()
 {
 	m_dynamicMemory = false;
-//	m_map = QMap<Objects::BaseObject *, quint32>();
 }
 
 ObjectMap::~ObjectMap()
 {
-	QMap<Objects::BaseObject *, quint32>::iterator it = m_map.begin();
-	while (it != m_map.end()) {
-		delete it.key();
-		++it;
+	foreach (Objects::BaseObject *object, m_map.keys()) {
+		delete object;
 	}
 	m_map.clear();
-}
-
-ObjectMap* ObjectMap::instance()
-{
-	if (sm_instance == NULL) {
-		sm_instance = new ObjectMap();
-	}
-	return sm_instance;
 }
 
 
@@ -58,30 +45,28 @@ ObjectMap* ObjectMap::instance()
 Objects::BaseObject *ObjectMap::createObject(Objects::Types::Type type)
 {
 	Objects::BaseObject *object = Services::ObjectFactory::instance()->createObject(type);
-	m_map.insert(object, 1);
+	updateObjectReference(object, 1, false);
 	return object;
 }
 
 void ObjectMap::discardObject(Objects::BaseObject *object)
 {
-	updateObjectReference(object, -1);
+	updateObjectReference(object, -1, true);
 }
 
 void ObjectMap::discardObjects(QList<Objects::BaseObject *> list)
 {
-	QList<Objects::BaseObject *>::const_iterator it = list.constBegin();
-	while (it != list.constEnd()) {
-		discardObject(*it++);
+	foreach (Objects::BaseObject *object, list) {
+		discardObject(object);
 	}
 }
 
 QList<Objects::BaseObject *> ObjectMap::getAllObjects(Objects::Types::Type type)
 {
 	QList<Objects::BaseObject *> list;
-	QList<quint32> idList = Services::ObjectRepository::instance()->selectIdList(type);
-	QList<quint32>::const_iterator it = idList.constBegin();
-	while (it != idList.constEnd()) {
-		Objects::BaseObject *object = getObjectById(type, *it++);
+	QList<quint32> idList = APP->objectRepository()->selectIdList(type);
+	foreach (quint32 id, idList) {
+		Objects::BaseObject *object = getObjectById(type, id);
 		if (object) {
 			list.append(object);
 		}
@@ -92,11 +77,11 @@ QList<Objects::BaseObject *> ObjectMap::getAllObjects(Objects::Types::Type type)
 QList<Objects::BaseObject *> ObjectMap::getObjectsByParent(Objects::Types::Type type, Objects::BaseObject *parent)
 {
 	QList<Objects::BaseObject *> list;
-	QList<quint32> idList = Services::ObjectRepository::instance()->selectIdList(type, parent);
-	QList<quint32>::const_iterator it = idList.constBegin();
-	while (it != idList.constEnd()) {
-		Objects::BaseObject *object = getObjectById(type, *it++);
+	QList<quint32> idList = APP->objectRepository()->selectIdList(type, parent);
+	foreach (quint32 id, idList) {
+		Objects::BaseObject *object = getObjectById(type, id);
 		if (object) {
+			object->setParent(parent);
 			list.append(object);
 		}
 	}
@@ -106,34 +91,23 @@ QList<Objects::BaseObject *> ObjectMap::getObjectsByParent(Objects::Types::Type 
 Objects::BaseObject *ObjectMap::getObjectById(Objects::Types::Type type, quint32 id)
 {
 	Objects::BaseObject *object;
+
 	object = findObjectInCache(type, id);
 	if (object) {
-		updateObjectReference(object, 1);
+		updateObjectReference(object, 1, true);
 		return object;
 	}
+
 	object = Services::ObjectFactory::instance()->createObject(type);
 	if (object) {
-		if (Services::ObjectRepository::instance()->selectObject(object, id)) {
-			m_map.insert(object, 1);
+		if (APP->objectRepository()->selectObject(object, id)) {
+			updateObjectReference(object, 1, false);
 			return object;
 		}
-		delete object;
 	}
+
+	delete object;
 	return NULL;
-}
-
-Objects::BaseObject *ObjectMap::getObjectById(Objects::BaseObject *object, Objects::Types::Type type, quint32 id)
-{
-	if (!object) {
-		return this->getObjectById(type, id);
-	}
-
-	if (object->id() == id) {
-		return object;
-	}
-
-	this->discardObject(object);
-	return this->getObjectById(type, id);
 }
 
 bool ObjectMap::saveObject(Objects::BaseObject *object)
@@ -143,9 +117,9 @@ bool ObjectMap::saveObject(Objects::BaseObject *object)
 		case Objects::States::Selected:
 			return true;
 		case Objects::States::Created:
-			return Services::ObjectRepository::instance()->insertObject(object);
+			return APP->objectRepository()->insertObject(object);
 		case Objects::States::Modified:
-			return Services::ObjectRepository::instance()->updateObject(object);
+			return APP->objectRepository()->updateObject(object);
 		case Objects::States::Deleted:
 			return false;
 		}
@@ -164,7 +138,7 @@ bool ObjectMap::deleteObject(Objects::BaseObject *object)
 			if (m_map.contains(object)) {
 				if (m_map[object] > 1) return false;
 			}
-			return Services::ObjectRepository::instance()->deleteObject(object);
+			return APP->objectRepository()->deleteObject(object);
 		case Objects::States::Deleted:
 			return false;
 		}
@@ -175,10 +149,9 @@ bool ObjectMap::deleteObject(Objects::BaseObject *object)
 QList<Objects::BaseObject *> ObjectMap::getEventsByDate(const QDate &start, const QDate &end)
 {
 	QList<Objects::BaseObject *> list;
-	QList<quint32> idList = Services::ObjectRepository::instance()->selectEventIdListByDate(start, end);
-	QList<quint32>::const_iterator it = idList.constBegin();
-	while (it != idList.constEnd()) {
-		Objects::BaseObject *object = getObjectById(Objects::Types::Event, *it++);
+	QList<quint32> idList = APP->objectRepository()->selectEventIdListByDate(start, end);
+	foreach (quint32 id, idList) {
+		Objects::BaseObject *object = getObjectById(Objects::Types::Event, id);
 		if (object) {
 			list.append(object);
 		}
@@ -194,48 +167,67 @@ void ObjectMap::setDynamicMemory(bool value)
 void ObjectMap::free()
 {
 	QList<Objects::BaseObject *> list = m_map.keys(0);
-	QList<Objects::BaseObject *>::iterator it = list.begin();
-	while (it != list.end()) {
-		m_map.remove(*it);
-		delete *it++;
+	foreach (Objects::BaseObject *object, list) {
+		m_map.remove(object);
+		delete object;
 	}
 }
 
 Objects::BaseObject *ObjectMap::findObjectInCache(Objects::Types::Type type, quint32 id)
 {
-	QMap<Objects::BaseObject *, quint32>::const_iterator it = m_map.constBegin();
-	while (it != m_map.constEnd()) {
-		Objects::BaseObject *object = it.key();
-		if ((object->type() == type) && (object->id() == id)) {
-			return object;
+	foreach(Objects::BaseObject *object, m_map.keys()) {
+		if (object->type() == type) {
+			if (object->id() == id) {
+				return object;
+			}
 		}
-		++it;
 	}
 	return NULL;
 }
 
-void ObjectMap::updateObjectReference(Objects::BaseObject *object, qint32 count)
+void ObjectMap::updateObjectReference(Objects::BaseObject *object, qint32 count, bool recursive)
 {
-	if (object) {
-		if (m_map.contains(object)) {
-			if (count < 0) {
-				if (m_map[object] == 0) return;
-			}
+	if ((object == NULL) || (count == 0)) return;
 
-			m_map[object] += count;
+#ifdef QT_DEBUG
+	qDebug() << QString("ObjectMap: %1 ref:%2 recursive:%3").arg(object->toString()).arg(count).arg(recursive);
+#endif
 
-			if (m_dynamicMemory) {
-				if (m_map[object] == 0) {
-					m_map.remove(object);
-					delete object;
-				}
-			}
+	if (m_map.contains(object)) {
+		if (count < 0) {
+			if (m_map[object] == 0) return;
+		}
 
-			QList<Objects::BaseObject *> list = object->children();
-			QList<Objects::BaseObject *>::const_iterator it = list.constBegin();
-			while (it != list.constEnd()) {
-				updateObjectReference(*it++, count);
-			}
+		m_map[object] += count;
+	} else {
+		if (count < 0) {
+			return;
+		}
+
+		m_map.insert(object, 1);
+	}
+
+	if (recursive) {
+		if (object->parent()) {
+			updateObjectReference(object->parent(), count, false);
+		}
+
+		foreach (Objects::BaseObject *child, object->children()) {
+			updateObjectReference(child, count, true);
+		}
+	}
+
+	if (object->state() == Objects::States::Created) {
+		if (m_map[object] == 0) {
+			m_map.remove(object);
+			delete object;
+		}
+	}
+
+	if (m_dynamicMemory) {
+		if (m_map[object] == 0) {
+			m_map.remove(object);
+			delete object;
 		}
 	}
 }
@@ -244,24 +236,27 @@ QString ObjectMap::toString()
 {
 	quint32 oe, oet, os, osma, osmo, ow, oi, oit;
 	oe = oet = os = osma = osmo = ow = oi = oit = 0;
-	QMap<Objects::BaseObject *, quint32>::const_iterator it = m_map.constBegin();
-	while (it != m_map.constEnd()) {
-		Objects::BaseObject *baseObject = it.key();
-		switch (baseObject->type()) {
-			case Objects::Types::Event:			oe += it.value();		break;
-			case Objects::Types::EventType:		oet += it.value();		break;
-			case Objects::Types::Shoe:			os += it.value();		break;
-			case Objects::Types::ShoeMaker:		osma += it.value();		break;
-			case Objects::Types::ShoeModel:		osmo += it.value();		break;
-			case Objects::Types::Weather:		ow += it.value();		break;
-			case Objects::Types::Interval:		oi += it.value();		break;
-			case Objects::Types::IntervalType:	oit += it.value();		break;
+	foreach (Objects::BaseObject *object, m_map.keys()) {
+		quint32 refcount = m_map[object];
+		switch (object->type()) {
+			case Objects::Types::Event:			oe += refcount;		break;
+			case Objects::Types::EventType:		oet += refcount;	break;
+			case Objects::Types::Shoe:			os += refcount;		break;
+			case Objects::Types::ShoeMaker:		osma += refcount;	break;
+			case Objects::Types::ShoeModel:		osmo += refcount;	break;
+			case Objects::Types::Weather:		ow += refcount;		break;
+			case Objects::Types::Interval:		oi += refcount;		break;
+			case Objects::Types::IntervalType:	oit += refcount;	break;
+			case Objects::Types::Cfg:					break;
+			case Objects::Types::CfgDistanceUnit:		break;
+			case Objects::Types::CfgWeightUnit:			break;
+			case Objects::Types::CfgTemperatureUnit:	break;
+			case Objects::Types::CfgCurrencyUnit:		break;
 		}
-		++it;
 	}
 	QString refs = QString("E%1|ET%2|S%3|SMA%4|SMO%5|W%6|I%7|IT%8")
 						.arg(oe).arg(oet).arg(os).arg(osma).arg(osmo).arg(ow).arg(oi).arg(oit);
-	return QString("ObjectMap: objects: %1, refs: %2.").arg(m_map.count()).arg(refs);
+	return QString("ObjectMap: objects:%1 refs:%2.").arg(m_map.count()).arg(refs);
 }
 
 }

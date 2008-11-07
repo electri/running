@@ -33,8 +33,8 @@ public:
 	QList<quint32> selectIdListByDate(const QDate &start, const QDate &end);
 
 private:
-	void get(Objects::BaseObject *, QSqlQuery &);
-	void set(Objects::BaseObject *, QSqlQuery &);
+	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);
+	void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &);
 };
 
 }

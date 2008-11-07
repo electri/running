@@ -21,17 +21,18 @@
 #include <QtGui>
 
 #include "comboobjectitemdelegate.h"
-#include "../services/objectmap.h"
+
+#include "../application.h"
 
 ComboObjectItemDelegate::ComboObjectItemDelegate(Objects::Types::Type type, QObject *parent)
 	: QItemDelegate(parent)
 {
-	m_list = Services::ObjectMap::instance()->getAllObjects(type);
+    m_list = APP->objectMap()->getAllObjects(type);
 }
 
 ComboObjectItemDelegate::~ComboObjectItemDelegate()
 {
-	Services::ObjectMap::instance()->discardObjects(m_list);
+    APP->objectMap()->discardObjects(m_list);
 }
 
 void ComboObjectItemDelegate::paint(QPainter *painter,

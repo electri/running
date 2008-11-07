@@ -37,7 +37,7 @@ friend class Services::ObjectFactory;
 
 public:
 	ShoeModel *shoeModel() const { return m_shoeModel; }
-	void setShoeModel(ShoeModel *);
+	void setShoeModel(BaseObject *);
 
 	qreal size() const { return m_size; }
 	void setSize(qreal);
@@ -63,8 +63,6 @@ public:
 
 	QList<Objects::BaseObject *> children() const;
 
-	QString toString() const;
-
 private:
 	Shoe();
 	virtual ~Shoe();
@@ -77,8 +75,6 @@ private:
 	bool m_retired;
 	QString m_notes;
 };
-
-QDebug operator<<(QDebug, const Shoe &);
 
 }
 

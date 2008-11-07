@@ -39,6 +39,11 @@ HEADERS += src/objects/baseobject.h \
     src/objects/weather.h \
     src/objects/interval.h \
     src/objects/intervaltype.h \
+    src/objects/cfg.h \
+    src/objects/cfgdistanceunit.h \
+    src/objects/cfgweightunit.h \
+    src/objects/cfgtemperatureunit.h \
+    src/objects/cfgcurrencyunit.h \
     src/services/memento.h \
     src/services/objectfactory.h \
     src/services/objectmap.h \
@@ -50,6 +55,7 @@ HEADERS += src/objects/baseobject.h \
     src/services/mappers/shoemapper.h \
     src/services/mappers/shoemodelmapper.h \
     src/services/mappers/intervalmapper.h \
+    src/services/mappers/cfgmapper.h \
     src/delegates/booleanimageitemdelegate.h \
     src/delegates/calendardelegate.h \
     src/delegates/comboobjectitemdelegate.h \
@@ -78,7 +84,10 @@ HEADERS += src/objects/baseobject.h \
     src/views/votepopupview.h \
     src/views/runnerinfopopupview.h \
     src/views/weatherinfopopupview.h \
-    src/views/mainview.h
+    src/views/optionsview.h \
+    src/views/mainview.h \
+    src/views/viewhelper.h \
+    src/application.h
 FORMS += src/views/ui/eventtypeview.ui \
     src/views/ui/shoeview.ui \
     src/views/ui/shoemakerview.ui \
@@ -89,17 +98,16 @@ FORMS += src/views/ui/eventtypeview.ui \
     src/views/ui/votepopupview.ui \
     src/views/ui/runnerinfopopupview.ui \
     src/views/ui/weatherinfopopupview.ui \
+    src/views/ui/optionsview.ui \
     src/views/ui/mainview.ui
 SOURCES += src/objects/baseobject.cpp \
     src/objects/comboobject.cpp \
     src/objects/event.cpp \
     src/objects/eventtype.cpp \
     src/objects/shoe.cpp \
-    src/objects/shoemaker.cpp \
     src/objects/shoemodel.cpp \
-    src/objects/weather.cpp \
     src/objects/interval.cpp \
-    src/objects/intervaltype.cpp \
+    src/objects/cfg.cpp \
     src/services/memento.cpp \
     src/services/objectfactory.cpp \
     src/services/objectmap.cpp \
@@ -111,6 +119,7 @@ SOURCES += src/objects/baseobject.cpp \
     src/services/mappers/shoemapper.cpp \
     src/services/mappers/shoemodelmapper.cpp \
     src/services/mappers/intervalmapper.cpp \
+    src/services/mappers/cfgmapper.cpp \
     src/delegates/booleanimageitemdelegate.cpp \
     src/delegates/calendardelegate.cpp \
     src/delegates/comboobjectitemdelegate.cpp \
@@ -137,10 +146,12 @@ SOURCES += src/objects/baseobject.cpp \
     src/views/votepopupview.cpp \
     src/views/runnerinfopopupview.cpp \
     src/views/weatherinfopopupview.cpp \
+    src/views/optionsview.cpp \
     src/views/mainview.cpp \
+    src/views/viewhelper.cpp \
+    src/application.cpp \
     src/main.cpp
-RESOURCES += resources/application.qrc \
-    application.qrc
+RESOURCES += resources/application.qrc
 RC_FILE = resources/application.rc
 TRANSLATIONS = resources/translations/running_it_IT.ts \
 	resources/translations/running_en_US.ts

@@ -46,8 +46,10 @@ public:
 	QString lastError() const { return m_lastError; }
 
 protected:
-	virtual void get(Objects::BaseObject *, QSqlQuery &) = 0;
-	virtual void set(Objects::BaseObject *, QSqlQuery &) = 0;
+	virtual void setValuesFromFields(Objects::BaseObject *, QSqlQuery &) = 0;
+	virtual void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &) = 0;
+
+	Objects::BaseObject *child(quint32 id, Objects::Types::Type type, Objects::BaseObject *old_child);
 
 	QSqlDatabase m_database;
 	QString m_table;

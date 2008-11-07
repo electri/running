@@ -34,14 +34,10 @@ friend class Services::ObjectFactory;
 public:
 	Types::Type type() const { return Types::IntervalType; }
 
-	QString toString() const;
-
 private:
-	IntervalType();
-	virtual ~IntervalType();
+	IntervalType() {};
+	virtual ~IntervalType() {};
 };
-
-QDebug operator<<(QDebug, const Objects::IntervalType &);
 
 }
 

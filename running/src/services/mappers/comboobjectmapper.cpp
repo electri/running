@@ -45,7 +45,7 @@ bool ComboObjectMapper::selectObjectByDescription(Objects::ComboObject *object, 
 	query.exec(text);
 	if (query.next()) {
 		object->m_id = query.value(0).toInt();
-		get(object, query);
+		setValuesFromFields(object, query);
 		object->m_state = Objects::States::Selected;
 		m_lastError = "";
 		return true;
@@ -55,14 +55,14 @@ bool ComboObjectMapper::selectObjectByDescription(Objects::ComboObject *object, 
 
 
 
-void ComboObjectMapper::get(Objects::BaseObject *object, QSqlQuery &query)
+void ComboObjectMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::ComboObject *comboObject = static_cast<Objects::ComboObject *>(object);
 
 	comboObject->setDescription(query.record().value("Description").toString());
 }
 
-void ComboObjectMapper::set(Objects::BaseObject *object, QSqlQuery &query)
+void ComboObjectMapper::setFieldsFromValues(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::ComboObject *comboObject = static_cast<Objects::ComboObject *>(object);
 

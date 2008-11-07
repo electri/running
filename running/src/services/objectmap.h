@@ -28,14 +28,16 @@
 
 #include "../objects/baseobject.h"
 
+class Application;
+
 namespace Services {
 
 class ObjectMap
 {
+friend class ::Application;
+
 public:
 	virtual ~ObjectMap();
-
-	static ObjectMap* instance();
 
 	Objects::BaseObject *createObject(Objects::Types::Type type);
 	void discardObject(Objects::BaseObject *);
@@ -43,7 +45,6 @@ public:
 	QList<Objects::BaseObject *> getAllObjects(Objects::Types::Type type);
 	QList<Objects::BaseObject *> getObjectsByParent(Objects::Types::Type type, Objects::BaseObject *parent);
 	Objects::BaseObject *getObjectById(Objects::Types::Type type, quint32 id);
-	Objects::BaseObject *getObjectById(Objects::BaseObject *object, Objects::Types::Type type, quint32 id);
 	bool saveObject(Objects::BaseObject *);
 	bool deleteObject(Objects::BaseObject *);
 
@@ -58,9 +59,7 @@ private:
 	ObjectMap();
 
 	Objects::BaseObject *findObjectInCache(Objects::Types::Type type, quint32 id);
-	void updateObjectReference(Objects::BaseObject *, qint32 count);
-
-	static ObjectMap* sm_instance;
+	void updateObjectReference(Objects::BaseObject *, qint32 count, bool recursive);
 
 	bool m_dynamicMemory;
 	QMap<Objects::BaseObject *, quint32> m_map;

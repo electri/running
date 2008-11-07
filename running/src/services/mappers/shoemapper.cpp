@@ -26,10 +26,6 @@
 #include "../../objects/shoemaker.h"
 #include "../../objects/shoemodel.h"
 
-#include "../objectmap.h"
-//#include "../objectfactory.h"
-//#include "../objectrepository.h"
-
 namespace Mappers {
 
 ShoeMapper::ShoeMapper()
@@ -43,15 +39,12 @@ ShoeMapper::ShoeMapper()
 
 
 
-void ShoeMapper::get(Objects::BaseObject *object, QSqlQuery &query)
+void ShoeMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 
-	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(
-		Services::ObjectMap::instance()->getObjectById(shoe->shoeModel(), Objects::Types::ShoeModel, query.record().value("ShoeModelId").toInt()));
-//	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(
-//										Services::ObjectFactory::instance()->createObject(Objects::Types::ShoeModel));
-//	Services::ObjectRepository::instance()->selectObject(shoeModel, query.record().value("ShoeModelId").toInt());
+	Objects::BaseObject *shoeModel = this->child(query.record().value("ShoeModelId").toInt(),
+		Objects::Types::ShoeModel, shoe->shoeModel());
 
 	shoe->setShoeModel(shoeModel ? shoeModel : 0);
 	shoe->setSize(query.record().value("Size").toDouble());
@@ -62,7 +55,7 @@ void ShoeMapper::get(Objects::BaseObject *object, QSqlQuery &query)
 	shoe->setNotes(query.record().value("Notes").toString());
 }
 
-void ShoeMapper::set(Objects::BaseObject *object, QSqlQuery &query)
+void ShoeMapper::setFieldsFromValues(Objects::BaseObject *object, QSqlQuery &query)
 {
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 

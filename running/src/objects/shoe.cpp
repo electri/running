@@ -43,10 +43,12 @@ Shoe::~Shoe()
 
 
 
-void Shoe::setShoeModel(ShoeModel *value)
+void Shoe::setShoeModel(BaseObject *value)
 {
-	if (m_shoeModel != value) {
-		m_shoeModel = value;
+	ShoeModel *object = static_cast<ShoeModel *>(value);
+
+	if (m_shoeModel != object) {
+		m_shoeModel = object;
 		modified();
 	}
 }
@@ -104,24 +106,8 @@ void Shoe::setNotes(const QString &value)
 QList<Objects::BaseObject *> Shoe::children() const
 {
 	QList<Objects::BaseObject *> list;
-	list.append(m_shoeModel);
+	list << m_shoeModel;
 	return list;
-}
-
-QString Shoe::toString() const
-{
-	QString baseObject = static_cast<const BaseObject *>(this)->toString();
-	QString shoeModel = m_shoeModel ? m_shoeModel->toString() : "";
-	QString s = QString("Shoe{%1|%2|%3|%4|%5|%6|%7|%8}").arg(baseObject).arg(shoeModel)
-								.arg(m_size).arg(m_purchaseDate.toString()).arg(m_price)
-								.arg(m_initialDistance).arg(m_retired).arg(m_notes);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const Shoe &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
 }
 
 }

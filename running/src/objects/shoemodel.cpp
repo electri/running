@@ -37,10 +37,12 @@ ShoeModel::~ShoeModel()
 
 
 
-void ShoeModel::setShoeMaker(ShoeMaker *value)
+void ShoeModel::setShoeMaker(BaseObject *value)
 {
-	if (m_shoeMaker != value) {
-		m_shoeMaker = value;
+	ShoeMaker *object = static_cast<ShoeMaker *>(value);
+
+	if (m_shoeMaker != object) {
+		m_shoeMaker = object;
 		modified();
 	}
 }
@@ -50,22 +52,8 @@ void ShoeModel::setShoeMaker(ShoeMaker *value)
 QList<Objects::BaseObject *> ShoeModel::children() const
 {
 	QList<Objects::BaseObject *> list;
-	list.append(m_shoeMaker);
+	list << m_shoeMaker;
 	return list;
-}
-
-QString ShoeModel::toString() const
-{
-	QString comboObject = static_cast<const ComboObject *>(this)->toString();
-	QString shoeMaker = m_shoeMaker ? m_shoeMaker->toString() : "";
-	QString s = QString("ShoeModel{%1|%2}").arg(comboObject).arg(shoeMaker);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const ShoeModel &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
 }
 
 }

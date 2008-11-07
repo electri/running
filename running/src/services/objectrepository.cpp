@@ -18,10 +18,8 @@
 
 ****************************************************************************/
 
+#include <QtGui>
 #include <QtSql>
-#include <QApplication>
-#include <QDir>
-#include <QFile>
 
 #include "objectrepository.h"
 
@@ -31,28 +29,48 @@
 #include "mappers/shoemapper.h"
 #include "mappers/shoemodelmapper.h"
 #include "mappers/intervalmapper.h"
+#include "mappers/cfgmapper.h"
+
+const QString DATABASENAME = "running.db3";
+const int DATABASEVERSION = 1;
 
 namespace Services {
-
-ObjectRepository* ObjectRepository::sm_instance = NULL;
 
 ObjectRepository::ObjectRepository()
 {
 	m_active = false;
 
+	m_database = QSqlDatabase::addDatabase("QSQLITE");
+	m_database.setDatabaseName(DATABASENAME);
+
 	// init database
 	QDir::setCurrent(QApplication::applicationDirPath());
 
-	if (!QFile::exists("running.db3")) {
-		return;
-	}
-
-	m_database = QSqlDatabase::addDatabase("QSQLITE");
-
-	m_database.setDatabaseName("running.db3");
-
-	if (!m_database.open()) {
-		return;
+	if (QFile::exists(DATABASENAME)) {
+		if (!m_database.open()) {
+			m_lastError = "Unable to open existing database file.";
+			return;
+		}
+		int databaseVersion = this->databaseVersion();
+		if (databaseVersion > DATABASEVERSION)
+		{
+			m_lastError = "The database file is for a newer version of the software.";
+			return;
+		} else if (databaseVersion < DATABASEVERSION) {
+			if (!this->upgradeDatabase(databaseVersion)) {
+				m_lastError = "An error has occurred upgrading the database.";
+				return;
+			}
+		}
+	} else {
+		if (!m_database.open()) {
+			m_lastError = "Unable to create new database file.";
+			return;
+		}
+		if (!this->createDatabase()) {
+			m_lastError = "An error has occurred creating a new database.";
+			return;
+		}
 	}
 
 	// init mapper's instances
@@ -64,6 +82,11 @@ ObjectRepository::ObjectRepository()
 	m_mappers.insert(Objects::Types::Weather, new Mappers::ComboObjectMapper("Weather"));
 	m_mappers.insert(Objects::Types::Interval, new Mappers::IntervalMapper());
 	m_mappers.insert(Objects::Types::IntervalType, new Mappers::ComboObjectMapper("IntervalType"));
+	m_mappers.insert(Objects::Types::Cfg, new Mappers::CfgMapper());
+	m_mappers.insert(Objects::Types::CfgDistanceUnit, new Mappers::ComboObjectMapper("CfgDistanceUnit"));
+	m_mappers.insert(Objects::Types::CfgWeightUnit, new Mappers::ComboObjectMapper("CfgWeightUnit"));
+	m_mappers.insert(Objects::Types::CfgTemperatureUnit, new Mappers::ComboObjectMapper("CfgTemperatureUnit"));
+	m_mappers.insert(Objects::Types::CfgCurrencyUnit, new Mappers::ComboObjectMapper("CfgCurrencyUnit"));
 
 	m_lastError = "";
 
@@ -85,35 +108,103 @@ ObjectRepository::~ObjectRepository()
 		m_database.close();
 	}
 
-	QSqlDatabase::removeDatabase("running.db3");
+	QSqlDatabase::removeDatabase(DATABASENAME);
 }
 
-ObjectRepository* ObjectRepository::instance()
-{
-	if (sm_instance == NULL) {
-		sm_instance = new ObjectRepository();
-	}
-	return sm_instance;
-}
+
 
 QString ObjectRepository::lastError() const
 {
-	if (!m_active) return "DATABASE: No connection";
-
-	QString message = "";
+	QString message;
 
 	if (!m_lastError.isEmpty()) {
-		message += QString("LAST QUERY: %1\n").arg(m_lastError);
+		message += QString("%1").arg(m_lastError);
+	} else {
+		QSqlError error = m_database.lastError();
+		if (error.isValid()) {
+			message += QString("Database: %1\n").arg(error.databaseText());
+			message += QString("Driver: %1").arg(error.driverText());
+		} else {
+			message += "Unknown error";
+		}
 	}
 
-	QSqlError error = m_database.lastError();
+	message = qApp->translate("ObjectRepository", "A database error has occurred:\n\n") + message;
 
-	if (error.isValid()) {
-		message += QString("DATABASE: %1\n").arg(error.databaseText());
-		message += QString("DRIVER: %1").arg(error.driverText());
+	return message;
+}
+
+
+
+int ObjectRepository::databaseVersion() const
+{
+	QSqlQuery query;
+	query.exec("PRAGMA user_version");
+	if (query.next()) {
+		return query.value(0).toInt();
 	}
 
-	return message.isEmpty() ? "No error" : message;
+	return 0;
+}
+
+bool ObjectRepository::createDatabase()
+{
+	return this->alterDatabase("create", qApp->translate("ObjectRepository", "Creating database ..."));
+}
+
+bool ObjectRepository::upgradeDatabase(int oldVersion)
+{
+	bool result = true;
+
+	for (int i = oldVersion; i < DATABASEVERSION; ++i) {
+		QString scriptName = QString("upgrade_%1-%2").arg(i).arg(i + 1);
+		result &= this->alterDatabase(scriptName, qApp->translate("ObjectRepository", "Upgrading database ..."));
+	}
+
+	return result;
+}
+
+bool ObjectRepository::alterDatabase(const QString &scriptName, const QString &message)
+{
+	QProgressDialog progress;
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setLabelText(message);
+
+	QStringList queries;
+
+	QFile file(QString(":/sql/%1.sql").arg(scriptName));
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		return false;
+	}
+	QTextStream textStream(&file);
+	QString buffer = textStream.readAll();
+	file.close();
+	queries << buffer.split("\n\n", QString::SkipEmptyParts);
+
+	QFile file1(QString(":/sql/%1_init.sql").arg(scriptName));
+	if (!file1.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		return false;
+	}
+	QTextStream textStream1(&file1);
+	buffer = textStream1.readAll();
+	file1.close();
+	queries << buffer.split("\n\n", QString::SkipEmptyParts);
+
+	progress.setMinimum(0);
+	progress.setMaximum(queries.count());
+
+	QSqlQuery query;
+	int i = 0;
+	foreach (QString text, queries) {
+		progress.setValue(++i);
+		qApp->processEvents();
+		
+		if (!query.exec(text)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 

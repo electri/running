@@ -22,9 +22,10 @@
 
 #include "weatherinfopopupview.h"
 
+#include "../application.h"
 #include "../objects/comboobject.h"
-#include "../services/objectmap.h"
 #include "../views/weatherview.h"
+#include "../views/viewhelper.h"
 
 WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 	: QWidget(parent)
@@ -32,13 +33,18 @@ WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 	setupUi(this);
 }
 
+void WeatherInfoPopupView::showEvent(QShowEvent *)
+{
+	temperatureDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgTemperatureUnit()->description());
+}
+
 
 
 void WeatherInfoPopupView::on_weatherToolButton_clicked()
 {
-	quint32 weatherId = weatherComboBox->itemData(weatherComboBox->currentIndex()).toInt();
+	quint32 id = weatherComboBox->itemData(weatherComboBox->currentIndex()).toInt();
 
-	WeatherView *view = new WeatherView(this, weatherId);
+	WeatherView *view = new WeatherView(this, id);
 	int result = view->exec();
 	if (result == QDialog::Accepted) {
 		this->refreshComboBoxes();
@@ -50,17 +56,6 @@ void WeatherInfoPopupView::on_weatherToolButton_clicked()
 
 void WeatherInfoPopupView::refreshComboBoxes()
 {
-	Services::ObjectMap *session = Services::ObjectMap::instance();
-
-	quint32 id = weatherComboBox->itemData(weatherComboBox->currentIndex()).toInt();
-	weatherComboBox->clear();
-	weatherComboBox->addItem("", 0);
-	QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::Weather);
-	QList<Objects::BaseObject *>::const_iterator it = list.constBegin();
-	while (it != list.constEnd()) {
-		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(*it++);
-		weatherComboBox->addItem(item->description(), item->id());
-	}
-	session->discardObjects(list);
-	weatherComboBox->setCurrentIndex(weatherComboBox->findData(id));
+	ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather);
+	weatherComboBox->insertItem(0, "", 0);
 }

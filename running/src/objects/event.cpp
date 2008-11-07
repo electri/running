@@ -79,10 +79,12 @@ void Event::setDescription(const QString &value)
 	}
 }
 
-void Event::setEventType(EventType *value)
+void Event::setEventType(BaseObject *value)
 {
-	if (m_eventType != value) {
-		m_eventType = value;
+	EventType *object = static_cast<EventType *>(value);
+
+	if (m_eventType != object) {
+		m_eventType = object;
 		modified();
 	}
 }
@@ -111,10 +113,12 @@ void Event::setNotes(const QString &value)
 	}
 }
 
-void Event::setShoe(Shoe *value)
+void Event::setShoe(BaseObject *value)
 {
-	if (m_shoe != value) {
-		m_shoe = value;
+	Shoe *object = static_cast<Shoe *>(value);
+
+	if (m_shoe != object) {
+		m_shoe = object;
 		modified();
 	}
 }
@@ -151,10 +155,12 @@ void Event::setWeight(qreal value)
 	}
 }
 
-void Event::setWeather(Weather *value)
+void Event::setWeather(BaseObject *value)
 {
-	if (m_weather != value) {
-		m_weather = value;
+	Weather *object = static_cast<Weather *>(value);
+
+	if (m_weather != object) {
+		m_weather = object;
 		modified();
 	}
 }
@@ -208,29 +214,8 @@ qreal Event::paceSpeed() const
 QList<Objects::BaseObject *> Event::children() const
 {
 	QList<BaseObject *> list;
-	list << m_eventType << m_shoe << m_weather;
-	QList<Interval *>::const_iterator it = m_intervals.constBegin();
-	while (it != m_intervals.constEnd()) { list << *it++; }
+	list << m_eventType << m_shoe << m_weather << m_intervals;
 	return list;
-}
-
-QString Event::toString() const
-{
-	QString baseObject = static_cast<const BaseObject *>(this)->toString();
-	QString eventType = m_eventType ? m_eventType->toString() : "";
-	QString shoe = m_shoe ? m_shoe->toString() : "";
-	QString weather = m_weather ? m_weather->toString() : "";
-	QString s = QString("Event{%1|%2|%3|%4|%5|%6|%7|%8|%9|%10|%11|%12|%13}")
-		.arg(baseObject).arg(m_start.date().toString()).arg(m_name).arg(m_description)
-		.arg(eventType).arg(m_distance).arg(m_duration.toString()).arg(m_notes)
-		.arg(shoe).arg(m_vote).arg(m_weight).arg(weather).arg(m_temperature);
-	return s;
-}
-
-QDebug operator<<(QDebug dbg, const Event &object)
-{
-	dbg.nospace() << object.toString();
-	return dbg.nospace();
 }
 
 }
