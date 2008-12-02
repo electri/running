@@ -20,7 +20,7 @@
 
 #include "memento.h"
 
-#include "objectfactory.h"
+#include "../services/objectfactory.h"
 
 namespace Services {
 
@@ -29,8 +29,8 @@ Memento::Memento(Objects::BaseObject *original)
 	m_original = original;
 
 	if (m_original) {
-		m_copy = ObjectFactory::instance()->createObject(m_original->type());
-		ObjectFactory::instance()->copyObject(m_original, m_copy);
+		m_copy = ObjectFactory::createObject(m_original->type());
+		ObjectFactory::copyObject(m_original, m_copy);
 	} else {
 		m_copy = NULL;
 	}
@@ -46,14 +46,14 @@ Memento::~Memento()
 void Memento::submit()
 {
 	if (m_original && m_copy) {
-		ObjectFactory::instance()->copyObject(m_copy, m_original);
+		ObjectFactory::copyObject(m_copy, m_original);
 	}
 }
 
 void Memento::revert()
 {
 	if (m_original && m_copy) {
-		ObjectFactory::instance()->copyObject(m_original, m_copy);
+		ObjectFactory::copyObject(m_original, m_copy);
 	}
 }
 

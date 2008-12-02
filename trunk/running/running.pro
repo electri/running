@@ -1,9 +1,8 @@
 QT += core \
-	gui \
-	sql
-
+    gui \
+    sql
 TEMPLATE = app
-
+TARGET =
 CONFIG += qt \
 	debug_and_release
 CONFIG(debug, debug|release) {
@@ -17,7 +16,6 @@ CONFIG(debug, debug|release) {
 	DESTDIR = bin/release
 	OBJECTS_DIR = obj/release
 }
-
 DEPENDPATH += src \
 	resources
 INCLUDEPATH += src \
@@ -40,13 +38,12 @@ HEADERS += src/objects/baseobject.h \
     src/objects/interval.h \
     src/objects/intervaltype.h \
     src/objects/cfg.h \
-    src/objects/cfgdistanceunit.h \
-    src/objects/cfgweightunit.h \
-    src/objects/cfgtemperatureunit.h \
-    src/objects/cfgcurrencyunit.h \
+    src/services/database.h \
+    src/services/transaction.h \
     src/services/memento.h \
     src/services/objectfactory.h \
     src/services/objectmap.h \
+    src/services/objectmapinterface.h \
     src/services/objectrepository.h \
     src/services/mappers/baseobjectmapper.h \
     src/services/mappers/comboobjectmapper.h \
@@ -70,6 +67,7 @@ HEADERS += src/objects/baseobject.h \
     src/utility/utility.h \
     src/models/baseobjecttablemodel.h \
     src/models/comboobjecttablemodel.h \
+    src/models/childobjecttablemodel.h \
     src/models/eventtypetablemodel.h \
     src/models/shoemodeltablemodel.h \
     src/models/shoetablemodel.h \
@@ -108,6 +106,8 @@ SOURCES += src/objects/baseobject.cpp \
     src/objects/shoemodel.cpp \
     src/objects/interval.cpp \
     src/objects/cfg.cpp \
+    src/services/database.cpp \
+    src/services/transaction.cpp \
     src/services/memento.cpp \
     src/services/objectfactory.cpp \
     src/services/objectmap.cpp \
@@ -132,6 +132,7 @@ SOURCES += src/objects/baseobject.cpp \
     src/utility/utility.cpp \
     src/models/baseobjecttablemodel.cpp \
     src/models/comboobjecttablemodel.cpp \
+    src/models/childobjecttablemodel.cpp \
     src/models/eventtypetablemodel.cpp \
     src/models/shoemodeltablemodel.cpp \
     src/models/shoetablemodel.cpp \

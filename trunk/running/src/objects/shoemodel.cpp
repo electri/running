@@ -28,6 +28,7 @@ namespace Objects {
 
 ShoeModel::ShoeModel()
 {
+	m_shoeMakerId = 0u;
 	m_shoeMaker = NULL;
 }
 
@@ -37,12 +38,10 @@ ShoeModel::~ShoeModel()
 
 
 
-void ShoeModel::setShoeMaker(BaseObject *value)
+void ShoeModel::setShoeMaker(ShoeMaker *value)
 {
-	ShoeMaker *object = static_cast<ShoeMaker *>(value);
-
-	if (m_shoeMaker != object) {
-		m_shoeMaker = object;
+	if (m_shoeMaker != value) {
+		m_shoeMaker = value;
 		modified();
 	}
 }

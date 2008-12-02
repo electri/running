@@ -28,7 +28,7 @@
 namespace ViewHelper
 {
 
-void fillComboBox(QComboBox *, Objects::Types::Type);
+void fillComboBox(QComboBox *, Objects::Types::Type, bool blankItem = false);
 Objects::BaseObject *getObjectOnComboBox(QComboBox *, Objects::Types::Type type, Objects::BaseObject *old_object);
 void setIndexOnComboBox(QComboBox *, Objects::BaseObject *);
 void setIndexOnComboBox(QComboBox *, int id);

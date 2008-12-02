@@ -21,12 +21,10 @@
 #ifndef APPLICATIONSERVICE_H
 #define APPLICATIONSERVICE_H
 
-#include "./services/objectrepository.h"
 #include "./services/objectmap.h"
-#include "./services/memento.h"
 #include "./objects/cfg.h"
 
-#define APP Application::instance()
+//#define APP Application::instance()
 
 class Application
 {
@@ -40,9 +38,9 @@ public:
 
 	QString about() const;
 	QString systemInformation() const;
+	QString lastError() const;
 
 	Services::ObjectMap *objectMap() const { return m_objectMap; }
-	Services::ObjectRepository *objectRepository() const { return m_objectRepository; }
 	Objects::Cfg *cfg() const { return m_cfg; }
 
 private:
@@ -51,7 +49,6 @@ private:
 	static Application* sm_instance;
 
 	Services::ObjectMap *m_objectMap;
-	Services::ObjectRepository *m_objectRepository;
 	Objects::Cfg *m_cfg;
 };
 

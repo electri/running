@@ -25,7 +25,7 @@
 
 #include "baseobject.h"
 
-namespace Services { class ObjectFactory; }
+namespace Services { class ObjectFactory; class ObjectRepository; }
 
 namespace Objects {
 
@@ -37,6 +37,7 @@ class Interval;
 class Event : public BaseObject
 {
 friend class Services::ObjectFactory;
+friend class Services::ObjectRepository;
 
 public:
 	QDateTime start() const { return m_start; }
@@ -49,7 +50,7 @@ public:
 	void setDescription(const QString &);
 
 	EventType *eventType() const { return m_eventType; }
-	void setEventType(BaseObject *);
+	void setEventType(EventType *);
 
 	qreal distance() const { return m_distance; }
 	void setDistance(qreal);
@@ -61,7 +62,7 @@ public:
 	void setNotes(const QString &);
 
 	Shoe *shoe() const { return m_shoe; }
-	void setShoe(BaseObject *);
+	void setShoe(Shoe *);
 
 	quint8 vote() const { return m_vote; }
 	void setVote(quint8);
@@ -76,7 +77,7 @@ public:
 	void setWeight(qreal);
 
 	Weather *weather() const { return m_weather; }
-	void setWeather(BaseObject *);
+	void setWeather(Weather *);
 
 	qreal temperature() const { return m_temperature; }
 	void setTemperature(qreal);
@@ -86,20 +87,17 @@ public:
 	void removeInterval(Interval *);
 	void clearIntervals();
 
-
-
 	QTime paceTime() const;
 	qreal paceSpeed() const;
 
-
-
 	Types::Type type() const { return Types::Event; }
-
-	QList<Objects::BaseObject *> children() const;
 
 private:
 	Event();
 	virtual ~Event();
+
+	QList<Objects::BaseObject *> children() const;
+	QList<Objects::BaseObject *> collectionItems() const;
 
 	QDateTime m_start;
 	QString m_name;
@@ -115,7 +113,7 @@ private:
 	qreal m_weight;
 	Weather *m_weather;
 	qreal m_temperature;
-	QList<BaseObject *> m_intervals, m_intervals_removed;
+	QList<BaseObject *> m_intervals;
 };
 
 }

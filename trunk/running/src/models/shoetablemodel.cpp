@@ -23,14 +23,53 @@
 #include "../objects/shoe.h"
 #include "../objects/shoemaker.h"
 #include "../objects/shoemodel.h"
+#include "../services/objectmap.h"
+#include "../services/memento.h"
 
 ShoeTableModel::ShoeTableModel(QObject *parent)
 	: BaseObjectTableModel(Objects::Types::Shoe, parent)
 {
+	QList<Objects::BaseObject *> objects = m_objectMap->getAllObjects(Objects::Types::Shoe);
+
+	foreach (Objects::BaseObject *object, objects) {
+		m_list.append(new Services::Memento(object));
+	}
 }
 
 ShoeTableModel::~ShoeTableModel()
 {
+	foreach (Services::Memento *memento, m_list) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
+	foreach (Services::Memento *memento, m_removed) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
+}
+
+
+
+bool ShoeTableModel::submitAll()
+{
+	QList<Objects::BaseObject *> list;
+	foreach (Services::Memento *memento, m_list) {
+		list << memento->copy();
+	}
+	QList<Objects::BaseObject *> removed;
+	foreach (Services::Memento *memento, m_removed) {
+		removed << memento->copy();
+	}
+	if (!m_objectMap->updateObjects(list, removed)) {
+		return false;
+	}
+
+	foreach (Services::Memento *memento, m_list) {
+		memento->submit();
+	}
+	m_removed.clear();
+
+	return true;
 }
 
 
@@ -93,6 +132,8 @@ void ShoeTableModel::setColumnValue(Objects::BaseObject *object, int column, con
 		}
 	}
 }
+
+
 
 int ShoeTableModel::forceColumnChange(int column)
 {

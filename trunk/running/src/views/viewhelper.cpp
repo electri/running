@@ -32,13 +32,17 @@
 namespace ViewHelper
 {
 
-void fillComboBox(QComboBox *comboBox, Objects::Types::Type type)
+void fillComboBox(QComboBox *comboBox, Objects::Types::Type type, bool blankItem)
 {
-	quint32 id = comboBox->itemData(comboBox->currentIndex()).toInt();
+	int id = comboBox->itemData(comboBox->currentIndex()).toInt();
+
+	QList<Objects::BaseObject *> list = Application::instance()->objectMap()->getAllObjects(type);
 
 	comboBox->clear();
 
-	QList<Objects::BaseObject *> list = APP->objectMap()->getAllObjects(type);
+	if (blankItem) {
+		comboBox->addItem("", 0);
+	}
 
 	if (type == Objects::Types::Shoe) {
 		foreach (Objects::BaseObject *object, list) {
@@ -55,9 +59,17 @@ void fillComboBox(QComboBox *comboBox, Objects::Types::Type type)
 		}
 	}
 
-	APP->objectMap()->discardObjects(list);
+	Application::instance()->objectMap()->discardObjects(list);
 
-	comboBox->setCurrentIndex(comboBox->findData(id));
+	if (id != -1) {
+		if (comboBox->findData(id) != -1) {
+			comboBox->setCurrentIndex(comboBox->findData(id));
+		} else {
+			comboBox->setCurrentIndex(0);
+		}
+	} else {
+		comboBox->setCurrentIndex(0);
+	}
 }
 
 Objects::BaseObject *getObjectOnComboBox(QComboBox *comboBox, Objects::Types::Type type, Objects::BaseObject *old_object)
@@ -68,11 +80,11 @@ Objects::BaseObject *getObjectOnComboBox(QComboBox *comboBox, Objects::Types::Ty
 		if (old_object->id() == id) {
 			return old_object;
 		} else {
-			APP->objectMap()->discardObject(old_object);
+			Application::instance()->objectMap()->discardObject(old_object);
 		}
 	}
 
-	return APP->objectMap()->getObjectById(type, id);
+	return Application::instance()->objectMap()->getObjectById(type, id);
 }
 
 void setIndexOnComboBox(QComboBox *comboBox, Objects::BaseObject *object)

@@ -22,7 +22,15 @@
 
 #include "baseobject.h"
 
-#include "objects.h"
+#include "event.h"
+#include "eventtype.h"
+#include "shoe.h"
+#include "shoemaker.h"
+#include "shoemodel.h"
+#include "weather.h"
+#include "interval.h"
+#include "intervaltype.h"
+#include "cfg.h"
 
 namespace Objects {
 
@@ -53,6 +61,11 @@ QList<Objects::BaseObject *> BaseObject::children() const
 	return QList<Objects::BaseObject *>();
 }
 
+QList<Objects::BaseObject *> BaseObject::collectionItems() const
+{
+	return QList<Objects::BaseObject *>();
+}
+
 
 
 QString BaseObject::toString() const
@@ -66,12 +79,15 @@ QString BaseObject::toString() const
 		{
 			const Event *object = static_cast<const Event *>(this);
 			s += QString("start:%1|name:%2|description:%3|eventType:%4|distance:%5|duration:%6" \
-						"|notes:%7|shoe:%8|vote:%9|weight:%10|weather:%11|temperature:%12")
+						"|notes:%7|shoe:%8|vote:%9|quality:%10|effort:%11|weight:%12|weather:%13" \
+						"|temperature:%14|intervals:%15")
 				.arg(object->start().toString()).arg(object->name()).arg(object->description())
 				.arg(object->eventType() ? object->eventType()->id() : 0).arg(object->distance())
 				.arg(object->duration().toString()).arg(object->notes())
-				.arg(object->shoe() ? object->shoe()->id() : 0).arg(object->vote()).arg(object->weight())
-				.arg(object->weather() ? object->weather()->id() : 0).arg(object->temperature());
+				.arg(object->shoe() ? object->shoe()->id() : 0).arg(object->vote())
+				.arg(object->quality()).arg(object->effort()).arg(object->weight())
+				.arg(object->weather() ? object->weather()->id() : 0).arg(object->temperature())
+				.arg(object->intervals().count());
 		}
 		break;
 		case Objects::Types::EventType:
@@ -90,23 +106,11 @@ QString BaseObject::toString() const
 				.arg(object->retired()).arg(object->notes());
 		}
 		break;
-		case Objects::Types::ShoeMaker:
-		{
-			const ShoeMaker *object = static_cast<const ShoeMaker *>(this);
-			s += QString("description:%1").arg(object->description());
-		}
-		break;
 		case Objects::Types::ShoeModel:
 		{
 			const ShoeModel *object = static_cast<const ShoeModel *>(this);
 			s += QString("description:%1|shoeMaker:%2").arg(object->description())
 				.arg(object->shoeMaker() ? object->shoeMaker()->id() : 0);
-		}
-		break;
-		case Objects::Types::Weather:
-		{
-			const Weather *object = static_cast<const Weather *>(this);
-			s += QString("description:%1").arg(object->description());
 		}
 		break;
 		case Objects::Types::Interval:
@@ -116,12 +120,6 @@ QString BaseObject::toString() const
 				.arg(object->parent() ? object->parent()->id() : 0)
 				.arg(object->intervalType() ? object->intervalType()->id() : 0)
 				.arg(object->distance()).arg(object->duration().toString()).arg(object->notes());
-		}
-		break;
-		case Objects::Types::IntervalType:
-		{
-			const IntervalType *object = static_cast<const IntervalType *>(this);
-			s += QString("description:%1").arg(object->description());
 		}
 		break;
 		case Objects::Types::Cfg:
@@ -135,26 +133,14 @@ QString BaseObject::toString() const
 		}
 		break;
 		case Objects::Types::CfgDistanceUnit:
-		{
-			const CfgDistanceUnit *object = static_cast<const CfgDistanceUnit *>(this);
-			s += QString("description:%1").arg(object->description());
-		}
-		break;
 		case Objects::Types::CfgWeightUnit:
-		{
-			const CfgWeightUnit *object = static_cast<const CfgWeightUnit *>(this);
-			s += QString("description:%1").arg(object->description());
-		}
-		break;
 		case Objects::Types::CfgTemperatureUnit:
-		{
-			const CfgTemperatureUnit *object = static_cast<const CfgTemperatureUnit *>(this);
-			s += QString("description:%1").arg(object->description());
-		}
-		break;
 		case Objects::Types::CfgCurrencyUnit:
+		case Objects::Types::IntervalType:
+		case Objects::Types::ShoeMaker:
+		case Objects::Types::Weather:
 		{
-			const CfgCurrencyUnit *object = static_cast<const CfgCurrencyUnit *>(this);
+			const ComboObject *object = static_cast<const ComboObject *>(this);
 			s += QString("description:%1").arg(object->description());
 		}
 		break;

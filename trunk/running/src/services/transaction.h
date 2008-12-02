@@ -18,21 +18,29 @@
 
 ****************************************************************************/
 
-#ifndef SHOEMAPPER_H
-#define SHOEMAPPER_H
+#ifndef TRANSACTION_H
+#define TRANSACTION_H
 
-#include "baseobjectmapper.h"
+#include <QString>
+#include <QSqlDatabase>
 
-namespace Mappers {
+namespace Services {
 
-class ShoeMapper : public BaseObjectMapper
+class Transaction
 {
 public:
-	ShoeMapper(Services::ObjectRepository *repository);
+	Transaction();
+	virtual ~Transaction();
+
+	QString lastError() const;
+
+	bool transaction();
+	bool commit();
+	bool rollback();
 
 private:
-	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);
-	void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &);
+	QSqlDatabase m_database;
+	QString m_lastError;
 };
 
 }

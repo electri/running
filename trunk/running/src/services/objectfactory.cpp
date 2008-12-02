@@ -22,26 +22,6 @@
 
 namespace Services {
 
-ObjectFactory* ObjectFactory::sm_instance = NULL;
-
-ObjectFactory::ObjectFactory()
-{
-}
-
-ObjectFactory::~ObjectFactory()
-{
-}
-
-ObjectFactory* ObjectFactory::instance()
-{
-	if (sm_instance == NULL) {
-		sm_instance = new ObjectFactory();
-	}
-	return sm_instance;
-}
-
-
-
 Objects::BaseObject *ObjectFactory::createObject(Objects::Types::Type type)
 {
 	switch (type) {
@@ -77,10 +57,10 @@ void ObjectFactory::copyObject(Objects::BaseObject *src, Objects::BaseObject *ds
 		case Objects::Types::Interval:				*static_cast<Objects::Interval *>(dst) = *static_cast<Objects::Interval *>(src);						break;
 		case Objects::Types::IntervalType:			*static_cast<Objects::IntervalType *>(dst) = *static_cast<Objects::IntervalType *>(src);				break;
 		case Objects::Types::Cfg:					*static_cast<Objects::Cfg *>(dst) = *static_cast<Objects::Cfg *>(src);									break;
-		case Objects::Types::CfgDistanceUnit:		*static_cast<Objects::CfgDistanceUnit *>(dst) = *static_cast<Objects::CfgDistanceUnit *>(src);			break;
-		case Objects::Types::CfgWeightUnit:			*static_cast<Objects::CfgWeightUnit *>(dst) = *static_cast<Objects::CfgWeightUnit *>(src);				break;
+		case Objects::Types::CfgDistanceUnit:		*static_cast<Objects::CfgDistanceUnit *>(dst) = *static_cast<Objects::CfgDistanceUnit *>(src);	break;
+		case Objects::Types::CfgWeightUnit:			*static_cast<Objects::CfgWeightUnit *>(dst) = *static_cast<Objects::CfgWeightUnit *>(src);	break;
 		case Objects::Types::CfgTemperatureUnit:	*static_cast<Objects::CfgTemperatureUnit *>(dst) = *static_cast<Objects::CfgTemperatureUnit *>(src);	break;
-		case Objects::Types::CfgCurrencyUnit:		*static_cast<Objects::CfgCurrencyUnit *>(dst) = *static_cast<Objects::CfgCurrencyUnit *>(src);			break;
+		case Objects::Types::CfgCurrencyUnit:		*static_cast<Objects::CfgCurrencyUnit *>(dst) = *static_cast<Objects::CfgCurrencyUnit *>(src);	break;
 	}
 }
 

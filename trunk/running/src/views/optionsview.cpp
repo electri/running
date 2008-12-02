@@ -24,6 +24,7 @@
 
 #include "../application.h"
 #include "../objects/cfg.h"
+#include "../services/memento.h"
 #include "../views/viewhelper.h"
 
 OptionsView::OptionsView(QWidget *parent)
@@ -40,7 +41,7 @@ OptionsView::OptionsView(QWidget *parent)
 
 	this->refreshComboBoxes();
 
-    m_cfg = static_cast<Objects::Cfg *>(APP->objectMap()->getObjectById(Objects::Types::Cfg, 1));
+	m_cfg = static_cast<Objects::Cfg *>(Application::instance()->objectMap()->getObjectById(Objects::Types::Cfg, 1));
 	this->setProperties(m_cfg);
 
 	m_memento = new Services::Memento(m_cfg);
@@ -48,7 +49,7 @@ OptionsView::OptionsView(QWidget *parent)
 
 OptionsView::~OptionsView()
 {
-    APP->objectMap()->discardObject(m_cfg);
+	Application::instance()->objectMap()->discardObject(m_cfg);
 
 	delete m_memento;
 }
@@ -67,8 +68,8 @@ void OptionsView::on_savePushButton_clicked()
 	Objects::Cfg *item = static_cast<Objects::Cfg *>(m_memento->copy());
 	this->getProperties(item);
 
-    if (!APP->objectMap()->saveObject(m_memento->copy())) {
-		QMessageBox::critical(this, tr("Edit options"), APP->objectRepository()->lastError());
+	if (!Application::instance()->objectMap()->saveObject(m_memento->copy())) {
+		QMessageBox::critical(this, tr("Edit options"), Application::instance()->objectMap()->lastError());
 		return;
 	}
 	m_memento->submit();
@@ -96,10 +97,10 @@ void OptionsView::getProperties(Objects::Cfg *object)
 {
 	if (object) {
 		object->setMondayFirstDayOfWeek(mondayFirstDayOfWeekCheckBox->isChecked());
-		object->setCfgDistanceUnit(ViewHelper::getObjectOnComboBox(cfgDistanceUnitComboBox, Objects::Types::CfgDistanceUnit, object->cfgDistanceUnit()));
-		object->setCfgWeightUnit(ViewHelper::getObjectOnComboBox(cfgWeightUnitComboBox, Objects::Types::CfgWeightUnit, object->cfgWeightUnit()));
-		object->setCfgTemperatureUnit(ViewHelper::getObjectOnComboBox(cfgTemperatureUnitComboBox, Objects::Types::CfgTemperatureUnit, object->cfgTemperatureUnit()));
-		object->setCfgCurrencyUnit(ViewHelper::getObjectOnComboBox(cfgCurrencyUnitComboBox, Objects::Types::CfgCurrencyUnit, object->cfgCurrencyUnit()));
+		object->setCfgDistanceUnit(static_cast<Objects::CfgDistanceUnit *>(ViewHelper::getObjectOnComboBox(cfgDistanceUnitComboBox, Objects::Types::CfgDistanceUnit, object->cfgDistanceUnit())));
+		object->setCfgWeightUnit(static_cast<Objects::CfgWeightUnit *>(ViewHelper::getObjectOnComboBox(cfgWeightUnitComboBox, Objects::Types::CfgWeightUnit, object->cfgWeightUnit())));
+		object->setCfgTemperatureUnit(static_cast<Objects::CfgTemperatureUnit *>(ViewHelper::getObjectOnComboBox(cfgTemperatureUnitComboBox, Objects::Types::CfgTemperatureUnit, object->cfgTemperatureUnit())));
+		object->setCfgCurrencyUnit(static_cast<Objects::CfgCurrencyUnit *>(ViewHelper::getObjectOnComboBox(cfgCurrencyUnitComboBox, Objects::Types::CfgCurrencyUnit, object->cfgCurrencyUnit())));
 	}
 }
 

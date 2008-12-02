@@ -18,21 +18,32 @@
 
 ****************************************************************************/
 
-#ifndef SHOEMAPPER_H
-#define SHOEMAPPER_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
-#include "baseobjectmapper.h"
+#include <QString>
+#include <QSqlDatabase>
 
-namespace Mappers {
+namespace Services {
 
-class ShoeMapper : public BaseObjectMapper
+class Database
 {
 public:
-	ShoeMapper(Services::ObjectRepository *repository);
+	Database();
+	virtual ~Database();
+
+	bool isActive() const { return m_active; }
+	QString lastError() const;
 
 private:
-	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);
-	void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &);
+	int databaseVersion() const;
+	bool createDatabase();
+	bool upgradeDatabase(int oldVersion);
+	bool alterDatabase(const QString &scriptName, const QString &message);
+
+	bool m_active;
+	QSqlDatabase m_database;
+	QString m_lastError;
 };
 
 }

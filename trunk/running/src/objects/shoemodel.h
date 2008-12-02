@@ -35,7 +35,7 @@ friend class Services::ObjectFactory;
 
 public:
 	ShoeMaker *shoeMaker() const { return m_shoeMaker; }
-	void setShoeMaker(BaseObject *);
+	void setShoeMaker(ShoeMaker *);
 
 	Types::Type type() const { return Types::ShoeModel; }
 
@@ -45,6 +45,7 @@ private:
 	ShoeModel();
 	virtual ~ShoeModel();
 
+	quint32 m_shoeMakerId;
 	ShoeMaker *m_shoeMaker;
 };
 

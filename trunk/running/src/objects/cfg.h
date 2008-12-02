@@ -22,14 +22,58 @@
 #define CFG_H
 
 #include "comboobject.h"
-#include "cfgdistanceunit.h"
-#include "cfgweightunit.h"
-#include "cfgtemperatureunit.h"
-#include "cfgcurrencyunit.h"
 
 namespace Services { class ObjectFactory; }
 
 namespace Objects {
+
+class CfgDistanceUnit : public ComboObject
+{
+friend class Services::ObjectFactory;
+
+public:
+	Types::Type type() const { return Types::CfgDistanceUnit; }
+
+private:
+	CfgDistanceUnit() {}
+	virtual ~CfgDistanceUnit() {}
+};
+
+class CfgWeightUnit : public ComboObject
+{
+friend class Services::ObjectFactory;
+
+public:
+	Types::Type type() const { return Types::CfgWeightUnit; }
+
+private:
+	CfgWeightUnit() {}
+	virtual ~CfgWeightUnit() {}
+};
+
+class CfgTemperatureUnit : public ComboObject
+{
+friend class Services::ObjectFactory;
+
+public:
+	Types::Type type() const { return Types::CfgTemperatureUnit; }
+
+private:
+	CfgTemperatureUnit() {}
+	virtual ~CfgTemperatureUnit() {}
+};
+
+class CfgCurrencyUnit : public ComboObject
+{
+friend class Services::ObjectFactory;
+
+public:
+	Types::Type type() const { return Types::CfgCurrencyUnit; }
+
+private:
+	CfgCurrencyUnit() {}
+	virtual ~CfgCurrencyUnit() {}
+};
 
 class Cfg : public BaseObject
 {
@@ -42,16 +86,16 @@ public:
 	void setMondayFirstDayOfWeek(bool);
 
 	CfgDistanceUnit *cfgDistanceUnit() const { return m_cfgDistanceUnit; }
-	void setCfgDistanceUnit(BaseObject *);
+	void setCfgDistanceUnit(CfgDistanceUnit *);
 
 	CfgWeightUnit *cfgWeightUnit() const { return m_cfgWeightUnit; }
-	void setCfgWeightUnit(BaseObject *);
+	void setCfgWeightUnit(CfgWeightUnit *);
 
 	CfgTemperatureUnit *cfgTemperatureUnit() const { return m_cfgTemperatureUnit; }
-	void setCfgTemperatureUnit(BaseObject *);
+	void setCfgTemperatureUnit(CfgTemperatureUnit *);
 
 	CfgCurrencyUnit *cfgCurrencyUnit() const { return m_cfgCurrencyUnit; }
-	void setCfgCurrencyUnit(BaseObject *);
+	void setCfgCurrencyUnit(CfgCurrencyUnit *);
 
 	Types::Type type() const { return Types::Cfg; }
 

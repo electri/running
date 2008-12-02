@@ -31,7 +31,6 @@ Application* Application::sm_instance = NULL;
 Application::Application()
 {
 	m_objectMap = NULL;
-	m_objectRepository = NULL;
 	m_cfg = NULL;
 }
 
@@ -51,16 +50,14 @@ Application* Application::instance()
 
 bool Application::init()
 {
-	bool result = true;
-
-	m_objectRepository = new Services::ObjectRepository();
-	result |= m_objectRepository->isActive();
-
 	m_objectMap = new Services::ObjectMap();
+	if(!m_objectMap->isActive()) {
+		return false;
+	}
 
 	m_cfg = static_cast<Objects::Cfg *>(m_objectMap->getObjectById(Objects::Types::Cfg, 1));
 
-	return result;
+	return true;
 }
 
 void Application::close()
@@ -70,9 +67,6 @@ void Application::close()
 
 	delete m_objectMap;
 	m_objectMap = NULL;
-
-	delete m_objectRepository;
-	m_objectRepository = NULL;
 }
 
 QString Application::about() const
@@ -111,4 +105,9 @@ QString Application::systemInformation() const
 		message += "with no database drivers available.<br>\n";
 	}
 	return message;
+}
+
+QString Application::lastError() const
+{
+	return m_objectMap->lastError();
 }

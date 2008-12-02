@@ -25,7 +25,7 @@
 #include "../objects/event.h"
 
 IntervalTableModel::IntervalTableModel(Objects::Event *event, QObject *parent)
-	: BaseObjectTableModel(Objects::Types::Interval, event->intervals(), event, parent)
+	: ChildObjectTableModel(Objects::Types::Interval, event->intervals(), event, parent)
 {
 }
 
@@ -43,11 +43,11 @@ int IntervalTableModel::getColumnCount() const
 QString IntervalTableModel::getColumnHeader(int column) const
 {
 	switch (column) {
-		case 0:		return "Id";
-		case 1:		return tr("Interval type");
-		case 2:		return tr("Distance");
-		case 3:		return tr("Duration");
-		case 4:		return tr("Notes");
+		case 0:	return "Id";
+		case 1:	return tr("Interval type");
+		case 2:	return tr("Distance");
+		case 3:	return tr("Duration");
+		case 4:	return tr("Notes");
 	}
 	return QString("Column %1").arg(column + 1);
 }
@@ -58,11 +58,11 @@ QVariant IntervalTableModel::getColumnValue(Objects::BaseObject *object, int col
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 	if (interval) {
 		switch (column) {
-			case 0:		value = interval->id();				break;
-			case 1:		value = interval->intervalType() ? interval->intervalType()->id() : 0;		break;
-			case 2:		value = interval->distance();		break;
-			case 3:		value = interval->duration();		break;
-			case 4:		value = interval->notes();			break;
+			case 0:	value = interval->id();			break;
+			case 1:	value = interval->intervalType() ? interval->intervalType()->id() : 0;	break;
+			case 2:	value = interval->distance();	break;
+			case 3:	value = interval->duration();	break;
+			case 4:	value = interval->notes();		break;
 		}
 	}
 	return value;
@@ -73,12 +73,42 @@ void IntervalTableModel::setColumnValue(Objects::BaseObject *object, int column,
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 	if (interval) {
 		switch (column) {
-			case 0:		break;
-			case 1:		interval->setIntervalType(static_cast<Objects::IntervalType *>(
-							this->child(Objects::Types::IntervalType, value.toInt(), interval->intervalType())));	break;
-			case 2:		interval->setDistance(value.toDouble());	break;
-			case 3:		interval->setDuration(value.toTime());		break;
-			case 4:		interval->setNotes(value.toString());		break;
+			case 0:	break;
+			case 1:	interval->setIntervalType(static_cast<Objects::IntervalType *>(this->child(Objects::Types::IntervalType, value.toInt(), interval->intervalType())));	break;
+			case 2:	interval->setDistance(value.toDouble());	break;
+			case 3:	interval->setDuration(value.toTime());		break;
+			case 4:	interval->setNotes(value.toString());		break;
 		}
 	}
 }
+
+
+
+void IntervalTableModel::setDefaultValues(Objects::BaseObject *object)
+{
+	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
+	if (interval) {
+		interval->setIntervalType(static_cast<Objects::IntervalType *>(this->child(Objects::Types::IntervalType, 1, NULL)));
+		interval->setDistance(0.0);
+		interval->setDuration(QTime(0, 0, 0));
+	}
+}
+
+
+
+void IntervalTableModel::addToParent(Objects::BaseObject *object)
+{
+	Objects::Event *event = static_cast<Objects::Event *>(m_objectsParent);
+	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
+
+	event->addInterval(interval);
+}
+
+void IntervalTableModel::removeFromParent(Objects::BaseObject *object)
+{
+	Objects::Event *event = static_cast<Objects::Event *>(m_objectsParent);
+	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
+
+	event->removeInterval(interval);
+}
+

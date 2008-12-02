@@ -26,8 +26,8 @@
 
 namespace Mappers {
 
-ComboObjectMapper::ComboObjectMapper(const QString &table)
-	: BaseObjectMapper()
+ComboObjectMapper::ComboObjectMapper(Services::ObjectRepository *repository, const QString &table)
+	: BaseObjectMapper(repository)
 {
 	m_table = table;
 	m_order = "Description";

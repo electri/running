@@ -35,7 +35,7 @@ WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 
 void WeatherInfoPopupView::showEvent(QShowEvent *)
 {
-	temperatureDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgTemperatureUnit()->description());
+	temperatureDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgTemperatureUnit()->description());
 }
 
 

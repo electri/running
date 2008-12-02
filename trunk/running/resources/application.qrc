@@ -32,6 +32,7 @@
 	<qresource prefix="/">
 		<file>sql/create.sql</file>
 		<file>sql/create_init.sql</file>
+		<file>sql/delete.sql</file>
 		<file>sql/upgrade_0-1.sql</file>
 		<file>sql/upgrade_0-1_init.sql</file>
 	</qresource>

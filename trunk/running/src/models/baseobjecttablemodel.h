@@ -24,7 +24,8 @@
 #include <QAbstractTableModel>
 
 #include "../objects/baseobject.h"
-#include "../services/memento.h"
+
+namespace Services { class ObjectMap; class Memento; }
 
 class BaseObjectTableModel : public QAbstractTableModel
 {
@@ -32,8 +33,6 @@ class BaseObjectTableModel : public QAbstractTableModel
 
 public:
 	BaseObjectTableModel(Objects::Types::Type type, QObject *parent = 0);
-	BaseObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects,
-		 Objects::BaseObject *objectsParent, QObject *parent = 0);
 	~BaseObjectTableModel();
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -47,9 +46,9 @@ public:
 	bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex());
 	bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex());
 
-	void revertAll();
-	bool submitAll();
-	
+	virtual void revertAll();
+	virtual bool submitAll();
+
 	QModelIndex indexById(quint32 id) const;
 	QString lastError() const;
 
@@ -59,6 +58,7 @@ protected:
 	virtual QVariant getColumnValue(Objects::BaseObject *object, int column) const;
 	virtual void setColumnValue(Objects::BaseObject *object, int column, const QVariant &value);
 
+	virtual void setDefaultValues(Objects::BaseObject *object);
 	virtual int forceColumnChange(int column);
 
 	Objects::BaseObject *child(Objects::Types::Type type, quint32 id, Objects::BaseObject *old_child);
@@ -66,8 +66,7 @@ protected:
 	QList<Services::Memento *> m_list;
 	QList<Services::Memento *> m_removed;
 	Objects::Types::Type m_type;
-	QList<Objects::BaseObject *> m_objects;
-	Objects::BaseObject *m_objectsParent;
+	Services::ObjectMap *m_objectMap;
 };
 
 #endif

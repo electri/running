@@ -27,8 +27,8 @@
 
 namespace Mappers {
 
-ShoeModelMapper::ShoeModelMapper()
-	: ComboObjectMapper("ShoeModel")
+ShoeModelMapper::ShoeModelMapper(Services::ObjectRepository *repository)
+	: ComboObjectMapper(repository, "ShoeModel")
 {
 	m_order = "Description";
 	m_columnList = "ShoeMakerId, Description";
@@ -41,8 +41,7 @@ void ShoeModelMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery
 {
 	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(object);
 
-	Objects::BaseObject *shoeMaker = this->child(query.record().value("ShoeMakerId").toInt(),
-		Objects::Types::ShoeMaker,  shoeModel->shoeMaker());
+	Objects::ShoeMaker *shoeMaker = static_cast<Objects::ShoeMaker *>(m_repository->getChild(Objects::Types::ShoeMaker, query.record().value("ShoeMakerId").toInt() /*, shoeModel->shoeMaker()*/));
 
 	shoeModel->setShoeMaker(shoeMaker);
 	shoeModel->setDescription(query.record().value("Description").toString());

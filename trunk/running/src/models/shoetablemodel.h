@@ -31,6 +31,8 @@ public:
 	ShoeTableModel(QObject *parent = 0);
 	~ShoeTableModel();
 
+	virtual bool submitAll();
+
 private:
 	int getColumnCount() const;
 	QString getColumnHeader(int column) const;

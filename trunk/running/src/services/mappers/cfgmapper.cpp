@@ -23,15 +23,11 @@
 #include "cfgmapper.h"
 
 #include "../../objects/cfg.h"
-#include "../../objects/cfgdistanceunit.h"
-#include "../../objects/cfgweightunit.h"
-#include "../../objects/cfgtemperatureunit.h"
-#include "../../objects/cfgcurrencyunit.h"
 
 namespace Mappers {
 
-CfgMapper::CfgMapper()
-	: BaseObjectMapper()
+CfgMapper::CfgMapper(Services::ObjectRepository *repository)
+	: BaseObjectMapper(repository)
 {
 	m_table = "Cfg";
 	m_order = "Id";
@@ -45,14 +41,10 @@ void CfgMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &quer
 {
 	Objects::Cfg *cfg = static_cast<Objects::Cfg *>(object);
 
-	Objects::BaseObject *cfgDistanceUnit = this->child(query.record().value("CfgDistanceUnitId").toInt(),
-		Objects::Types::CfgDistanceUnit, cfg->cfgDistanceUnit());
-	Objects::BaseObject *cfgWeightUnit = this->child(query.record().value("CfgWeightUnitId").toInt(),
-		Objects::Types::CfgWeightUnit, cfg->cfgWeightUnit());
-	Objects::BaseObject *cfgTemperatureUnit = this->child(query.record().value("CfgTemperatureUnitId").toInt(),
-		Objects::Types::CfgTemperatureUnit, cfg->cfgTemperatureUnit());
-	Objects::BaseObject *cfgCurrencyUnit = this->child(query.record().value("CfgCurrencyUnitId").toInt(),
-		Objects::Types::CfgCurrencyUnit, cfg->cfgCurrencyUnit());
+	Objects::CfgDistanceUnit *cfgDistanceUnit = static_cast<Objects::CfgDistanceUnit *>(m_repository->getChild(Objects::Types::CfgDistanceUnit, query.record().value("CfgDistanceUnitId").toInt() /*, cfg->cfgDistanceUnit()*/));
+	Objects::CfgWeightUnit *cfgWeightUnit = static_cast<Objects::CfgWeightUnit *>(m_repository->getChild(Objects::Types::CfgWeightUnit, query.record().value("CfgWeightUnitId").toInt() /*, cfg->cfgWeightUnit()*/));
+	Objects::CfgTemperatureUnit *cfgTemperatureUnit = static_cast<Objects::CfgTemperatureUnit *>(m_repository->getChild(Objects::Types::CfgTemperatureUnit, query.record().value("CfgTemperatureUnitId").toInt() /*, cfg->cfgTemperatureUnit()*/));
+	Objects::CfgCurrencyUnit *cfgCurrencyUnit = static_cast<Objects::CfgCurrencyUnit *>(m_repository->getChild(Objects::Types::CfgCurrencyUnit, query.record().value("CfgCurrencyUnitId").toInt() /*, cfg->cfgCurrencyUnit()*/));
 
 	cfg->setMondayFirstDayOfWeek(query.record().value("MondayFirstDayOfWeek").toBool());
 	cfg->setCfgDistanceUnit(cfgDistanceUnit ? cfgDistanceUnit : 0);

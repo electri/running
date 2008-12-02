@@ -27,12 +27,12 @@
 ComboObjectItemDelegate::ComboObjectItemDelegate(Objects::Types::Type type, QObject *parent)
 	: QItemDelegate(parent)
 {
-    m_list = APP->objectMap()->getAllObjects(type);
+	m_list = Application::instance()->objectMap()->getAllObjects(type);
 }
 
 ComboObjectItemDelegate::~ComboObjectItemDelegate()
 {
-    APP->objectMap()->discardObjects(m_list);
+	Application::instance()->objectMap()->discardObjects(m_list);
 }
 
 void ComboObjectItemDelegate::paint(QPainter *painter,

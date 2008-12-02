@@ -59,7 +59,7 @@ void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate
 	}
 
 	Objects::Event *currentEvent = NULL;
-    Services::ObjectMap *session = APP->objectMap();
+	Services::ObjectMap *session = Application::instance()->objectMap();
 
 	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
 	if (!list.isEmpty()) {

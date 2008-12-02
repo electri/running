@@ -43,9 +43,6 @@ public:
 private slots:
 	void on_addPushButton_clicked();
 	void on_removePushButton_clicked();
-//	void on_resetPushButton_clicked();
-//	void on_savePushButton_clicked();
-//	void on_cancelPushButton_clicked();
 
 	void on_rowUpPushButton_clicked();
 	void on_rowDownPushButton_clicked();

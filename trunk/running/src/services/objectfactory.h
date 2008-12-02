@@ -30,27 +30,20 @@
 #include "../objects/interval.h"
 #include "../objects/intervaltype.h"
 #include "../objects/cfg.h"
-#include "../objects/cfgdistanceunit.h"
-#include "../objects/cfgweightunit.h"
-#include "../objects/cfgtemperatureunit.h"
-#include "../objects/cfgcurrencyunit.h"
 
 namespace Services {
 
+class Memento;
+class ObjectRepository;
+
 class ObjectFactory
 {
-public:
-	virtual ~ObjectFactory();
-
-	static ObjectFactory* instance();
-
-	Objects::BaseObject *createObject(Objects::Types::Type type);
-	void copyObject(Objects::BaseObject *source, Objects::BaseObject *destination);
+	friend class Memento;
+	friend class ObjectRepository;
 
 private:
-	ObjectFactory();
-
-	static ObjectFactory* sm_instance;
+	static Objects::BaseObject *createObject(Objects::Types::Type type);
+	static void copyObject(Objects::BaseObject *source, Objects::BaseObject *destination);
 };
 
 }

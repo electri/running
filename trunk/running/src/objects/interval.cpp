@@ -44,12 +44,10 @@ Interval::~Interval()
 
 
 
-void Interval::setIntervalType(BaseObject *value)
+void Interval::setIntervalType(IntervalType *value)
 {
-	IntervalType *object = static_cast<IntervalType *>(value);
-
-	if (m_intervalType != object) {
-		m_intervalType = object;
+	if (m_intervalType != value) {
+		m_intervalType = value;
 		modified();
 	}
 }
@@ -99,10 +97,10 @@ Objects::BaseObject *Interval::parent() const
 
 void Interval::setParent(Objects::BaseObject *value)
 {
-	Event *object = static_cast<Event *>(value);
+	Event *event = static_cast<Event *>(value);
 
-	if (m_event != object) {
-		m_event = object;
+	if (m_event != event) {
+		m_event = event;
 		modified();
 	}
 }

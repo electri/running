@@ -80,9 +80,10 @@ void ShoeView::showEvent(QShowEvent *event)
 {
 	Q_UNUSED(event);
 
-	initialDistanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
-	distanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
-	pricePerDistanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgCurrencyUnit()->description() + "/" + APP->cfg()->cfgDistanceUnit()->description());
+	Objects::Cfg *cfg = Application::instance()->cfg();
+	initialDistanceDoubleSpinBox->setSuffix(" " + cfg->cfgDistanceUnit()->description());
+	distanceDoubleSpinBox->setSuffix(" " + cfg->cfgDistanceUnit()->description());
+	pricePerDistanceDoubleSpinBox->setSuffix(" " + cfg->cfgCurrencyUnit()->description() + "/" + cfg->cfgDistanceUnit()->description());
 }
 
 
@@ -168,7 +169,7 @@ void ShoeView::on_shoeMakerComboBox_currentIndexChanged(int index)
 {
 	quint32 shoeMakerId = shoeMakerComboBox->itemData(index).toInt();
 
-	Services::ObjectMap *session = APP->objectMap();
+	Services::ObjectMap *session = Application::instance()->objectMap();
 
 	shoeModelComboBox->clear();
 	QList<Objects::BaseObject *> list = session->getAllObjects(Objects::Types::ShoeModel);
