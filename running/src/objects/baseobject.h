@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QString>
 
+namespace Services { class ObjectRepository; class ObjectMap; }
 namespace Mappers { class BaseObjectMapper; }
 
 namespace Objects {
@@ -46,9 +47,13 @@ namespace States {
 
 class BaseObject
 {
+friend class Services::ObjectRepository;
+friend class Services::ObjectMap;
 friend class Mappers::BaseObjectMapper;
 
 public:
+	virtual ~BaseObject() {}
+
 	quint32 id() const { return m_id; }
 
 	States::State state() const { return m_state; }
@@ -56,8 +61,7 @@ public:
 	virtual Types::Type type() const = 0;
 
 	virtual Objects::BaseObject *parent() const;
-	virtual void setParent(Objects::BaseObject *);
-	virtual QList<Objects::BaseObject *> children() const;
+	virtual void setParent(Objects::BaseObject *parent);
 
 	QString toString() const;
 
@@ -66,8 +70,13 @@ protected:
 
 	void modified();
 
+	virtual QList<Objects::BaseObject *> children() const;
+	virtual QList<Objects::BaseObject *> collectionItems() const;
+
 	quint32 m_id;
 	States::State m_state;
+
+	QList<BaseObject *> m_removedCollectionItems;
 };
 
 QDebug operator<<(QDebug, const BaseObject &);

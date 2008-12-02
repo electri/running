@@ -30,7 +30,7 @@ namespace Mappers {
 class ComboObjectMapper : public BaseObjectMapper
 {
 public:
-	ComboObjectMapper(const QString &table);
+	ComboObjectMapper(Services::ObjectRepository *repository, const QString &table);
 
 	bool selectObjectByDescription(Objects::ComboObject *, const QString &description);
 

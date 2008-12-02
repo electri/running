@@ -19,14 +19,53 @@
 ****************************************************************************/
 
 #include "comboobjecttablemodel.h"
+#include "../services/objectmap.h"
+#include "../services/memento.h"
 
 ComboObjectTableModel::ComboObjectTableModel(Objects::Types::Type type, QObject *parent)
 	: BaseObjectTableModel(type, parent)
 {
+	QList<Objects::BaseObject *> objects = m_objectMap->getAllObjects(m_type);
+
+	foreach (Objects::BaseObject *object, objects) {
+		m_list.append(new Services::Memento(object));
+	}
 }
 
 ComboObjectTableModel::~ComboObjectTableModel()
 {
+	foreach (Services::Memento *memento, m_list) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
+	foreach (Services::Memento *memento, m_removed) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
+}
+
+
+
+bool ComboObjectTableModel::submitAll()
+{
+	QList<Objects::BaseObject *> list;
+	foreach (Services::Memento *memento, m_list) {
+		list << memento->copy();
+	}
+	QList<Objects::BaseObject *> removed;
+	foreach (Services::Memento *memento, m_removed) {
+		removed << memento->copy();
+	}
+	if (!m_objectMap->updateObjects(list, removed)) {
+		return false;
+	}
+
+	foreach (Services::Memento *memento, m_list) {
+		memento->submit();
+	}
+	m_removed.clear();
+
+	return true;
 }
 
 
@@ -39,8 +78,8 @@ int ComboObjectTableModel::getColumnCount() const
 QString ComboObjectTableModel::getColumnHeader(int column) const
 {
 	switch (column) {
-		case 0:		return "Id";
-		case 1:		return tr("Description");
+		case 0:	return "Id";
+		case 1:	return tr("Description");
 	}
 	return QString("Column %1").arg(column + 1);
 }
@@ -50,10 +89,9 @@ QVariant ComboObjectTableModel::getColumnValue(Objects::BaseObject *object, int 
 	QVariant value;
 	Objects::ComboObject *comboObject = static_cast<Objects::ComboObject *>(object);
 	if (comboObject) {
-		switch (column)
-		{
-			case 0:		value = comboObject->id();				break;
-			case 1:		value = comboObject->description();		break;
+		switch (column) {
+			case 0:	value = comboObject->id();				break;
+			case 1:	value = comboObject->description();		break;
 		}
 	}
 	return value;
@@ -63,10 +101,9 @@ void ComboObjectTableModel::setColumnValue(Objects::BaseObject *object, int colu
 {
 	Objects::ComboObject *comboObject = static_cast<Objects::ComboObject *>(object);
 	if (comboObject) {
-		switch (column)
-		{
-			case 0:		break;
-			case 1:		comboObject->setDescription(value.toString());	break;
+		switch (column) {
+			case 0:	break;
+			case 1:	comboObject->setDescription(value.toString());	break;
 		}
 	}
 }

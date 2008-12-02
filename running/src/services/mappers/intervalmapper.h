@@ -28,7 +28,7 @@ namespace Mappers {
 class IntervalMapper : public BaseObjectMapper
 {
 public:
-	IntervalMapper();
+	IntervalMapper(Services::ObjectRepository *repository);
 
 private:
 	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);

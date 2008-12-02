@@ -18,8 +18,8 @@
 
 ****************************************************************************/
 
-#ifndef OBJECTMAPSERVICE_H
-#define OBJECTMAPSERVICE_H
+#ifndef CONFIGURATIONSERVICE_H
+#define CONFIGURATIONSERVICE_H
 
 #include <QMap>
 #include <QList>
@@ -27,52 +27,42 @@
 #include <QString>
 
 #include "../objects/baseobject.h"
-#include "objectmapinterface.h"
 
 namespace Services {
 
-class Database;
-class ObjectRepository;
-
-class ObjectMap : public IObjectMap
+class Configuration
 {
 public:
-	ObjectMap();
-	virtual ~ObjectMap();
+	virtual ~Configuration();
 
-	bool isActive() const;
-	QString lastError() const;
+	static Configuration* instance();
 
 	Objects::BaseObject *createObject(Objects::Types::Type type);
-	void registerObject(Objects::BaseObject *);
 	void discardObject(Objects::BaseObject *);
 	void discardObjects(QList<Objects::BaseObject *>);
 	QList<Objects::BaseObject *> getAllObjects(Objects::Types::Type type);
 	QList<Objects::BaseObject *> getObjectsByParent(Objects::Types::Type type, Objects::BaseObject *parent);
 	Objects::BaseObject *getObjectById(Objects::Types::Type type, quint32 id);
 	bool saveObject(Objects::BaseObject *);
-	bool eraseObject(Objects::BaseObject *);
-
-	bool updateObjects(QList<Objects::BaseObject *> objectListToSave, QList<Objects::BaseObject *> objectListToErase);
+	bool deleteObject(Objects::BaseObject *);
 
 	QList<Objects::BaseObject *> getEventsByDate(const QDate &start, const QDate &end);
 
 	void setDynamicMemory(bool value);
 	void free();
 
-	int objCount();
-	int refCount(Objects::Types::Type);
 	QString toString();
 
 private:
+	Configuration();
+
 	Objects::BaseObject *findObjectInCache(Objects::Types::Type type, quint32 id);
 	void updateObjectReference(Objects::BaseObject *, qint32 count, bool recursive);
 
+	static Configuration* sm_instance;
+
 	bool m_dynamicMemory;
 	QMap<Objects::BaseObject *, quint32> m_map;
-
-	Services::Database *m_database;
-	Services::ObjectRepository *m_objectRepository;
 };
 
 }

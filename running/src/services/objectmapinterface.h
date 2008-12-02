@@ -18,23 +18,22 @@
 
 ****************************************************************************/
 
-#ifndef SHOEMAPPER_H
-#define SHOEMAPPER_H
+#ifndef OBJECTMAPINTERFACE_H
+#define OBJECTMAPINTERFACE_H
 
-#include "baseobjectmapper.h"
+#include "../objects/baseobject.h"
 
-namespace Mappers {
+namespace Services {
 
-class ShoeMapper : public BaseObjectMapper
+class IObjectMap
 {
 public:
-	ShoeMapper(Services::ObjectRepository *repository);
+	virtual ~IObjectMap() {}
 
-private:
-	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);
-	void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &);
+	virtual Objects::BaseObject *getObjectById(Objects::Types::Type type, quint32 id) = 0;
+	virtual void discardObject(Objects::BaseObject *) = 0;
 };
 
 }
 
-#endif
+#endif // OBJECTMAPINTERFACE_H

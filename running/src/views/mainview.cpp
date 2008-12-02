@@ -23,7 +23,11 @@
 #include "mainview.h"
 
 #include "../application.h"
-#include "../objects/objects.h"
+#include "../objects/event.h"
+#include "../objects/eventtype.h"
+#include "../objects/shoe.h"
+#include "../objects/weather.h"
+#include "../services/memento.h"
 #include "../utility/statisticsservice.h"
 #include "../utility/utility.h"
 #include "../views/votepopupview.h"
@@ -64,8 +68,8 @@ MainView::MainView(QWidget *parent)
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-	if (APP->init()) {
-		calendarWidget->setFirstDayOfWeek(APP->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+	if (Application::instance()->init()) {
+		calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 
 		connect(actionShowCalendar, SIGNAL(triggered()), this, SLOT(showCalendar()));
 		connect(actionShowStatistics, SIGNAL(triggered()), this, SLOT(showStatistics()));
@@ -96,8 +100,9 @@ MainView::MainView(QWidget *parent)
 	}
 
 #ifdef QT_DEBUG
-	calendarWidget->setSelectedDate(QDate(2006, 11, 1));
+//	calendarWidget->setSelectedDate(QDate(2006, 11, 1));
 #endif
+	on_calendarWidget_selectionChanged();
 
 #ifdef QT_DEBUG
 	QTimer *timer = new QTimer(this);
@@ -125,7 +130,7 @@ void MainView::showCalendar()
 
 void MainView::on_calendarWidget_selectionChanged()
 {
-	Services::ObjectMap *session = APP->objectMap();
+	Services::ObjectMap *session = Application::instance()->objectMap();
 
 	if (m_currentEvent) {
 		session->discardObject(m_currentEvent);
@@ -184,7 +189,7 @@ void MainView::addEvent()
 	if (m_currentEvent) {
 		QMessageBox::warning(this, tr("Add a new event"), tr("The selected day already has an event."));
 	} else {
-		m_currentEvent = static_cast<Objects::Event *>(APP->objectMap()->createObject(Objects::Types::Event));
+		m_currentEvent = static_cast<Objects::Event *>(Application::instance()->objectMap()->createObject(Objects::Types::Event));
 		m_currentEvent->setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
 
 		editEventBegin(m_currentEvent);
@@ -203,14 +208,14 @@ void MainView::removeEvent()
 			return;
 		}
 
-		foreach (Objects::BaseObject *interval, m_currentEvent->intervals()) {
-			if (!APP->objectMap()->deleteObject(interval)) {
-				QMessageBox::critical(this, tr("Remove an event"), APP->objectRepository()->lastError());
-			}
-		}
+//		foreach (Objects::BaseObject *interval, m_currentEvent->intervals()) {
+//			if (!APP->objectMap()->eraseObject(interval)) {
+//				QMessageBox::critical(this, tr("Remove an event"), APP->objectMap()->lastError());
+//			}
+//		}
 
-		if (!APP->objectMap()->deleteObject(m_currentEvent)) {
-			QMessageBox::critical(this, tr("Remove an event"), APP->objectRepository()->lastError());
+		if (!Application::instance()->objectMap()->eraseObject(m_currentEvent)) {
+			QMessageBox::critical(this, tr("Remove an event"), Application::instance()->objectMap()->lastError());
 		}
 
 		this->on_calendarWidget_selectionChanged();
@@ -263,7 +268,7 @@ void MainView::editEventBegin(Objects::Event *object)
 	nameLineEdit->setCompleter(ViewHelper::completer(nameLineEdit, "Event", "Name"));
 	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "Event", "Description"));
 
-	distanceDoubleSpinBox->setSuffix(" " + APP->cfg()->cfgDistanceUnit()->description());
+	distanceDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgDistanceUnit()->description());
 }
 
 void MainView::editEventEnd()
@@ -284,16 +289,17 @@ void MainView::editEventGetProperties(Objects::Event *object)
 		object->setStart(QDateTime(object->start().date(), startTimeEdit->time()));
 		object->setName(nameLineEdit->text());
 		object->setDescription(descriptionLineEdit->text());
-		object->setEventType(ViewHelper::getObjectOnComboBox(eventTypeComboBox, Objects::Types::EventType, object->eventType()));
+		object->setEventType(static_cast<Objects::EventType *>(ViewHelper::getObjectOnComboBox(eventTypeComboBox, Objects::Types::EventType, object->eventType())));
 		object->setDistance(distanceDoubleSpinBox->value());
 		object->setDuration(durationTimeEdit->time());
 		object->setNotes(notesPlainTextEdit->toPlainText());
-		object->setShoe(ViewHelper::getObjectOnComboBox(shoeComboBox, Objects::Types::Shoe, object->shoe()));
+		object->setShoe(static_cast<Objects::Shoe *>(ViewHelper::getObjectOnComboBox(shoeComboBox, Objects::Types::Shoe, object->shoe())));
 		object->setVote(starsSlider->value());
 		object->setQuality(m_votepopupview->qualitySpinBox->value());
 		object->setEffort(m_votepopupview->effortSpinBox->value());
 		object->setWeight(m_runnerinfopopupview->weightDoubleSpinBox->value());
-		object->setWeather(ViewHelper::getObjectOnComboBox(m_weatherinfopopupview->weatherComboBox, Objects::Types::Weather, object->weather()));
+		object->setWeather(static_cast<Objects::Weather *>(ViewHelper::getObjectOnComboBox(m_weatherinfopopupview->weatherComboBox, Objects::Types::Weather, object->weather())));
+		object->setTemperature(m_weatherinfopopupview->temperatureDoubleSpinBox->value());
 	}
 }
 
@@ -340,16 +346,16 @@ void MainView::on_savePushButton_clicked()
 	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
 	editEventGetProperties(event);
 
-	if (!APP->objectMap()->saveObject(m_memento->copy())) {
-		QMessageBox::critical(this, tr("Add/Edit an event"), APP->objectRepository()->lastError());
+	if (!Application::instance()->objectMap()->saveObject(m_memento->copy())) {
+		QMessageBox::critical(this, tr("Add/Edit an event"), Application::instance()->objectMap()->lastError());
 		return;
 	}
 	m_memento->submit();
 
-	if (!m_intervalview->saveAll()) {
-		QMessageBox::critical(this, tr("Add/Edit an event"), APP->objectRepository()->lastError());
-		return;
-	}
+//	if (!m_intervalview->saveAll()) {
+//		QMessageBox::critical(this, tr("Add/Edit an event"), Application::instance()->objectMap()->lastError());
+//		return;
+//	}
 
 	editEventEnd();
 }
@@ -361,7 +367,7 @@ void MainView::on_cancelPushButton_clicked()
 
 void MainView::on_eventTypeComboBox_currentIndexChanged(int)
 {
-	Services::ObjectMap *session = APP->objectMap();
+	Services::ObjectMap *session = Application::instance()->objectMap();
 
 	quint32 eventTypeId = eventTypeComboBox->itemData(eventTypeComboBox->currentIndex()).toInt();
 	if (eventTypeId != 0) {
@@ -392,7 +398,7 @@ void MainView::refreshPaceLineEdit(double distance, const QTime &time)
 	QTime paceTime = Utility::paceTime(distance, time);
 	double paceSpeed = Utility::paceSpeed(distance, time);
 	paceLineEdit->setText(tr("%1 min/%3 or %2 %3/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)).arg(APP->cfg()->cfgDistanceUnit()->description()));
+			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)).arg(Application::instance()->cfg()->cfgDistanceUnit()->description()));
 }
 
 void MainView::on_eventTypeToolButton_clicked()
@@ -510,7 +516,7 @@ void MainView::options()
 	OptionsView *view = new OptionsView(this);
 	int result = view->exec();
 	if (result == QDialog::Accepted) {
-		calendarWidget->setFirstDayOfWeek(APP->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+		calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 		calendarWidget->update();
 	}
 	delete view;
@@ -520,12 +526,12 @@ void MainView::options()
 
 void MainView::systemInformation()
 {
-	QMessageBox::information(this, tr("System Information"), APP->systemInformation());
+	QMessageBox::information(this, tr("System Information"), Application::instance()->systemInformation());
 }
 
 void MainView::about()
 {
-	QMessageBox::about(this, tr("About"), APP->about());
+	QMessageBox::about(this, tr("About"), Application::instance()->about());
 }
 
 void MainView::updateStatusbar()
@@ -537,7 +543,7 @@ void MainView::updateStatusbar()
 			message += tr(" - %1").arg(m_currentEvent->name());
 		}
 		message += tr(" - %1 %2 in %3").arg(Utility::formatDistance(m_currentEvent->distance(), 3))
-			.arg(APP->cfg()->cfgDistanceUnit()->description()).arg(Utility::formatDuration(m_currentEvent->duration()));
+			.arg(Application::instance()->cfg()->cfgDistanceUnit()->description()).arg(Utility::formatDuration(m_currentEvent->duration()));
 
 		statusbar->showMessage(tr("Event: %1.").arg(message));
 
@@ -547,7 +553,7 @@ void MainView::updateStatusbar()
 	StatisticsResults::EventsPerDate r = Utility::StatisticsService::instance()->event(calendarWidget->yearShown(), calendarWidget->monthShown());
 	if (r.events > 0) {
 		QString message = tr("Events: %L1 for a total of %L2 %3.").arg(r.events)
-			.arg(Utility::formatDistance(r.distance, 3)).arg(APP->cfg()->cfgDistanceUnit()->description());
+			.arg(Utility::formatDistance(r.distance, 3)).arg(Application::instance()->cfg()->cfgDistanceUnit()->description());
 		statusbar->showMessage(message);
 		return;
 	}
@@ -558,7 +564,7 @@ void MainView::updateStatusbar()
 
 void MainView::showDebugOnConsole()
 {
-//	APP->objectMap()->free();
+//	Application::instance()->objectMap()->free();
 
-	qDebug() << APP->objectMap()->toString();
+	qDebug() << Application::instance()->objectMap()->toString();
 }

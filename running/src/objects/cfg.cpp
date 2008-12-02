@@ -47,42 +47,34 @@ void Cfg::setMondayFirstDayOfWeek(bool value)
 	}
 }
 
-void Cfg::setCfgDistanceUnit(BaseObject *value)
+void Cfg::setCfgDistanceUnit(CfgDistanceUnit *value)
 {
-	CfgDistanceUnit *object = static_cast<CfgDistanceUnit *>(value);
-
-	if (m_cfgDistanceUnit != object) {
-		m_cfgDistanceUnit = object;
+	if (m_cfgDistanceUnit != value) {
+		m_cfgDistanceUnit = value;
 		modified();
 	}
 }
 
-void Cfg::setCfgWeightUnit(BaseObject *value)
+void Cfg::setCfgWeightUnit(CfgWeightUnit *value)
 {
-	CfgWeightUnit *object = static_cast<CfgWeightUnit *>(value);
-
-	if (m_cfgWeightUnit != object) {
-		m_cfgWeightUnit = object;
+	if (m_cfgWeightUnit != value) {
+		m_cfgWeightUnit = value;
 		modified();
 	}
 }
 
-void Cfg::setCfgTemperatureUnit(BaseObject *value)
+void Cfg::setCfgTemperatureUnit(CfgTemperatureUnit *value)
 {
-	CfgTemperatureUnit *object = static_cast<CfgTemperatureUnit *>(value);
-
-	if (m_cfgTemperatureUnit != object) {
-		m_cfgTemperatureUnit = object;
+	if (m_cfgTemperatureUnit != value) {
+		m_cfgTemperatureUnit = value;
 		modified();
 	}
 }
 
-void Cfg::setCfgCurrencyUnit(BaseObject *value)
+void Cfg::setCfgCurrencyUnit(CfgCurrencyUnit *value)
 {
-	CfgCurrencyUnit *object = static_cast<CfgCurrencyUnit *>(value);
-
-	if (m_cfgCurrencyUnit != object) {
-		m_cfgCurrencyUnit = object;
+	if (m_cfgCurrencyUnit != value) {
+		m_cfgCurrencyUnit = value;
 		modified();
 	}
 }

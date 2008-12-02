@@ -23,9 +23,9 @@
 #include "event.h"
 
 #include "eventtype.h"
+#include "interval.h"
 #include "shoe.h"
 #include "weather.h"
-#include "interval.h"
 
 #include "../utility/utility.h"
 
@@ -79,12 +79,10 @@ void Event::setDescription(const QString &value)
 	}
 }
 
-void Event::setEventType(BaseObject *value)
+void Event::setEventType(EventType *value)
 {
-	EventType *object = static_cast<EventType *>(value);
-
-	if (m_eventType != object) {
-		m_eventType = object;
+	if (m_eventType != value) {
+		m_eventType = value;
 		modified();
 	}
 }
@@ -113,12 +111,10 @@ void Event::setNotes(const QString &value)
 	}
 }
 
-void Event::setShoe(BaseObject *value)
+void Event::setShoe(Shoe *value)
 {
-	Shoe *object = static_cast<Shoe *>(value);
-
-	if (m_shoe != object) {
-		m_shoe = object;
+	if (m_shoe != value) {
+		m_shoe = value;
 		modified();
 	}
 }
@@ -155,12 +151,10 @@ void Event::setWeight(qreal value)
 	}
 }
 
-void Event::setWeather(BaseObject *value)
+void Event::setWeather(Weather *value)
 {
-	Weather *object = static_cast<Weather *>(value);
-
-	if (m_weather != object) {
-		m_weather = object;
+	if (m_weather != value) {
+		m_weather = value;
 		modified();
 	}
 }
@@ -177,6 +171,7 @@ void Event::addInterval(Interval *value)
 {
 	if (!m_intervals.contains(value)) {
 		m_intervals.append(value);
+		value->setParent(this);
 		modified();
 	}
 }
@@ -184,6 +179,8 @@ void Event::addInterval(Interval *value)
 void Event::removeInterval(Interval *value)
 {
 	if (m_intervals.contains(value)) {
+		value->setParent(NULL);
+		m_removedCollectionItems << value;
 		m_intervals.removeAll(value);
 		modified();
 	}
@@ -192,6 +189,10 @@ void Event::removeInterval(Interval *value)
 void Event::clearIntervals()
 {
 	if (m_intervals.size() > 0) {
+		foreach (BaseObject *value, m_intervals) {
+			value->setParent(NULL);
+		}
+		m_removedCollectionItems << m_intervals;
 		m_intervals.clear();
 		modified();
 	}
@@ -214,7 +215,14 @@ qreal Event::paceSpeed() const
 QList<Objects::BaseObject *> Event::children() const
 {
 	QList<BaseObject *> list;
-	list << m_eventType << m_shoe << m_weather << m_intervals;
+	list << m_eventType << m_shoe << m_weather;
+	return list;
+}
+
+QList<Objects::BaseObject *> Event::collectionItems() const
+{
+	QList<BaseObject *> list;
+	list << m_intervals;
 	return list;
 }
 

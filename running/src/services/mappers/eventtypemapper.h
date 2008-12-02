@@ -28,7 +28,7 @@ namespace Mappers {
 class EventTypeMapper : public ComboObjectMapper
 {
 public:
-	EventTypeMapper();
+	EventTypeMapper(Services::ObjectRepository *repository);
 
 private:
 	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);

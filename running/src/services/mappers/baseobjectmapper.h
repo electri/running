@@ -27,13 +27,21 @@
 #include <QSqlQuery>
 
 #include "../../objects/baseobject.h"
+#include "../../services/objectrepository.h"
 
 namespace Mappers {
+
+struct ObjectRef
+{
+	Objects::Types::Type type;
+	Objects::BaseObject *object;
+	quint32 id;
+};
 
 class BaseObjectMapper
 {
 public:
-	BaseObjectMapper();
+	BaseObjectMapper(Services::ObjectRepository *repository);
 	virtual ~BaseObjectMapper();
 
 	virtual QList<quint32> selectIdList();
@@ -45,11 +53,13 @@ public:
 
 	QString lastError() const { return m_lastError; }
 
+	QList<ObjectRef> children(Objects::BaseObject *);
+
 protected:
 	virtual void setValuesFromFields(Objects::BaseObject *, QSqlQuery &) = 0;
 	virtual void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &) = 0;
 
-	Objects::BaseObject *child(quint32 id, Objects::Types::Type type, Objects::BaseObject *old_child);
+	Services::ObjectRepository *m_repository;
 
 	QSqlDatabase m_database;
 	QString m_table;

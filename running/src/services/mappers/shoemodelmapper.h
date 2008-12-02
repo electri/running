@@ -28,7 +28,7 @@ namespace Mappers {
 class ShoeModelMapper : public ComboObjectMapper
 {
 public:
-	ShoeModelMapper();
+	ShoeModelMapper(Services::ObjectRepository *repository);
 
 private:
 	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);

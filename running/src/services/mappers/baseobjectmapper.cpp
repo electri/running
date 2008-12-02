@@ -22,12 +22,12 @@
 
 #include "baseobjectmapper.h"
 
-#include "../../application.h"
-
 namespace Mappers {
 
-BaseObjectMapper::BaseObjectMapper()
+BaseObjectMapper::BaseObjectMapper(Services::ObjectRepository *repository)
 {
+	m_repository = repository;
+
 	m_database = QSqlDatabase::database();
 	m_table = "";
 	m_order = "";
@@ -104,7 +104,7 @@ bool BaseObjectMapper::insertObject(Objects::BaseObject *object)
 		m_lastError = "";
 		return true;
 	}
-	m_lastError = query.lastError().databaseText();
+	m_lastError = query.lastError().driverText();
 	return false;
 }
 
@@ -129,33 +129,13 @@ bool BaseObjectMapper::deleteObject(Objects::BaseObject *object)
 {
 	QString text = QString("DELETE FROM %1 WHERE Id = %2").arg(m_table).arg(object->id());
 	QSqlQuery query;
-	query.exec(text);
-	if (query.numRowsAffected() == 1) {
+	if (query.exec(text)) {
 		object->m_state = Objects::States::Deleted;
 		m_lastError = "";
 		return true;
 	}
 	m_lastError = query.lastError().databaseText();
 	return false;
-}
-
-Objects::BaseObject *BaseObjectMapper::child(quint32 id, Objects::Types::Type type, Objects::BaseObject *old_child)
-{
-	if (old_child) {
-		if (old_child->id() == id) {
-			return old_child;
-		} else {
-            APP->objectMap()->discardObject(old_child);
-		}
-	}
-
-	Objects::BaseObject *child;
-
-    child = APP->objectMap()->getObjectById(type, id);
-//	child = Services::ObjectFactory::instance()->createObject(Objects::Types::EventType);
-//	APP->objectRepository()->selectObject(child, id);
-
-	return child;
 }
 
 }

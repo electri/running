@@ -38,7 +38,7 @@ friend class Services::ObjectFactory;
 
 public:
 	IntervalType *intervalType() const { return m_intervalType; }
-	void setIntervalType(BaseObject *);
+	void setIntervalType(IntervalType *);
 
 	qreal distance() const { return m_distance; }
 	void setDistance(qreal);

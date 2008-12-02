@@ -28,8 +28,8 @@
 
 namespace Mappers {
 
-ShoeMapper::ShoeMapper()
-	: BaseObjectMapper()
+ShoeMapper::ShoeMapper(Services::ObjectRepository *repository)
+	: BaseObjectMapper(repository)
 {
 	m_table = "Shoe";
 	m_order = "Id";
@@ -43,8 +43,7 @@ void ShoeMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &que
 {
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 
-	Objects::BaseObject *shoeModel = this->child(query.record().value("ShoeModelId").toInt(),
-		Objects::Types::ShoeModel, shoe->shoeModel());
+	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(m_repository->getChild(Objects::Types::ShoeModel, query.record().value("ShoeModelId").toInt() /*, shoe->shoeModel()*/));
 
 	shoe->setShoeModel(shoeModel ? shoeModel : 0);
 	shoe->setSize(query.record().value("Size").toDouble());

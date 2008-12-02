@@ -22,56 +22,59 @@
 #define OBJECTREPOSITORY_H
 
 #include <QString>
-#include <QList>
 #include <QSqlDatabase>
+#include <QMap>
+#include <QList>
 #include <QDate>
 
 #include "../objects/baseobject.h"
-
-class Application;
 
 namespace Mappers { class BaseObjectMapper; }
 
 namespace Services {
 
+class IObjectMap;
+
 class ObjectRepository
 {
-friend class ::Application;
-
 public:
+	ObjectRepository();
 	virtual ~ObjectRepository();
 
-	bool isActive() const { return m_active; }
 	QString lastError() const;
 
-	/* generic SQL calls (transactions) */
-	bool transaction();
-	bool commit();
-	bool rollback();
+	/* object's non-SQL calls (common to all objects) */
+	Objects::BaseObject *createObject(Objects::Types::Type type);
+	void copyObject(Objects::BaseObject *src, Objects::BaseObject *dst);
 
 	/* object's SQL calls (common to all objects) */
-	QList<quint32> selectIdList(Objects::Types::Type type);
-	QList<quint32> selectIdList(Objects::Types::Type type, Objects::BaseObject *parent);
-	bool selectObject(Objects::BaseObject *, quint32 id);
-	bool insertObject(Objects::BaseObject *);
-	bool updateObject(Objects::BaseObject *);
-	bool deleteObject(Objects::BaseObject *);
+	QList<quint32> getIdList(Objects::Types::Type type);
+	QList<quint32> getIdList(Objects::Types::Type type, Objects::BaseObject *parent);
+	bool loadObject(Objects::BaseObject *, quint32 id);
+	bool saveObject(Objects::BaseObject *);
+	bool eraseObject(Objects::BaseObject *);
+
+	bool updateObjects(QList<Objects::BaseObject *> objectListToSave, QList<Objects::BaseObject *> objectListToErase);
 
 	/* object's specific SQL calls */
-	QList<quint32> selectEventIdListByDate(const QDate &start, const QDate &end);
+	QList<quint32> getEventIdListByDate(const QDate &start, const QDate &end);
+
+	/* internally used (by the mappers) */
+	Objects::BaseObject *getChild(Objects::Types::Type type, quint32 id);
+	QList<Objects::BaseObject *> getCollection(Objects::Types::Type type, Objects::BaseObject *parent);
+
+	/* external implementations (by the objectmap) */
+	void setObjectMap(IObjectMap *);
 
 private:
-	ObjectRepository();
+	bool internalSaveObject(Objects::BaseObject *);
+	bool internalEraseObject(Objects::BaseObject *);
 
-	int databaseVersion() const;
-	bool createDatabase();
-	bool upgradeDatabase(int oldVersion);
-	bool alterDatabase(const QString &scriptName, const QString &message);
-
-	bool m_active;
 	QSqlDatabase m_database;
 	QString m_lastError;
 	QMap<Objects::Types::Type, Mappers::BaseObjectMapper *> m_mappers;
+
+	IObjectMap *m_objectMap;
 };
 
 }

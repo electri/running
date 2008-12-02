@@ -43,12 +43,10 @@ Shoe::~Shoe()
 
 
 
-void Shoe::setShoeModel(BaseObject *value)
+void Shoe::setShoeModel(ShoeModel *value)
 {
-	ShoeModel *object = static_cast<ShoeModel *>(value);
-
-	if (m_shoeModel != object) {
-		m_shoeModel = object;
+	if (m_shoeModel != value) {
+		m_shoeModel = value;
 		modified();
 	}
 }

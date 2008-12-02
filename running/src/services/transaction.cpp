@@ -19,18 +19,60 @@
 ****************************************************************************/
 
 #include <QtGui>
+#include <QtSql>
 
-#include "runnerinfopopupview.h"
+#include "transaction.h"
 
-#include "../application.h"
+namespace Services {
 
-RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
-	: QWidget(parent)
+Transaction::Transaction()
 {
-	setupUi(this);
+	m_database = QSqlDatabase::database();
+	m_lastError = "";
 }
 
-void RunnerInfoPopupView::showEvent(QShowEvent *)
+Transaction::~Transaction()
 {
-	weightDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgWeightUnit()->description());
+}
+
+
+
+QString Transaction::lastError() const
+{
+	QString message;
+
+	if (!m_lastError.isEmpty()) {
+		message += QString("%1").arg(m_lastError);
+	} else {
+		QSqlError error = m_database.lastError();
+		if (error.isValid()) {
+			message += QString("Database: %1\n").arg(error.databaseText());
+			message += QString("Driver: %1").arg(error.driverText());
+		} else {
+			message += "Unknown error";
+		}
+	}
+
+//	message = qApp->translate("Transaction", "A database error has occurred:\n\n") + message;
+
+	return message;
+}
+
+
+
+bool Transaction::transaction()
+{
+	return m_database.transaction();
+}
+
+bool Transaction::commit()
+{
+	return m_database.commit();
+}
+
+bool Transaction::rollback()
+{
+	return m_database.rollback();
+}
+
 }

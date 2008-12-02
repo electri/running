@@ -28,7 +28,7 @@ namespace Mappers {
 class CfgMapper : public BaseObjectMapper
 {
 public:
-	CfgMapper();
+	CfgMapper(Services::ObjectRepository *repository);
 
 private:
 	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);

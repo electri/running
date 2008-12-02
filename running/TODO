@@ -1,7 +1,13 @@
-Finire di agganciare le unità di misura alla configurazione.
+0.2
+Completare e testare il salvataggio di intervalli.
 
-Completare  e testare il salvataggio di intervalli.
+0.3
+Import/export plugins:
+	Import da CSV
+	Import da "iPod Sport Kit"
+	Import da log "The Running Training Log"
+	Export in CSV
+	Export in HTML
 
-Import/export (plugin ?).
-
+0.X
 Statistiche rivedere e aggiungere pagine (grafico annuale distanze/tempi, ecc).

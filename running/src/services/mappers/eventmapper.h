@@ -28,7 +28,7 @@ namespace Mappers {
 class EventMapper : public BaseObjectMapper
 {
 public:
-	EventMapper();
+	EventMapper(Services::ObjectRepository *repository);
 
 	QList<quint32> selectIdListByDate(const QDate &start, const QDate &end);
 

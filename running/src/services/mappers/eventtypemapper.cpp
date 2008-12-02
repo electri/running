@@ -26,8 +26,8 @@
 
 namespace Mappers {
 
-EventTypeMapper::EventTypeMapper()
-	: ComboObjectMapper("EventType")
+EventTypeMapper::EventTypeMapper(Services::ObjectRepository *repository)
+	: ComboObjectMapper(repository, "EventType")
 {
 	m_order = "Description";
 	m_columnList = "Description, HasMedal, HasIntervals";

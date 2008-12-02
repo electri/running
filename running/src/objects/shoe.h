@@ -37,7 +37,7 @@ friend class Services::ObjectFactory;
 
 public:
 	ShoeModel *shoeModel() const { return m_shoeModel; }
-	void setShoeModel(BaseObject *);
+	void setShoeModel(ShoeModel *);
 
 	qreal size() const { return m_size; }
 	void setSize(qreal);

@@ -28,8 +28,8 @@
 
 namespace Mappers {
 
-IntervalMapper::IntervalMapper()
-	: BaseObjectMapper()
+IntervalMapper::IntervalMapper(Services::ObjectRepository *repository)
+	: BaseObjectMapper(repository)
 {
 	m_table = "Interval";
 	m_order = "Id";
@@ -44,8 +44,7 @@ void IntervalMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery 
 {
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 
-	Objects::BaseObject *intervalType = this->child(query.record().value("IntervalTypeId").toInt(),
-		Objects::Types::IntervalType, interval->intervalType());
+	Objects::IntervalType *intervalType = static_cast<Objects::IntervalType *>(m_repository->getChild(Objects::Types::IntervalType, query.record().value("IntervalTypeId").toInt() /*, interval->intervalType()*/));
 
 	interval->setIntervalType(intervalType ? intervalType : 0);
 	interval->setDistance(query.record().value("Distance").toDouble());

@@ -21,11 +21,11 @@
 #ifndef INTERVALTABLEMODEL_H
 #define INTERVALTABLEMODEL_H
 
-#include "../models/baseobjecttablemodel.h"
+#include "../models/childobjecttablemodel.h"
 
 namespace Objects { class Event; }
 
-class IntervalTableModel : public BaseObjectTableModel
+class IntervalTableModel : public ChildObjectTableModel
 {
 	Q_OBJECT
 
@@ -38,6 +38,11 @@ private:
 	QString getColumnHeader(int column) const;
 	QVariant getColumnValue(Objects::BaseObject *object, int column) const;
 	void setColumnValue(Objects::BaseObject *object, int column, const QVariant &value);
+
+	void setDefaultValues(Objects::BaseObject *object);
+
+	void addToParent(Objects::BaseObject *object);
+	void removeFromParent(Objects::BaseObject *object);
 };
 
 #endif

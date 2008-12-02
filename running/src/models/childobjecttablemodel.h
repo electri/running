@@ -18,23 +18,28 @@
 
 ****************************************************************************/
 
-#ifndef SHOEMAPPER_H
-#define SHOEMAPPER_H
+#ifndef CHILDOBJECTTABLEMODEL_H
+#define CHILDOBJECTTABLEMODEL_H
 
-#include "baseobjectmapper.h"
+#include "../models/baseobjecttablemodel.h"
 
-namespace Mappers {
-
-class ShoeMapper : public BaseObjectMapper
+class ChildObjectTableModel : public BaseObjectTableModel
 {
+	Q_OBJECT
+
 public:
-	ShoeMapper(Services::ObjectRepository *repository);
+	ChildObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects,
+		 Objects::BaseObject *objectsParent, QObject *parent = 0);
+	~ChildObjectTableModel();
 
-private:
-	void setValuesFromFields(Objects::BaseObject *, QSqlQuery &);
-	void setFieldsFromValues(Objects::BaseObject *, QSqlQuery &);
+	virtual bool submitAll();
+
+protected:
+	virtual void addToParent(Objects::BaseObject *object);
+	virtual void removeFromParent(Objects::BaseObject *object);
+
+	QList<Objects::BaseObject *> m_objects;
+	Objects::BaseObject *m_objectsParent;
 };
-
-}
 
 #endif

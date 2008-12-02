@@ -41,10 +41,10 @@ int EventTypeTableModel::getColumnCount() const
 QString EventTypeTableModel::getColumnHeader(int column) const
 {
 	switch (column) {
-		case 0:		return "Id";
-		case 1:		return tr("Description");
-		case 2:		return tr("Medal");
-		case 3:		return tr("Intervals");
+		case 0:	return "Id";
+		case 1:	return tr("Description");
+		case 2:	return tr("Medal");
+		case 3:	return tr("Intervals");
 	}
 	return QString("Column %1").arg(column + 1);
 }
@@ -54,12 +54,11 @@ QVariant EventTypeTableModel::getColumnValue(Objects::BaseObject *object, int co
 	QVariant value;
 	Objects::EventType *eventType = static_cast<Objects::EventType *>(object);
 	if (eventType) {
-		switch (column)
-		{
-			case 0:		value = eventType->id();			break;
-			case 1:		value = eventType->description();	break;
-			case 2:		value = eventType->hasMedal();		break;
-			case 3:		value = eventType->hasIntervals();	break;
+		switch (column) {
+			case 0:	value = eventType->id();			break;
+			case 1:	value = eventType->description();	break;
+			case 2:	value = eventType->hasMedal();		break;
+			case 3:	value = eventType->hasIntervals();	break;
 		}
 	}
 	return value;
@@ -69,12 +68,11 @@ void EventTypeTableModel::setColumnValue(Objects::BaseObject *object, int column
 {
 	Objects::EventType *eventType = static_cast<Objects::EventType *>(object);
 	if (eventType) {
-		switch (column)
-		{
-			case 0:		break;
-			case 1:		eventType->setDescription(value.toString());	break;
-			case 2:		eventType->setMedal(value.toBool());			break;
-			case 3:		eventType->setIntervals(value.toBool());		break;
+		switch (column) {
+			case 0:	break;
+			case 1:	eventType->setDescription(value.toString());	break;
+			case 2:	eventType->setMedal(value.toBool());			break;
+			case 3:	eventType->setIntervals(value.toBool());		break;
 		}
 	}
 }

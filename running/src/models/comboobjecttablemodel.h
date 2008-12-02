@@ -32,6 +32,8 @@ public:
 	ComboObjectTableModel(Objects::Types::Type type, QObject *parent = 0);
 	~ComboObjectTableModel();
 
+	virtual bool submitAll();
+
 protected:
 	virtual int getColumnCount() const;
 	virtual QString getColumnHeader(int column) const;

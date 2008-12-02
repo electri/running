@@ -21,50 +21,20 @@
 #include "baseobjecttablemodel.h"
 
 #include "../application.h"
+#include "../services/objectmap.h"
+#include "../services/transaction.h"
+#include "../services/memento.h"
 
 BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, QObject *parent)
 	: QAbstractTableModel(parent)
 {
 	m_type = type;
-	m_objects.clear();
-	m_objectsParent = NULL;
 
-    QList<Objects::BaseObject *> objects = APP->objectMap()->getAllObjects(m_type);
-
-	foreach (Objects::BaseObject *object, objects) {
-		m_list.append(new Services::Memento(object));
-	}
-}
-
-BaseObjectTableModel::BaseObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects,
-	Objects::BaseObject *objectsParent, QObject *parent)
-	: QAbstractTableModel(parent)
-{
-	m_type = type;
-	m_objects = objects;
-	m_objectsParent = objectsParent;
-
-	foreach (Objects::BaseObject *object, objects) {
-		m_list.append(new Services::Memento(object));
-	}
+	m_objectMap = Application::instance()->objectMap();
 }
 
 BaseObjectTableModel::~BaseObjectTableModel()
 {
-    Services::ObjectMap *session = APP->objectMap();
-
-	foreach (Services::Memento *memento, m_list) {
-		if (m_objects.contains(memento->original()) == false) {
-			session->discardObject(memento->original());
-		}
-		delete memento;
-	}
-	foreach (Services::Memento *memento, m_removed) {
-		if (m_objects.contains(memento->original()) == false) {
-			session->discardObject(memento->original());
-		}
-		delete memento;
-	}
 }
 
 int BaseObjectTableModel::rowCount(const QModelIndex &) const
@@ -127,17 +97,14 @@ bool BaseObjectTableModel::insertRows(int position, int rows, const QModelIndex 
 {
 	beginInsertRows(QModelIndex(), position, position+rows-1);
 
-    Services::ObjectMap *session = APP->objectMap();
-
 	for (int row = 0; row < rows; ++row) {
-		Objects::BaseObject *object = session->createObject(m_type);
-		if (m_objectsParent) {
-			object->setParent(m_objectsParent);
-		}
+		Objects::BaseObject *object = m_objectMap->createObject(m_type);
+		setDefaultValues(object);
 		m_list.insert(position, new Services::Memento(object));
 	}
 
 	endInsertRows();
+
 	return true;
 }
 
@@ -150,23 +117,20 @@ bool BaseObjectTableModel::removeRows(int position, int rows, const QModelIndex 
 	}
 
 	endRemoveRows();
+
 	return true;
 }
 
 void BaseObjectTableModel::revertAll()
 {
-    Services::ObjectMap *session = APP->objectMap();
-
-	foreach (Services::Memento *memento, m_removed) {
-		m_list.append(memento);
-	}
+	m_list << m_removed;
 	m_removed.clear();
 
 	int i = m_list.size();
 	while (i > 0) {
 		Services::Memento *memento = m_list.at(--i);
 		if (memento->original()->state() == Objects::States::Created) {
-			session->discardObject(memento->original());
+			m_objectMap->discardObject(memento->original());
 			delete memento;
 			m_list.removeAt(i);
 		} else {
@@ -179,28 +143,11 @@ void BaseObjectTableModel::revertAll()
 
 bool BaseObjectTableModel::submitAll()
 {
-    Services::ObjectMap *session = APP->objectMap();
-    Services::ObjectRepository *repository = APP->objectRepository();
-	if (repository->transaction()) {
-		foreach (Services::Memento *memento, m_list) {
-			if (!session->saveObject(memento->copy())) {
-				repository->rollback();
-				return false;
-			}
-		}
-		foreach (Services::Memento *memento, m_removed) {
-			if (!session->deleteObject(memento->copy())) {
-				repository->rollback();
-				return false;
-			}
-		}
-		repository->commit();
-	} else {
-		return false;
-	}
 	foreach (Services::Memento *memento, m_list) {
 		memento->submit();
 	}
+	m_removed.clear();
+
 	return true;
 }
 
@@ -215,8 +162,10 @@ QModelIndex BaseObjectTableModel::indexById(quint32 id) const
 
 QString BaseObjectTableModel::lastError() const
 {
-    return APP->objectRepository()->lastError();
+	return m_objectMap->lastError();
 }
+
+
 
 int BaseObjectTableModel::getColumnCount() const
 {
@@ -251,7 +200,13 @@ void BaseObjectTableModel::setColumnValue(Objects::BaseObject *object, int colum
 	}
 }
 
-int BaseObjectTableModel::forceColumnChange(int /*column*/)
+
+
+void BaseObjectTableModel::setDefaultValues(Objects::BaseObject *)
+{
+}
+
+int BaseObjectTableModel::forceColumnChange(int)
 {
 	return 0;
 }
@@ -264,9 +219,9 @@ Objects::BaseObject *BaseObjectTableModel::child(Objects::Types::Type type, quin
 		if (old_child->id() == id) {
 			return old_child;
 		} else {
-            APP->objectMap()->discardObject(old_child);
+			m_objectMap->discardObject(old_child);
 		}
 	}
 
-    return APP->objectMap()->getObjectById(type, id);
+	return m_objectMap->getObjectById(type, id);
 }
