@@ -157,9 +157,7 @@ bool ObjectMap::saveObject(Objects::BaseObject *object)
 #endif
 
 	if (object) {
-//		if (m_map.contains(object)) {
-			return m_objectRepository->saveObject(object);
-//		}
+		return m_objectRepository->saveObject(object);
 	}
 	return false;
 }
@@ -171,9 +169,7 @@ bool ObjectMap::eraseObject(Objects::BaseObject *object)
 #endif
 
 	if (object) {
-//		if (m_map.contains(object)) {
-			return m_objectRepository->eraseObject(object);
-//		}
+		return m_objectRepository->eraseObject(object);
 	}
 	return false;
 }
@@ -255,10 +251,6 @@ void ObjectMap::updateObjectReference(Objects::BaseObject *object, qint32 count,
 	}
 
 	if (recursive) {
-//		if (object->parent()) {
-//			updateObjectReference(object->parent(), count, false);
-//		}
-
 		foreach (Objects::BaseObject *child, object->children()) {
 			updateObjectReference(child, count, true);
 		}

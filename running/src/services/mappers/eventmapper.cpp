@@ -68,45 +68,11 @@ void EventMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &qu
 {
 	Objects::Event *event = static_cast<Objects::Event *>(object);
 
-	Objects::EventType *eventType = static_cast<Objects::EventType *>(m_repository->getChild(Objects::Types::EventType, query.record().value("EventTypeId").toInt() /*, event->eventType()*/));
-	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(m_repository->getChild(Objects::Types::Shoe, query.record().value("ShoeId").toInt() /*, event->shoe()*/));
-	Objects::Weather *weather = static_cast<Objects::Weather *>(m_repository->getChild(Objects::Types::Weather, query.record().value("WeatherId").toInt() /*, event->weather()*/));
+	Objects::EventType *eventType = static_cast<Objects::EventType *>(m_repository->getChild(Objects::Types::EventType, query.record().value("EventTypeId").toInt()));
+	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(m_repository->getChild(Objects::Types::Shoe, query.record().value("ShoeId").toInt()));
+	Objects::Weather *weather = static_cast<Objects::Weather *>(m_repository->getChild(Objects::Types::Weather, query.record().value("WeatherId").toInt()));
 
 	QList<Objects::BaseObject *> intervals = m_repository->getCollection(Objects::Types::Interval, object);
-
-	// TODO move code below to an appropriate base method
-//	QList<Objects::BaseObject *> intervals = APP->objectMap()->getObjectsByParent(Objects::Types::Interval, event);
-//
-//	for (int i = event->intervals().size(); i > 0; --i) {
-//		Objects::Interval *old_interval = static_cast<Objects::Interval *>(event->intervals()[i - 1]);
-//		bool found = false;
-//		for (int j = intervals.size(); j > 0; --j) {
-//			Objects::Interval *interval = static_cast<Objects::Interval *>(intervals[j - 1]);
-//			if (interval->id() == old_interval->id()) {
-//				found = true;
-//				intervals.removeAll(interval);
-//				APP->objectMap()->discardObject(interval);
-//				break;
-//			}
-//		}
-//		if (!found) {
-//			event->removeInterval(old_interval);
-//			APP->objectMap()->discardObject(old_interval);
-//		}
-//	}
-//	for (int j = intervals.size(); j > 0; --j) {
-//		Objects::Interval *interval = static_cast<Objects::Interval *>(intervals[j - 1]);
-//		event->addInterval(interval);
-//	}
-
-//	APP->objectMap()->discardObjects(event->intervals());
-//	event->clearIntervals();
-//
-//	foreach (Objects::BaseObject *interval, intervals) {
-//		event->addInterval(static_cast<Objects::Interval *>(interval));
-//	}
-
-
 
 	event->setStart(query.record().value("Start").toDateTime());
 	event->setName(query.record().value("Name").toString());

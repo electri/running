@@ -146,6 +146,10 @@ bool BaseObjectTableModel::submitAll()
 	foreach (Services::Memento *memento, m_list) {
 		memento->submit();
 	}
+	foreach (Services::Memento *memento, m_removed) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
 	m_removed.clear();
 
 	return true;

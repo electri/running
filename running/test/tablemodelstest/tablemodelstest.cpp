@@ -133,6 +133,12 @@ void TableModelsTest::test_ComboObjectTableModel()
 	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[1])->description(), QString("MakerTest4"));
 	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[2])->description(), QString("MakerTest5u"));
 	map->discardObjects(list);
+
+	//FREE
+	delete model;
+	map->free();
+	QCOMPARE(map->refCount(Objects::Types::ShoeMaker), 0);
+	QCOMPARE(map->objCount(), 5); // 5 cfg objects are always in memory
 }
 
 void TableModelsTest::test_IntervalTableModel()
@@ -143,13 +149,13 @@ void TableModelsTest::test_IntervalTableModel()
 	QVERIFY(intervalType1 != NULL);
 	Objects::Interval *interval1 = static_cast<Objects::Interval *>(map->createObject(Objects::Types::Interval));
 	interval1->setIntervalType(intervalType1);
-	interval1->setDistance(2.0);
+	interval1->setDistance(1.0);
 	interval1->setDuration(QTime(0, 5, 0));
 	map->registerObject(intervalType1);
 	Objects::Interval *interval2 = static_cast<Objects::Interval *>(map->createObject(Objects::Types::Interval));
 	interval2->setIntervalType(intervalType1);
-	interval2->setDistance(1.0);
-	interval2->setDuration(QTime(0, 3, 0));
+	interval2->setDistance(2.0);
+	interval2->setDuration(QTime(0, 5, 0));
 	Objects::EventType *eventType1 = static_cast<Objects::EventType *>(map->getObjectById(Objects::Types::EventType, 1));
 	QVERIFY(eventType1 != NULL);
 	Objects::Event *event1 = static_cast<Objects::Event *>(map->createObject(Objects::Types::Event));
@@ -166,6 +172,7 @@ void TableModelsTest::test_IntervalTableModel()
 
 	QList<Objects::BaseObject *> list = map->getAllObjects(Objects::Types::Interval);
 	QCOMPARE(list.count(), 2);
+	map->discardObjects(list);
 
 	IntervalTableModel *model = new IntervalTableModel(event1, 0);
 	QCOMPARE(model->rowCount(), 2);
@@ -174,60 +181,80 @@ void TableModelsTest::test_IntervalTableModel()
 	model->insertRows(2, 1);
 	model->setData(model->index(2, 1), intervalType1->id());
 	model->setData(model->index(2, 2), 3.0);
-	model->setData(model->index(2, 3), QTime(0, 8, 0));
+	model->setData(model->index(2, 3), QTime(0, 5, 0));
 	QVERIFY(model->submitAll());
 	QCOMPARE(model->rowCount(), 3);
 
 	QVERIFY2(map->saveObject(event1), QTest::toString(map->lastError()));
+	QCOMPARE(event1->intervals().count(), 3);
 
 	list = map->getAllObjects(Objects::Types::Interval);
 	QCOMPARE(list.count(), 3);
 	QCOMPARE(static_cast<Objects::Interval *>(list[2])->distance(), 3.0);
 	map->discardObjects(list);
 
-//	// REMOVE ROWS
-//	model->removeRows(2, 1); // MakerTest3
-//	QVERIFY(model->submitAll());
-//	QCOMPARE(model->rowCount(), 2);
-//
-//	list = map->getAllObjects(Objects::Types::ShoeMaker);
-//	QCOMPARE(list.count(), 2);
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[0])->description(), QString("MakerTest1"));
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[1])->description(), QString("MakerTest2"));
-//	map->discardObjects(list);
-//
-//	// REVERT CHANGES
-//	model->insertRows(2, 2);
-//	model->setData(model->index(2, 1), "MakerTest4");
-//	model->setData(model->index(3, 1), "MakerTest5");
-//	model->removeRows(0, 1); // MakerTest1
-//	model->setData(model->index(0, 1), "MakerTest2u");
-//	model->setData(model->index(2, 1), "MakerTest5u");
-//	model->revertAll();
-//	QCOMPARE(model->rowCount(), 2);
-//
-//	list = map->getAllObjects(Objects::Types::ShoeMaker);
-//	QCOMPARE(list.count(), 2);
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[0])->description(), QString("MakerTest1"));
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[1])->description(), QString("MakerTest2"));
-//	map->discardObjects(list);
-//
-//	// SUBMIT CHANGES
-//	model->insertRows(2, 2);
-//	model->setData(model->index(2, 1), "MakerTest4");
-//	model->setData(model->index(3, 1), "MakerTest5");
-//	model->removeRows(0, 1); // MakerTest1
-//	model->setData(model->index(0, 1), "MakerTest2u");
-//	model->setData(model->index(2, 1), "MakerTest5u");
-//	QVERIFY(model->submitAll());
-//	QCOMPARE(model->rowCount(), 3);
-//
-//	list = map->getAllObjects(Objects::Types::ShoeMaker);
-//	QCOMPARE(list.count(), 3);
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[0])->description(), QString("MakerTest2u"));
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[1])->description(), QString("MakerTest4"));
-//	QCOMPARE(static_cast<Objects::ShoeMaker *>(list[2])->description(), QString("MakerTest5u"));
-//	map->discardObjects(list);
+	// REMOVE ROWS
+	model->removeRows(2, 1);
+	QVERIFY(model->submitAll());
+	QCOMPARE(model->rowCount(), 2);
+
+	QVERIFY2(map->saveObject(event1), QTest::toString(map->lastError()));
+	QCOMPARE(event1->intervals().count(), 2);
+
+	list = map->getAllObjects(Objects::Types::Interval);
+	QCOMPARE(list.count(), 2);
+	map->discardObjects(list);
+
+	// REVERT CHANGES
+	model->insertRows(2, 2);
+	model->setData(model->index(2, 1), intervalType1->id());
+	model->setData(model->index(2, 2), 4.0);
+	model->setData(model->index(2, 3), QTime(0, 5, 0));
+	model->setData(model->index(3, 1), intervalType1->id());
+	model->setData(model->index(3, 2), 5.0);
+	model->setData(model->index(3, 3), QTime(0, 5, 0));
+	model->removeRows(0, 1); // interval1
+	model->setData(model->index(0, 2), 10.0);
+	model->setData(model->index(2, 2), 10.0);
+	model->revertAll();
+	QCOMPARE(model->rowCount(), 2);
+
+	list = map->getAllObjects(Objects::Types::Interval);
+	QCOMPARE(list.count(), 2);
+	QCOMPARE(static_cast<Objects::Interval *>(list[0])->distance(), 1.0);
+	QCOMPARE(static_cast<Objects::Interval *>(list[1])->distance(), 2.0);
+	map->discardObjects(list);
+
+	// SUBMIT CHANGES
+	model->insertRows(2, 2);
+	model->setData(model->index(2, 1), intervalType1->id());
+	model->setData(model->index(2, 2), 4.0);
+	model->setData(model->index(2, 3), QTime(0, 5, 0));
+	model->setData(model->index(3, 1), intervalType1->id());
+	model->setData(model->index(3, 2), 5.0);
+	model->setData(model->index(3, 3), QTime(0, 5, 0));
+	model->removeRows(0, 1); // interval1
+	model->setData(model->index(0, 2), 10.0);
+	model->setData(model->index(2, 2), 10.0);
+	QVERIFY(model->submitAll());
+	QCOMPARE(model->rowCount(), 3);
+
+	QVERIFY2(map->saveObject(event1), QTest::toString(map->lastError()));
+	QCOMPARE(event1->intervals().count(), 3);
+
+	list = map->getAllObjects(Objects::Types::Interval);
+	QCOMPARE(list.count(), 3);
+	QCOMPARE(static_cast<Objects::Interval *>(list[0])->distance(), 10.0);
+	QCOMPARE(static_cast<Objects::Interval *>(list[1])->distance(), 4.0);
+	QCOMPARE(static_cast<Objects::Interval *>(list[2])->distance(), 10.0);
+	map->discardObjects(list);
+
+	//FREE
+	delete model;
+	map->discardObject(event1);
+	map->free();
+	QCOMPARE(map->refCount(Objects::Types::Interval), 0);
+	QCOMPARE(map->objCount(), 5); // 5 cfg objects are always in memory
 }
 
 QTEST_MAIN(TableModelsTest)

@@ -87,26 +87,25 @@ void IntervalView::showEvent(QShowEvent *event)
 
 void IntervalView::on_addPushButton_clicked()
 {
-	if (m_model->rowCount() > 0) {
-		int row = tableView->currentIndex().row() + 1;
-		m_model->insertRows(row, 1);
-		tableView->setCurrentIndex(m_model->index(row, 1));
-	} else {
-		m_model->insertRows(0, 1);
-		tableView->setCurrentIndex(m_model->index(0, 1));
+	if (m_model->rowCount() == 0) {
 		this->setControlsEnabled(true);
 	}
+
+	int row = m_model->rowCount() > 0 ? tableView->currentIndex().row() + 1 : 0;
+	m_model->insertRows(row, 1);
+	tableView->setCurrentIndex(m_model->index(row, 1));
 }
 
 void IntervalView::on_removePushButton_clicked()
 {
+	if (m_model->rowCount() == 1) {
+		this->setControlsEnabled(false);
+	}
+
 	if (m_model->rowCount() > 0) {
 		QModelIndexList indexes = tableView->selectionModel()->selectedIndexes();
 		if (!indexes.isEmpty()) {
 			m_model->removeRows(indexes.at(0).row(), 1);
-		}
-		if (m_model->rowCount() == 0) {
-			this->setControlsEnabled(false);
 		}
 	}
 }
@@ -114,9 +113,10 @@ void IntervalView::on_removePushButton_clicked()
 void IntervalView::resetAll()
 {
 	m_model->revertAll();
+
 	if (m_model->rowCount() > 0) {
-		tableView->setCurrentIndex(m_model->index(0, 1));
 		this->setControlsEnabled(true);
+		tableView->setCurrentIndex(m_model->index(0, 1));
 	} else {
 		this->setControlsEnabled(false);
 	}
@@ -124,11 +124,7 @@ void IntervalView::resetAll()
 
 bool IntervalView::saveAll()
 {
-	bool result = m_model->submitAll();
-	if (!result) {
-		return false;
-	}
-	return true;
+	return m_model->submitAll();
 }
 
 
@@ -155,11 +151,6 @@ void IntervalView::on_rowDownPushButton_clicked()
 
 void IntervalView::currentRowChanged(const QModelIndex &current, const QModelIndex &)
 {
-//	if (intervalTypeComboBox->findData(current.sibling(current.row(), 1).data().toInt()) != -1) {
-//		intervalTypeComboBox->setCurrentIndex(intervalTypeComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
-//	} else {
-//		intervalTypeComboBox->setCurrentIndex(0);
-//	}
 	intervalTypeComboBox->setCurrentIndex(intervalTypeComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
 	distanceDoubleSpinBox->setValue(current.sibling(current.row(), 2).data().toDouble());
 	durationTimeEdit->setTime(current.sibling(current.row(), 3).data().toTime());

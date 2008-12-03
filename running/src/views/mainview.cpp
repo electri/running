@@ -238,10 +238,14 @@ void MainView::editEvent()
 
 void MainView::editEventBegin(Objects::Event *object)
 {
+	m_memento = new Services::Memento(object);
+
+	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
+
 	m_votepopupview = new VotePopupView(this);
 	m_votepopupview->setWindowFlags(Qt::Popup);
 
-	m_intervalview = new IntervalView(object, this);
+	m_intervalview = new IntervalView(event, this);
 	m_intervalview->setWindowFlags(Qt::Popup);
 
 	m_runnerinfopopupview = new RunnerInfoPopupView(this);
@@ -252,9 +256,6 @@ void MainView::editEventBegin(Objects::Event *object)
 
 	editEventRefreshComboBoxes();
 
-	m_memento = new Services::Memento(object);
-
-	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
 	editEventSetProperties(event);
 
 	stackedWidget->setCurrentIndex(stackedWidget->indexOf(eventPage));
@@ -337,8 +338,9 @@ void MainView::on_resetPushButton_clicked()
 	m_intervalview->resetAll();
 
 	m_memento->revert();
-	Objects::Event *item = static_cast<Objects::Event *>(m_memento->copy());
-	editEventSetProperties(item);
+
+	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
+	editEventSetProperties(event);
 }
 
 void MainView::on_savePushButton_clicked()
@@ -346,16 +348,13 @@ void MainView::on_savePushButton_clicked()
 	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
 	editEventGetProperties(event);
 
+	m_intervalview->saveAll();
+
 	if (!Application::instance()->objectMap()->saveObject(m_memento->copy())) {
 		QMessageBox::critical(this, tr("Add/Edit an event"), Application::instance()->objectMap()->lastError());
 		return;
 	}
 	m_memento->submit();
-
-//	if (!m_intervalview->saveAll()) {
-//		QMessageBox::critical(this, tr("Add/Edit an event"), Application::instance()->objectMap()->lastError());
-//		return;
-//	}
 
 	editEventEnd();
 }

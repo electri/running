@@ -25,7 +25,6 @@
 ChildObjectTableModel::ChildObjectTableModel(Objects::Types::Type type, const QList<Objects::BaseObject *> &objects, Objects::BaseObject *objectsParent, QObject *parent)
 	: BaseObjectTableModel(type, parent)
 {
-	m_objects = objects;
 	m_objectsParent = objectsParent;
 
 	foreach (Objects::BaseObject *object, objects) {
@@ -35,16 +34,6 @@ ChildObjectTableModel::ChildObjectTableModel(Objects::Types::Type type, const QL
 
 ChildObjectTableModel::~ChildObjectTableModel()
 {
-	// TODO
-
-//	foreach (Services::Memento *memento, m_list) {
-//		m_objectMap->discardObject(memento->original());
-//		delete memento;
-//	}
-//	foreach (Services::Memento *memento, m_removed) {
-//		m_objectMap->discardObject(memento->original());
-//		delete memento;
-//	}
 }
 
 
@@ -54,19 +43,18 @@ bool ChildObjectTableModel::submitAll()
 	foreach (Services::Memento *memento, m_list) {
 		memento->submit();
 	}
-
-	if (m_objectsParent) {
-		foreach (Services::Memento *memento, m_list) {
-			if (m_objects.contains(memento->original()) == false) {
-				this->addToParent(memento->original());
-			}
-		}
-		foreach (Services::Memento *memento, m_removed) {
-			if (m_objects.contains(memento->original()) == true) {
-				this->removeFromParent(memento->original());
-			}
-		}
+	foreach (Services::Memento *memento, m_list) {
+		this->addToParent(memento->original());
 	}
+
+	foreach (Services::Memento *memento, m_removed) {
+		this->removeFromParent(memento->original());
+	}
+	foreach (Services::Memento *memento, m_removed) {
+		m_objectMap->discardObject(memento->original());
+		delete memento;
+	}
+	m_removed.clear();
 
 	return true;
 }

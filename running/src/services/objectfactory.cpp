@@ -62,6 +62,10 @@ void ObjectFactory::copyObject(Objects::BaseObject *src, Objects::BaseObject *ds
 		case Objects::Types::CfgTemperatureUnit:	*static_cast<Objects::CfgTemperatureUnit *>(dst) = *static_cast<Objects::CfgTemperatureUnit *>(src);	break;
 		case Objects::Types::CfgCurrencyUnit:		*static_cast<Objects::CfgCurrencyUnit *>(dst) = *static_cast<Objects::CfgCurrencyUnit *>(src);	break;
 	}
+
+	foreach (Objects::BaseObject *item, dst->collectionItems()) {
+		item->setParent(dst);
+	}
 }
 
 }

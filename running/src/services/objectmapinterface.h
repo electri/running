@@ -31,6 +31,7 @@ public:
 	virtual ~IObjectMap() {}
 
 	virtual Objects::BaseObject *getObjectById(Objects::Types::Type type, quint32 id) = 0;
+	virtual QList<Objects::BaseObject *> getObjectsByParent(Objects::Types::Type type, Objects::BaseObject *parent) = 0;
 	virtual void discardObject(Objects::BaseObject *) = 0;
 };
 

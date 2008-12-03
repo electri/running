@@ -240,29 +240,17 @@ QList<quint32> ObjectRepository::getEventIdListByDate(const QDate &start, const 
 
 
 
-Objects::BaseObject *ObjectRepository::getChild(Objects::Types::Type type, quint32 id /*, Objects::BaseObject *old_child*/)
+Objects::BaseObject *ObjectRepository::getChild(Objects::Types::Type type, quint32 id)
 {
 	if (id == 0) {
 		return NULL;
 	}
 
-	/*if (old_child) {
-		if (old_child->id() == id) {
-			return old_child;
-		} else {
-			if (m_objectMap) {
-				m_objectMap->discardObject(old_child);
-			}
-		}
-	}*/
-
 	Objects::BaseObject *child = NULL;
 
 	if (m_objectMap) {
 		child = m_objectMap->getObjectById(type, id);
-	}
-
-	if (child == NULL) {
+	} else {
 		child = this->createObject(type);
 		if (!this->loadObject(child, id)) {
 			child = NULL;
@@ -278,7 +266,7 @@ QList<Objects::BaseObject *> ObjectRepository::getCollection(Objects::Types::Typ
 
 	if (parent != NULL) {
 		if (m_objectMap) {
-//			list = m_objectMap->getObjectById(type, id);
+			list = m_objectMap->getObjectsByParent(type, parent);
 		} else {
 			QList<quint32> idList = getIdList(type, parent);
 			foreach (quint32 id, idList) {
