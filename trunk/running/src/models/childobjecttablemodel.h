@@ -38,7 +38,6 @@ protected:
 	virtual void addToParent(Objects::BaseObject *object);
 	virtual void removeFromParent(Objects::BaseObject *object);
 
-	QList<Objects::BaseObject *> m_objects;
 	Objects::BaseObject *m_objectsParent;
 };
 

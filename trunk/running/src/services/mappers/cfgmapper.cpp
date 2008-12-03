@@ -41,10 +41,10 @@ void CfgMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &quer
 {
 	Objects::Cfg *cfg = static_cast<Objects::Cfg *>(object);
 
-	Objects::CfgDistanceUnit *cfgDistanceUnit = static_cast<Objects::CfgDistanceUnit *>(m_repository->getChild(Objects::Types::CfgDistanceUnit, query.record().value("CfgDistanceUnitId").toInt() /*, cfg->cfgDistanceUnit()*/));
-	Objects::CfgWeightUnit *cfgWeightUnit = static_cast<Objects::CfgWeightUnit *>(m_repository->getChild(Objects::Types::CfgWeightUnit, query.record().value("CfgWeightUnitId").toInt() /*, cfg->cfgWeightUnit()*/));
-	Objects::CfgTemperatureUnit *cfgTemperatureUnit = static_cast<Objects::CfgTemperatureUnit *>(m_repository->getChild(Objects::Types::CfgTemperatureUnit, query.record().value("CfgTemperatureUnitId").toInt() /*, cfg->cfgTemperatureUnit()*/));
-	Objects::CfgCurrencyUnit *cfgCurrencyUnit = static_cast<Objects::CfgCurrencyUnit *>(m_repository->getChild(Objects::Types::CfgCurrencyUnit, query.record().value("CfgCurrencyUnitId").toInt() /*, cfg->cfgCurrencyUnit()*/));
+	Objects::CfgDistanceUnit *cfgDistanceUnit = static_cast<Objects::CfgDistanceUnit *>(m_repository->getChild(Objects::Types::CfgDistanceUnit, query.record().value("CfgDistanceUnitId").toInt()));
+	Objects::CfgWeightUnit *cfgWeightUnit = static_cast<Objects::CfgWeightUnit *>(m_repository->getChild(Objects::Types::CfgWeightUnit, query.record().value("CfgWeightUnitId").toInt()));
+	Objects::CfgTemperatureUnit *cfgTemperatureUnit = static_cast<Objects::CfgTemperatureUnit *>(m_repository->getChild(Objects::Types::CfgTemperatureUnit, query.record().value("CfgTemperatureUnitId").toInt()));
+	Objects::CfgCurrencyUnit *cfgCurrencyUnit = static_cast<Objects::CfgCurrencyUnit *>(m_repository->getChild(Objects::Types::CfgCurrencyUnit, query.record().value("CfgCurrencyUnitId").toInt()));
 
 	cfg->setMondayFirstDayOfWeek(query.record().value("MondayFirstDayOfWeek").toBool());
 	cfg->setCfgDistanceUnit(cfgDistanceUnit ? cfgDistanceUnit : 0);

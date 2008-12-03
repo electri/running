@@ -43,7 +43,7 @@ void ShoeMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery &que
 {
 	Objects::Shoe *shoe = static_cast<Objects::Shoe *>(object);
 
-	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(m_repository->getChild(Objects::Types::ShoeModel, query.record().value("ShoeModelId").toInt() /*, shoe->shoeModel()*/));
+	Objects::ShoeModel *shoeModel = static_cast<Objects::ShoeModel *>(m_repository->getChild(Objects::Types::ShoeModel, query.record().value("ShoeModelId").toInt()));
 
 	shoe->setShoeModel(shoeModel ? shoeModel : 0);
 	shoe->setSize(query.record().value("Size").toDouble());

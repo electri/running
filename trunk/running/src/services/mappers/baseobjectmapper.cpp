@@ -104,7 +104,7 @@ bool BaseObjectMapper::insertObject(Objects::BaseObject *object)
 		m_lastError = "";
 		return true;
 	}
-	m_lastError = query.lastError().driverText();
+	m_lastError = "object(" + object->toString() + ") error(" + query.lastError().driverText() + ")";
 	return false;
 }
 
@@ -121,7 +121,7 @@ bool BaseObjectMapper::updateObject(Objects::BaseObject *object)
 		m_lastError = "";
 		return true;
 	}
-	m_lastError = query.lastError().databaseText();
+	m_lastError = "object(" + object->toString() + ") error(" + query.lastError().driverText() + ")";
 	return false;
 }
 
@@ -134,7 +134,7 @@ bool BaseObjectMapper::deleteObject(Objects::BaseObject *object)
 		m_lastError = "";
 		return true;
 	}
-	m_lastError = query.lastError().databaseText();
+	m_lastError = "object(" + object->toString() + ") error(" + query.lastError().driverText() + ")";
 	return false;
 }
 

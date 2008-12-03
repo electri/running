@@ -44,7 +44,7 @@ void IntervalMapper::setValuesFromFields(Objects::BaseObject *object, QSqlQuery 
 {
 	Objects::Interval *interval = static_cast<Objects::Interval *>(object);
 
-	Objects::IntervalType *intervalType = static_cast<Objects::IntervalType *>(m_repository->getChild(Objects::Types::IntervalType, query.record().value("IntervalTypeId").toInt() /*, interval->intervalType()*/));
+	Objects::IntervalType *intervalType = static_cast<Objects::IntervalType *>(m_repository->getChild(Objects::Types::IntervalType, query.record().value("IntervalTypeId").toInt()));
 
 	interval->setIntervalType(intervalType ? intervalType : 0);
 	interval->setDistance(query.record().value("Distance").toDouble());

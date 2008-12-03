@@ -24,7 +24,7 @@
 #include <QObject>
 #include <QString>
 
-namespace Services { class ObjectRepository; class ObjectMap; }
+namespace Services { class ObjectFactory; class ObjectRepository; class ObjectMap; }
 namespace Mappers { class BaseObjectMapper; }
 
 namespace Objects {
@@ -47,6 +47,7 @@ namespace States {
 
 class BaseObject
 {
+friend class Services::ObjectFactory;
 friend class Services::ObjectRepository;
 friend class Services::ObjectMap;
 friend class Mappers::BaseObjectMapper;
