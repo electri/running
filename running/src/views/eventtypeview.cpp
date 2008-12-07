@@ -41,8 +41,7 @@ EventTypeView::EventTypeView(QWidget *parent, quint32 id)
 	tableView->setColumnWidth(3, 80);
 	tableView->setItemDelegateForColumn(3, new BooleanImageItemDelegate(":intervals", tableView));
 
-	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
-									 this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
 	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "EventType", "Description"));
 
@@ -66,26 +65,25 @@ EventTypeView::~EventTypeView()
 
 void EventTypeView::on_addPushButton_clicked()
 {
-	if (m_model->rowCount() > 0) {
-		int row = tableView->currentIndex().row() + 1;
-		m_model->insertRows(row, 1);
-		tableView->setCurrentIndex(m_model->index(row, 1));
-	} else {
-		m_model->insertRows(0, 1);
-		tableView->setCurrentIndex(m_model->index(0, 1));
+	if (m_model->rowCount() == 0) {
 		this->setControlsEnabled(true);
 	}
+
+	int row = m_model->rowCount() > 0 ? tableView->currentIndex().row() + 1 : 0;
+	m_model->insertRows(row, 1);
+	tableView->setCurrentIndex(m_model->index(row, 1));
 }
 
 void EventTypeView::on_removePushButton_clicked()
 {
+	if (m_model->rowCount() == 1) {
+		this->setControlsEnabled(false);
+	}
+
 	if (m_model->rowCount() > 0) {
 		QModelIndexList indexes = tableView->selectionModel()->selectedIndexes();
 		if (!indexes.isEmpty()) {
 			m_model->removeRows(indexes.at(0).row(), 1);
-		}
-		if (m_model->rowCount() == 0) {
-			this->setControlsEnabled(false);
 		}
 	}
 }
@@ -93,9 +91,10 @@ void EventTypeView::on_removePushButton_clicked()
 void EventTypeView::on_resetPushButton_clicked()
 {
 	m_model->revertAll();
+
 	if (m_model->rowCount() > 0) {
-		tableView->setCurrentIndex(m_model->index(0, 1));
 		this->setControlsEnabled(true);
+		tableView->setCurrentIndex(m_model->index(0, 1));
 	} else {
 		this->setControlsEnabled(false);
 	}
@@ -108,6 +107,7 @@ void EventTypeView::on_savePushButton_clicked()
 		QMessageBox::critical(this, tr("Error"), m_model->lastError());
 		return;
 	}
+
 	this->accept();
 }
 

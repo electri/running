@@ -31,6 +31,8 @@ WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+
+	ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather, true);
 }
 
 void WeatherInfoPopupView::showEvent(QShowEvent *)
@@ -47,15 +49,7 @@ void WeatherInfoPopupView::on_weatherToolButton_clicked()
 	WeatherView *view = new WeatherView(this, id);
 	int result = view->exec();
 	if (result == QDialog::Accepted) {
-		this->refreshComboBoxes();
+		ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather, true);
 	}
 	delete view;
-}
-
-
-
-void WeatherInfoPopupView::refreshComboBoxes()
-{
-	ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather);
-	weatherComboBox->insertItem(0, "", 0);
 }

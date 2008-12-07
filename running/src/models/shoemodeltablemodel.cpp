@@ -69,8 +69,7 @@ void ShoeModelTableModel::setColumnValue(Objects::BaseObject *object, int column
 	if (shoeModel) {
 		switch (column) {
 			case 0:		break;
-			case 1:		shoeModel->setShoeMaker(static_cast<Objects::ShoeMaker *>(
-							this->child(Objects::Types::ShoeMaker, value.toInt(), shoeModel->shoeMaker())));	break;
+			case 1:		shoeModel->setShoeMaker(static_cast<Objects::ShoeMaker *>(this->child(Objects::Types::ShoeMaker, value.toInt(), shoeModel->shoeMaker())));	break;
 			case 2:		shoeModel->setDescription(value.toString());	break;
 		}
 	}

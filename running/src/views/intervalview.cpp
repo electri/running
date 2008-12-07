@@ -51,10 +51,9 @@ IntervalView::IntervalView(Objects::Event *event, QWidget *parent, quint32 id)
 	tableView->setItemDelegateForColumn(3, new DurationStyledItemDelegate(tableView));
 	tableView->hideColumn(4);
 
-	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
-									 this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
-	refreshComboBoxes();
+	ViewHelper::fillComboBox(intervalTypeComboBox, Objects::Types::IntervalType, false);
 
 	if (m_model->rowCount() > 0) {
 		if (id) {
@@ -76,10 +75,9 @@ void IntervalView::showEvent(QShowEvent *event)
 {
 	Q_UNUSED(event);
 
-	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", " " + Application::instance()->cfg()->cfgDistanceUnit()->description()));
-
-	distanceDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgDistanceUnit()->description());
-
+	Objects::Cfg *cfg = Application::instance()->cfg();
+	tableView->setItemDelegateForColumn(2, new DistanceStyledItemDelegate(tableView, 3, "", " " + cfg->cfgDistanceUnit()->description()));
+	distanceDoubleSpinBox->setSuffix(" " + cfg->cfgDistanceUnit()->description());
 	this->refreshPaceLineEdit(distanceDoubleSpinBox->value(), durationTimeEdit->time());
 }
 
@@ -149,9 +147,11 @@ void IntervalView::on_rowDownPushButton_clicked()
 
 
 
-void IntervalView::currentRowChanged(const QModelIndex &current, const QModelIndex &)
+void IntervalView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
-	intervalTypeComboBox->setCurrentIndex(intervalTypeComboBox->findData(current.sibling(current.row(), 1).data().toInt()));
+	Q_UNUSED(previous);
+
+	ViewHelper::setIndexOnComboBox(intervalTypeComboBox, current.sibling(current.row(), 1).data().toInt());
 	distanceDoubleSpinBox->setValue(current.sibling(current.row(), 2).data().toDouble());
 	durationTimeEdit->setTime(current.sibling(current.row(), 3).data().toTime());
 	notesPlainTextEdit->setPlainText(current.sibling(current.row(), 4).data().toString());
@@ -191,9 +191,10 @@ void IntervalView::on_intervalTypeToolButton_clicked()
 	IntervalTypeView *view = new IntervalTypeView(this);
 	int result = view->exec();
 	if (result == QDialog::Accepted) {
-		quint32 intervalTypeId = intervalTypeComboBox->itemData(intervalTypeComboBox->currentIndex()).toInt();
-		this->refreshComboBoxes();
-		intervalTypeComboBox->setCurrentIndex(intervalTypeComboBox->findData(intervalTypeId));
+		ViewHelper::fillComboBox(intervalTypeComboBox, Objects::Types::IntervalType, false);
+
+		ComboObjectItemDelegate *delegate = qobject_cast<ComboObjectItemDelegate *>(tableView->itemDelegateForColumn(1));
+		delegate->refreshItems();
 	}
 	delete view;
 }
@@ -206,11 +207,6 @@ void IntervalView::setControlsEnabled(bool enable)
 	distanceDoubleSpinBox->setEnabled(enable);
 	durationTimeEdit->setEnabled(enable);
 	notesPlainTextEdit->setEnabled(enable);
-}
-
-void IntervalView::refreshComboBoxes()
-{
-	ViewHelper::fillComboBox(intervalTypeComboBox, Objects::Types::IntervalType, false);
 }
 
 void IntervalView::swapRows(int row1, int row2)

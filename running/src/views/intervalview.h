@@ -58,7 +58,6 @@ private slots:
 
 private:
 	void setControlsEnabled(bool enable);
-	void refreshComboBoxes();
 	void swapRows(int row1, int row2);
 	void refreshPaceLineEdit(double distance, QTime time);
 

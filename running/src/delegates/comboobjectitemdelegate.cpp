@@ -27,27 +27,49 @@
 ComboObjectItemDelegate::ComboObjectItemDelegate(Objects::Types::Type type, QObject *parent)
 	: QItemDelegate(parent)
 {
-	m_list = Application::instance()->objectMap()->getAllObjects(type);
+	m_type = type;
+
+	QList<Objects::BaseObject *> objects = Application::instance()->objectMap()->getAllObjects(m_type);
+	foreach (Objects::BaseObject *object, objects) {
+		m_objects << static_cast<Objects::ComboObject *>(object);
+	}
 }
 
 ComboObjectItemDelegate::~ComboObjectItemDelegate()
 {
-	Application::instance()->objectMap()->discardObjects(m_list);
+	foreach (Objects::ComboObject *object, m_objects) {
+		Application::instance()->objectMap()->discardObject(object);
+	}
 }
 
-void ComboObjectItemDelegate::paint(QPainter *painter,
-		const QStyleOptionViewItem &option, const QModelIndex &index) const
+
+
+void ComboObjectItemDelegate::refreshItems()
+{
+	foreach (Objects::ComboObject *object, m_objects) {
+		Application::instance()->objectMap()->discardObject(object);
+	}
+
+	m_objects.clear();
+
+	QList<Objects::BaseObject *> objects = Application::instance()->objectMap()->getAllObjects(m_type);
+	foreach (Objects::BaseObject *object, objects) {
+		m_objects << static_cast<Objects::ComboObject *>(object);
+	}
+}
+
+
+
+void ComboObjectItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	quint32 value = index.model()->data(index, Qt::DisplayRole).toInt();
 
 	drawBackground(painter, option, index);
 
 	QString description = "";
-	QList<Objects::BaseObject *>::const_iterator it = m_list.constBegin();
-	while (it != m_list.constEnd()) {
-		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(*it++);
-		if (item->id() == value) {
-			description = item->description();
+	foreach (Objects::ComboObject *object, m_objects) {
+		if (object->id() == value) {
+			description = object->description();
 		}
 	}
 	drawDisplay(painter, option, option.rect, description);
@@ -55,20 +77,22 @@ void ComboObjectItemDelegate::paint(QPainter *painter,
 	drawFocus(painter, option, option.rect);
 }
 
-QSize ComboObjectItemDelegate::sizeHint(const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+QSize ComboObjectItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	Q_UNUSED(option);
+	Q_UNUSED(index);
+
 	return QSize();
 }
 
-QWidget *ComboObjectItemDelegate::createEditor(QWidget *parent,
-		const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+QWidget *ComboObjectItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &index) const
 {
+	Q_UNUSED(index);
+
 	QComboBox *editor = new QComboBox(parent);
 
-	QList<Objects::BaseObject *>::const_iterator it = m_list.constBegin();
-	while (it != m_list.constEnd()) {
-		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(*it++);
-		editor->addItem(item->description(), item->id());
+	foreach (Objects::ComboObject *object, m_objects) {
+		editor->addItem(object->description(), object->id());
 	}
 
 	return editor;
@@ -90,8 +114,9 @@ void ComboObjectItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 	model->setData(index, value, Qt::EditRole);
 }
 
-void ComboObjectItemDelegate::updateEditorGeometry(QWidget *editor,
-			const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+void ComboObjectItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	Q_UNUSED(index);
+
 	editor->setGeometry(option.rect);
 }

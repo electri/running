@@ -12,8 +12,6 @@ DEPENDPATH += . \
 INCLUDEPATH += . \
     ../..
 
-DEFINES += TABLEMODELSTEST_DEBUG
-
 # Build
 UI_DIR = obj
 MOC_DIR = obj

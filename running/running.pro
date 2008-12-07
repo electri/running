@@ -28,16 +28,16 @@ RCC_DIR = obj
 
 # Input
 HEADERS += src/objects/baseobject.h \
+    src/objects/cfg.h \
     src/objects/comboobject.h \
     src/objects/event.h \
     src/objects/eventtype.h \
+    src/objects/interval.h \
+    src/objects/intervaltype.h \
     src/objects/shoe.h \
     src/objects/shoemaker.h \
     src/objects/shoemodel.h \
     src/objects/weather.h \
-    src/objects/interval.h \
-    src/objects/intervaltype.h \
-    src/objects/cfg.h \
     src/services/database.h \
     src/services/transaction.h \
     src/services/memento.h \
@@ -99,13 +99,13 @@ FORMS += src/views/ui/eventtypeview.ui \
     src/views/ui/optionsview.ui \
     src/views/ui/mainview.ui
 SOURCES += src/objects/baseobject.cpp \
+    src/objects/cfg.cpp \
     src/objects/comboobject.cpp \
     src/objects/event.cpp \
     src/objects/eventtype.cpp \
+    src/objects/interval.cpp \
     src/objects/shoe.cpp \
     src/objects/shoemodel.cpp \
-    src/objects/interval.cpp \
-    src/objects/cfg.cpp \
     src/services/database.cpp \
     src/services/transaction.cpp \
     src/services/memento.cpp \

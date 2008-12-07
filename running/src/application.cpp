@@ -78,8 +78,8 @@ QString Application::about() const
 		"A simple program for runners based on a calendar and an event list.") + "<br>\n";
 	message += "<hr><br>\n";
 	message += qApp->translate("Application", "Made with:") + "<br>\n";
-	message += "<a href='http://www.mingw.org'>MinGW</a> Compiler<br>\n";
-	message += "<a href='http://trolltech.com'>Trolltech Qt</a> Framework<br>\n";
+	message += "<a href='http://gcc.gnu.org'>GCC</a> / <a href='http://www.mingw.org'>MinGW</a> Compiler<br>\n";
+	message += "<a href='http://trolltech.com'>Trolltech</a> Qt Framework and Qt Creator IDE<br>\n";
 	message += "<a href='http://www.sqlite.org'>SQLite</a> Database engine<br>\n";
 	message += "QxtStars widget from <a href='http://libqxt.org'>Qxt library</a> Framework extension<br>\n";
 	message += "Icons from <a href='http://www.famfamfam.com/lab/icons/silk'>Silk</a> Icon set<br>\n";

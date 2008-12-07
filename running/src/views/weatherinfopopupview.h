@@ -33,8 +33,6 @@ public:
 	WeatherInfoPopupView(QWidget *parent = 0);
 	void showEvent(QShowEvent *);
 
-	void refreshComboBoxes();
-
 private slots:
 	void on_weatherToolButton_clicked();
 };
