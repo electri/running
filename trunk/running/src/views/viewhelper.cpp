@@ -36,40 +36,71 @@ void fillComboBox(QComboBox *comboBox, Objects::Types::Type type, bool blankItem
 {
 	int id = comboBox->itemData(comboBox->currentIndex()).toInt();
 
-	QList<Objects::BaseObject *> list = Application::instance()->objectMap()->getAllObjects(type);
-
 	comboBox->clear();
-
 	if (blankItem) {
 		comboBox->addItem("", 0);
 	}
 
-	if (type == Objects::Types::Shoe) {
-		foreach (Objects::BaseObject *object, list) {
-			Objects::Shoe *item = static_cast<Objects::Shoe *>(object);
-			comboBox->addItem(
-				QString("%1 %2").arg(item->shoeModel()->shoeMaker()->description())
-					.arg(item->shoeModel()->description()),
-				item->id());
-		}
-	} else {
-		foreach (Objects::BaseObject *object, list) {
-			Objects::ComboObject *item = static_cast<Objects::ComboObject *>(object);
-			comboBox->addItem(item->description(), item->id());
-		}
+	QList<Objects::BaseObject *> list = Application::instance()->objectMap()->getAllObjects(type);
+	foreach (Objects::BaseObject *object, list) {
+		Objects::ComboObject *item = static_cast<Objects::ComboObject *>(object);
+		comboBox->addItem(item->description(), item->id());
 	}
-
 	Application::instance()->objectMap()->discardObjects(list);
 
 	if (id != -1) {
 		if (comboBox->findData(id) != -1) {
 			comboBox->setCurrentIndex(comboBox->findData(id));
-		} else {
-			comboBox->setCurrentIndex(0);
+			return;
 		}
-	} else {
-		comboBox->setCurrentIndex(0);
 	}
+	comboBox->setCurrentIndex(0);
+}
+
+void fillShoesComboBox(QComboBox *comboBox)
+{
+	int id = comboBox->itemData(comboBox->currentIndex()).toInt();
+
+	comboBox->clear();
+	comboBox->addItem("", 0);
+
+	QList<Objects::BaseObject *> list = Application::instance()->objectMap()->getAllObjects(Objects::Types::Shoe);
+	foreach (Objects::BaseObject *object, list) {
+		Objects::Shoe *item = static_cast<Objects::Shoe *>(object);
+		comboBox->addItem(QString("%1 %2").arg(item->shoeModel()->shoeMaker()->description()).arg(item->shoeModel()->description()), item->id());
+	}
+	Application::instance()->objectMap()->discardObjects(list);
+
+	if (id != -1) {
+		if (comboBox->findData(id) != -1) {
+			comboBox->setCurrentIndex(comboBox->findData(id));
+			return;
+		}
+	}
+	comboBox->setCurrentIndex(0);
+}
+
+void fillShoeMakerModelsComboBox(QComboBox *comboBox)
+{
+	int id = comboBox->itemData(comboBox->currentIndex()).toInt();
+
+	comboBox->clear();
+
+	QList<Objects::BaseObject *> list = Application::instance()->objectMap()->getAllObjects(Objects::Types::ShoeModel);
+	foreach (Objects::BaseObject *object, list) {
+		Objects::ShoeModel *item = static_cast<Objects::ShoeModel *>(object);
+		comboBox->addItem(QString("%1 %2").arg(item->shoeMaker()->description())
+				.arg(item->description()), item->id());
+	}
+	Application::instance()->objectMap()->discardObjects(list);
+
+	if (id != -1) {
+		if (comboBox->findData(id) != -1) {
+			comboBox->setCurrentIndex(comboBox->findData(id));
+			return;
+		}
+	}
+	comboBox->setCurrentIndex(0);
 }
 
 Objects::BaseObject *getObjectOnComboBox(QComboBox *comboBox, Objects::Types::Type type, Objects::BaseObject *old_object)

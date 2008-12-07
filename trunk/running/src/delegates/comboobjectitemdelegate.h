@@ -33,6 +33,8 @@ public:
 	ComboObjectItemDelegate(Objects::Types::Type, QObject *parent = 0);
 	~ComboObjectItemDelegate();
 
+	void refreshItems();
+
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
@@ -44,7 +46,8 @@ public:
 	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
-	QList<Objects::BaseObject *> m_list;
+	Objects::Types::Type m_type;
+	QList<Objects::ComboObject *> m_objects;
 };
 
 #endif

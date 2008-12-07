@@ -208,12 +208,6 @@ void MainView::removeEvent()
 			return;
 		}
 
-//		foreach (Objects::BaseObject *interval, m_currentEvent->intervals()) {
-//			if (!APP->objectMap()->eraseObject(interval)) {
-//				QMessageBox::critical(this, tr("Remove an event"), APP->objectMap()->lastError());
-//			}
-//		}
-
 		if (!Application::instance()->objectMap()->eraseObject(m_currentEvent)) {
 			QMessageBox::critical(this, tr("Remove an event"), Application::instance()->objectMap()->lastError());
 		}
@@ -326,11 +320,8 @@ void MainView::editEventSetProperties(Objects::Event *object)
 
 void MainView::editEventRefreshComboBoxes()
 {
-	ViewHelper::fillComboBox(eventTypeComboBox, Objects::Types::EventType);
-	ViewHelper::fillComboBox(shoeComboBox, Objects::Types::Shoe);
-	if (m_weatherinfopopupview) {
-		m_weatherinfopopupview->refreshComboBoxes();
-	}
+	ViewHelper::fillComboBox(eventTypeComboBox, Objects::Types::EventType, false);
+	ViewHelper::fillShoesComboBox(shoeComboBox);
 }
 
 void MainView::on_resetPushButton_clicked()

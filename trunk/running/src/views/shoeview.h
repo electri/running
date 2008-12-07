@@ -45,7 +45,6 @@ private slots:
 
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	void on_shoeMakerComboBox_currentIndexChanged(int index);
 	void on_shoeModelComboBox_currentIndexChanged(int index);
 	void on_initialDistanceDoubleSpinBox_valueChanged(double value);
 	void on_purchaseDateDateEdit_dateChanged(const QDate &value);
@@ -54,12 +53,10 @@ private slots:
 	void on_retiredCheckBox_stateChanged(int state);
 	void on_notesPlainTextEdit_textChanged();
 
-	void on_shoeMakerToolButton_clicked();
 	void on_shoeModelToolButton_clicked();
 
 private:
 	void setControlsEnabled(bool enable);
-	void refreshComboBoxes();
 
 	ShoeTableModel *m_model;
 	double m_distance;

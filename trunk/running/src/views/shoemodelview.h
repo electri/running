@@ -44,12 +44,13 @@ private slots:
 
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	void on_descriptionLineEdit_textChanged(const QString &text);
 	void on_shoeMakerComboBox_currentIndexChanged(int index);
+	void on_descriptionLineEdit_textChanged(const QString &text);
+
+	void on_shoeMakerToolButton_clicked();
 
 private:
 	void setControlsEnabled(bool enable);
-	void refreshComboBoxes();
 
 	ShoeModelTableModel *m_model;
 };

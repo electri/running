@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 
 	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 ß");
+	app.setApplicationVersion("0.2");
 	app.setOrganizationName("Project hosted at Google Code");
 	app.setOrganizationDomain("http://code.google.com/p/running");
 
