@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="it">
+<!DOCTYPE TS>
+<TS version="2.0" language="it">
 <defaultcodec>ISO-8859-15</defaultcodec>
 <context>
     <name>Application</name>
@@ -854,12 +855,12 @@
         <source> km</source>
         <translation> km</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../../src/views/ui/shoeview.ui" line="229"/>
         <source> €</source>
         <translation> €</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../../src/views/ui/shoeview.ui" line="297"/>
         <source> €/km</source>
         <translation> €/km</translation>
@@ -976,7 +977,7 @@
     <message>
         <location filename="../../src/widgets/statisticswidget.cpp" line="60"/>
         <source>COST
-(&#x80;/km)</source>
+(/km)</source>
         <translation type="obsolete">COSTO
 (€/km)</translation>
     </message>
@@ -1011,14 +1012,14 @@
         <translation>Fatica</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>WeatherInfoPopupView</name>
     <message>
         <location filename="../../src/views/ui/weatherinfopopupview.ui" line="52"/>
         <source>...</source>
         <translation>...</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../../src/views/ui/weatherinfopopupview.ui" line="83"/>
         <source> °C</source>
         <translation> °C</translation>

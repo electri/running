@@ -18,20 +18,15 @@
 
 ****************************************************************************/
 
-#ifndef CALENDARWIDGET_H
-#define CALENDARWIDGET_H
+#ifndef CALENDARWIDGETINTERNAL_H
+#define CALENDARWIDGETINTERNAL
 
 #include <QWidget>
 #include <QDate>
 
 class CalendarDelegate;
 
-namespace Ui
-{
-	class CalendarWidget;
-}
-
-class CalendarWidget : public QWidget
+class CalendarWidgetInternal : public QWidget
 {
 	Q_OBJECT
 
@@ -39,34 +34,44 @@ class CalendarWidget : public QWidget
 	Q_PROPERTY(Qt::DayOfWeek firstDayOfWeek READ firstDayOfWeek WRITE setFirstDayOfWeek)
 
 public:
-	CalendarWidget(QWidget *parent = 0);
-	~CalendarWidget();
+	CalendarWidgetInternal(QWidget *parent = 0);
+	~CalendarWidgetInternal();
 
 	QDate selectedDate() const;
 	Qt::DayOfWeek firstDayOfWeek() const;
 	CalendarDelegate *delegate() const;
-	int monthShown() const;
-	int yearShown() const;
 
 signals:
 	void selectedDateChanged(const QDate &newDate);
-	void selectionChanged();
-	void currentPageChanged(int year, int month);
 	void activated();
 
 public slots:
 	void setSelectedDate(const QDate &date);
 	void setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek);
 	void setDelegate(CalendarDelegate *delegate);
-	void on_prevMonthToolButton_clicked();
-	void on_nextMonthToolButton_clicked();
-	void on_prevYearToolButton_clicked();
-	void on_nextYearToolButton_clicked();
+
+protected:
+	bool event(QEvent *event);
+	void paintEvent(QPaintEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void mouseDoubleClickEvent(QMouseEvent *event);
+	void wheelEvent(QWheelEvent *event);
 
 private:
-	QDate m_selectedDate;
+	void drawHeaderCell(QPainter *painter, const QRect &rect, int weekday);
+	void drawEmptyCell(QPainter *painter, const QRect &rect);
+	void drawItemCell(QPainter *painter, const QRect &rect, int weekday, int day);
+	QDate findDate(QPoint pos) const;
+	bool isDate(QPoint pos) const;
 
-	Ui::CalendarWidget *ui;
+	QDate m_selectedDate;
+	Qt::DayOfWeek m_firstDayOfWeek;
+	CalendarDelegate *m_delegate;
+
+	quint8 m_monthStartAt, m_monthEndAt;
+	int m_headHeight, m_cellHeight, m_cellWidth;
 };
 
-#endif // CALENDARWIDGET_H
+#endif // CALENDARWIDGETINTERNAL_H
