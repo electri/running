@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public:
 	CalendarDelegate(QObject *parent = 0);
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date) const;
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date, Objects::Event *event) const;
+	QString toolTipText(const QDate &date) const;
 
 private:
 	QImage m_medal;

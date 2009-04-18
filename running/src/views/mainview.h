@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -33,7 +33,12 @@ class IntervalView;
 class RunnerInfoPopupView;
 class WeatherInfoPopupView;
 
-class MainView : public QMainWindow, public Ui::MainView
+namespace Ui
+{
+	class MainView;
+}
+
+class MainView : public QMainWindow
 {
 	Q_OBJECT
 
@@ -94,6 +99,8 @@ private:
 	IntervalView *m_intervalview;
 	RunnerInfoPopupView *m_runnerinfopopupview;
 	WeatherInfoPopupView *m_weatherinfopopupview;
+
+	Ui::MainView *ui;
 };
 
 #endif

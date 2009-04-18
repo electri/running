@@ -28,6 +28,10 @@
 		<file alias="vote_low">images/emoticon_unhappy.png</file>
 		<file alias="table_row_up">images/arrow_up.png</file>
 		<file alias="table_row_down">images/arrow_down.png</file>
+        <file alias="nextMonth">images/nextMonth.png</file>
+        <file alias="nextYear">images/nextYear.png</file>
+        <file alias="prevMonth">images/prevMonth.png</file>
+        <file alias="prevYear">images/prevYear.png</file>
 	</qresource>
 	<qresource prefix="/">
 		<file>sql/create.sql</file>

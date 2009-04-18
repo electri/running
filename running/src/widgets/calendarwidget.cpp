@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,61 +21,97 @@
 #include <QtGui>
 
 #include "calendarwidget.h"
-
-#include "../delegates/calendardelegate.h"
-
-#include "../application.h"
-#include "../objects/event.h"
+#include "ui_calendarwidget.h"
 
 CalendarWidget::CalendarWidget(QWidget *parent)
-	: QCalendarWidget(parent)
+	: QWidget(parent), ui(new Ui::CalendarWidget)
 {
-	m_delegate = new CalendarDelegate(this);
+	ui->setupUi(this);
 
-//	QTableView *table = this->findChild<QTableView *>();
-//	connect(table, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(tableDoubleClicked(const QModelIndex &)));
+	connect(this, SIGNAL(selectedDateChanged(const QDate &)), ui->calendarWidgetInternal, SLOT(setSelectedDate(const QDate &)));
+	connect(ui->calendarWidgetInternal, SIGNAL(selectedDateChanged(const QDate &)), this, SLOT(setSelectedDate(const QDate &)));
+	connect(ui->calendarWidgetInternal, SIGNAL(activated()), this, SIGNAL(activated()));
+
+	m_selectedDate = QDate();
 }
 
-void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate &date) const
+CalendarWidget::~CalendarWidget()
 {
-	QStyleOptionViewItem option;
-	option.initFrom(this);
-	option.rect = rect;
-	option.showDecorationSelected = true;
-	if (date == selectedDate()) {
-		option.state |= QStyle::State_Selected | QStyle::State_HasFocus;
-	} else {
-		option.state &= ~QStyle::State_HasFocus;
-	}
+	delete ui;
+}
 
-	if (date.month() != monthShown()) {
-		option.palette.setColor(QPalette::Text, QColor("gray"));
-	}
-	else {
-		int dayOfWeek = date.dayOfWeek();
-		if (dayOfWeek == 6 || dayOfWeek == 7) {
-			option.palette.setColor(QPalette::Text, QColor("red"));
+void CalendarWidget::setSelectedDate(const QDate &newDate)
+{
+	if (newDate.isValid()) {
+		QDate oldDate = m_selectedDate;
+		if (newDate != oldDate) {
+
+			ui->selectedDateLabel->setText(newDate.toString("d MMMM yyyy"));
+			m_selectedDate = newDate;
+
+			emit selectedDateChanged(newDate);
+			emit selectionChanged();
+
+			if((newDate.year() != oldDate.year()) && (newDate.month() != oldDate.month())) {
+				emit currentPageChanged(newDate.year(), newDate.month());
+			}
+
+//			qDebug() << "CalendarWidget::setSelectedDate(" + newDate.toString() + ")";
 		}
 	}
+}
 
-	Objects::Event *currentEvent = NULL;
-	Services::ObjectMap *session = Application::instance()->objectMap();
+QDate CalendarWidget::selectedDate() const
+{
+	return m_selectedDate;
+}
 
-	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
-	if (!list.isEmpty()) {
-		currentEvent = static_cast<Objects::Event *>(list.takeFirst());
-	}
-	if (!list.isEmpty()) {
-		foreach (Objects::BaseObject *object, list) {
-			session->discardObject(object);
-		}
-	}
+void CalendarWidget::setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek)
+{
+	ui->calendarWidgetInternal->setFirstDayOfWeek(dayOfWeek);
+}
 
-	if (currentEvent) {
-		m_delegate->paint(painter, option, date, currentEvent);
-		session->discardObject(currentEvent);
-	}
-	else {
-		m_delegate->paint(painter, option, date);
-	}
+Qt::DayOfWeek CalendarWidget::firstDayOfWeek() const
+{
+	return ui->calendarWidgetInternal->firstDayOfWeek();
+}
+
+void CalendarWidget::setDelegate(CalendarDelegate *delegate)
+{
+	ui->calendarWidgetInternal->setDelegate(delegate);
+}
+
+CalendarDelegate *CalendarWidget::delegate() const
+{
+	return 	ui->calendarWidgetInternal->delegate();
+}
+
+int CalendarWidget::monthShown () const
+{
+	return m_selectedDate.month();
+}
+
+int CalendarWidget::yearShown () const
+{
+	return m_selectedDate.year();
+}
+
+void CalendarWidget::on_prevMonthToolButton_clicked()
+{
+	setSelectedDate(m_selectedDate.addMonths(-1));
+}
+
+void CalendarWidget::on_nextMonthToolButton_clicked()
+{
+	setSelectedDate(m_selectedDate.addMonths(1));
+}
+
+void CalendarWidget::on_prevYearToolButton_clicked()
+{
+	setSelectedDate(m_selectedDate.addYears(-1));
+}
+
+void CalendarWidget::on_nextYearToolButton_clicked()
+{
+	setSelectedDate(m_selectedDate.addYears(1));
 }
