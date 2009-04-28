@@ -39,8 +39,8 @@ int main(int argc, char *argv[])
 		app.installTranslator(&myappTranslator);
 	}
 
-	MainView* view = new MainView();
-	view->show();
+        MainView view;
+        view.show();
 
 	return app.exec();
 }
