@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,10 +20,7 @@
 
 #include "utility.h"
 
-namespace Utility
-{
-
-QString formatDistance(qreal d, quint8 precision)
+QString Utility::formatDistance(qreal d, quint8 precision)
 {
 	QString s = "0";
 	s = QString("%L1").arg(d, 0, 'f', precision);
@@ -34,7 +31,7 @@ QString formatDistance(qreal d, quint8 precision)
 	return s;
 }
 
-QString formatDuration(const QTime &t)
+QString Utility::formatDuration(const QTime &t)
 {
 	QString s = "00\"";
 	if (t.isValid()) {
@@ -51,7 +48,7 @@ QString formatDuration(const QTime &t)
 	return s;
 }
 
-QString formatDuration(const QDateTime &t)
+QString Utility::formatDuration(const QDateTime &t)
 {
 	QString s = "00\"";
 	if (t.isValid()) {
@@ -65,7 +62,7 @@ QString formatDuration(const QDateTime &t)
 	return s;
 }
 
-QTime paceTime(qreal distance, const QTime &duration)
+QTime Utility::paceTime(qreal distance, const QTime &duration)
 {
 	QTime t = QTime();
 	if ((distance > 0.0) && (duration > QTime(0, 0, 0))) {
@@ -77,7 +74,7 @@ QTime paceTime(qreal distance, const QTime &duration)
 	return t;
 }
 
-QTime paceTime(qreal distance, const QDateTime &duration)
+QTime Utility::paceTime(qreal distance, const QDateTime &duration)
 {
 	QTime t = QTime();
 	if ((distance > 0.0) && (duration > QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)))) {
@@ -96,7 +93,7 @@ QTime paceTime(qreal distance, const QDateTime &duration)
 	return t;
 }
 
-qreal paceSpeed(qreal distance, const QTime &duration)
+qreal Utility::paceSpeed(qreal distance, const QTime &duration)
 {
 	qreal d = 0.0;
 	if ((distance > 0.0) && (duration > QTime(0, 0, 0))) {
@@ -107,7 +104,7 @@ qreal paceSpeed(qreal distance, const QTime &duration)
 	return d;
 }
 
-qreal paceSpeed(qreal distance, const QDateTime &duration)
+qreal Utility::paceSpeed(qreal distance, const QDateTime &duration)
 {
 	qreal d = 0.0;
 	if ((distance > 0.0) && duration.isValid()) {
@@ -124,6 +121,4 @@ qreal paceSpeed(qreal distance, const QDateTime &duration)
 		}
 	}
 	return d;
-}
-
 }

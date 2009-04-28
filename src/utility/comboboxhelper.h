@@ -18,21 +18,19 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef COMBOBOXHELPER_H
+#define COMBOBOXHELPER_H
 
-int main(int argc, char *argv[])
+#include <QComboBox>
+
+class ComboBoxHelper
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+public:
+	static void fillComboBox(QComboBox *comboBox, const QString &tableName, bool blankItem = false);
+	static void fillShoesComboBox(QComboBox *comboBox, bool blankItem = false);
+//	static void fillShoeMakerModelsComboBox(QComboBox *);
+	static void setSelectedId(QComboBox *comboBox, int id);
+	static int selectedId(QComboBox *comboBox);
+};
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
-
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
-}
+#endif // COMBOBOXHELPER_H

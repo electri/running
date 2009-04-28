@@ -18,21 +18,32 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#include <QtGui>
+#include "weatherinfopopupview.h"
+#include "views/tableviews/weatherview.h"
+#include "utility/comboboxhelper.h"
 
-int main(int argc, char *argv[])
+WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
+	: QWidget(parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	setupUi(this);
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+	ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
+}
 
-	MainView* view = new MainView();
-	view->show();
+void WeatherInfoPopupView::showEvent(QShowEvent *)
+{
+	temperatureDoubleSpinBox->setSuffix(" °C");
+}
 
-	return app.exec();
+void WeatherInfoPopupView::on_weatherToolButton_clicked()
+{
+	quint32 id = ComboBoxHelper::selectedId(weatherComboBox);
+
+	WeatherView *view = new WeatherView(this, id);
+	int result = view->exec();
+	if (result == QDialog::Accepted) {
+		ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
+	}
+	delete view;
 }

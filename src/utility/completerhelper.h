@@ -18,21 +18,16 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef COMPLETERHELPER_H
+#define COMPLETERHELPER_H
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include <QCompleter>
+
+class CompleterHelper
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+public:
+	static QCompleter *completer(const QString &tableName, const QString &columnName, QWidget *parent = 0);
+};
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
-
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
-}
+#endif // COMPLETERHELPER_H

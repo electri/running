@@ -18,21 +18,29 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef EVENTTYPEVIEW_H
+#define EVENTTYPEVIEW_H
 
-int main(int argc, char *argv[])
+#include "abstracttableview.h"
+#include "ui_eventtypeview.h"
+
+class EventTypeView : public AbstractTableView, public Ui::EventTypeView
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	EventTypeView(QWidget *parent = 0, quint32 id = 0);
+	~EventTypeView();
 
-	MainView* view = new MainView();
-	view->show();
+private slots:
+	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	return app.exec();
-}
+	void on_descriptionLineEdit_textChanged(const QString &value);
+	void on_hasMedalCheckBox_stateChanged(int value);
+	void on_hasIntervalsCheckBox_stateChanged(int value);
+
+private:
+	void setControlsEnabled(bool value);
+};
+
+#endif // EVENTTYPEVIEW_H

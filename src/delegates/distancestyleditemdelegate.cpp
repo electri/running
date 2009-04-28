@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,10 +19,25 @@
 ****************************************************************************/
 
 #include "distancestyleditemdelegate.h"
+#include "utility/utility.h"
 
-#include "../utility/utility.h"
+DistanceStyledItemDelegate::DistanceStyledItemDelegate(QObject *parent)
+	: QStyledItemDelegate(parent)
+{
+	m_precision = 0;
+	m_prefix = "";
+	m_suffix = "";
+}
 
-DistanceStyledItemDelegate::DistanceStyledItemDelegate(QObject *parent, quint8 precision, const QString &prefix, const QString &suffix)
+DistanceStyledItemDelegate::DistanceStyledItemDelegate(quint8 precision, QObject *parent)
+	: QStyledItemDelegate(parent)
+{
+	m_precision = precision;
+	m_prefix = "";
+	m_suffix = "";
+}
+
+DistanceStyledItemDelegate::DistanceStyledItemDelegate(quint8 precision, const QString &prefix, const QString &suffix, QObject *parent)
 	: QStyledItemDelegate(parent)
 {
 	m_precision = precision;
