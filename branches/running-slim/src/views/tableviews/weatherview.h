@@ -18,21 +18,27 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef WEATHERVIEW_H
+#define WEATHERVIEW_H
 
-int main(int argc, char *argv[])
+#include "abstracttableview.h"
+#include "ui_weatherview.h"
+
+class WeatherView : public AbstractTableView, public Ui::WeatherView
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	WeatherView(QWidget *parent = 0, quint32 id = 0);
+	~WeatherView();
 
-	MainView* view = new MainView();
-	view->show();
+private slots:
+	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	return app.exec();
-}
+	void on_descriptionLineEdit_textChanged(const QString &value);
+
+private:
+	void setControlsEnabled(bool enable);
+};
+
+#endif // WEATHERVIEW_H

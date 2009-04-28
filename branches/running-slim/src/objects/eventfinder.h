@@ -18,21 +18,18 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef EVENTFINDER_H
+#define EVENTFINDER_H
 
-int main(int argc, char *argv[])
+#include <QString>
+#include <QDateTime>
+#include "eventgateway.h"
+
+class EventFinder
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+public:
+	static bool find(EventGateway &event, quint32 id);
+	static bool find(EventGateway &event, const QDate &date);
+};
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
-
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
-}
+#endif // EVENTFINDER_H

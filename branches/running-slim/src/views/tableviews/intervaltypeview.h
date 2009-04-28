@@ -18,21 +18,27 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef INTERVALTYPEVIEW_H
+#define INTERVALTYPEVIEW_H
 
-int main(int argc, char *argv[])
+#include "abstracttableview.h"
+#include "ui_intervaltypeview.h"
+
+class IntervalTypeView : public AbstractTableView, public Ui::IntervalTypeView
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	IntervalTypeView(QWidget *parent = 0, quint32 id = 0);
+	~IntervalTypeView();
 
-	MainView* view = new MainView();
-	view->show();
+private slots:
+	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	return app.exec();
-}
+	void on_descriptionLineEdit_textChanged(const QString &value);
+
+private:
+	void setControlsEnabled(bool enable);
+};
+
+#endif // INTERVALTYPEVIEW_H

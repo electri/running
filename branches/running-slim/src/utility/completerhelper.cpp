@@ -18,21 +18,20 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#include <QSqlQueryModel>
+#include "completerhelper.h"
 
-int main(int argc, char *argv[])
+QCompleter *CompleterHelper::completer(const QString &tableName, const QString &columnName, QWidget *parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	QCompleter *completer = new QCompleter(parent);
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+	QString queryText = QString("SELECT DISTINCT %1 FROM %2 ORDER BY %1").arg(columnName).arg(tableName);
+	QSqlQueryModel *completerModel = new QSqlQueryModel(completer);
+	completerModel->setQuery(queryText);
 
-	MainView* view = new MainView();
-	view->show();
+	completer->setModel(completerModel);
+	completer->setCaseSensitivity(Qt::CaseInsensitive);
+	completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
 
-	return app.exec();
+	return completer;
 }

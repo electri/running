@@ -18,21 +18,16 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#include <QtGui>
+#include "runnerinfopopupview.h"
 
-int main(int argc, char *argv[])
+RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
+	: QWidget(parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	setupUi(this);
+}
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
-
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
+void RunnerInfoPopupView::showEvent(QShowEvent *)
+{
+	weightDoubleSpinBox->setSuffix(" kg");
 }

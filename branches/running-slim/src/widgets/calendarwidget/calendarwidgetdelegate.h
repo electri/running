@@ -18,21 +18,24 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef CALENDARWIDGETDELEGATE_H
+#define CALENDARWIDGETDELEGATE_H
 
-int main(int argc, char *argv[])
+#include <QItemDelegate>
+
+class CalendarWidgetDelegate : public QItemDelegate
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	CalendarWidgetDelegate(QObject *parent = 0);
 
-	MainView* view = new MainView();
-	view->show();
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date) const;
+	QString toolTipText(const QDate &date) const;
 
-	return app.exec();
-}
+private:
+	QImage m_medal;
+	QImage m_vote_high, m_vote_low;
+};
+
+#endif // CALENDARWIDGETDELEGATE_H

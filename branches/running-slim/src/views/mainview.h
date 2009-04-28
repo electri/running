@@ -22,85 +22,66 @@
 #define MAINVIEW_H
 
 #include <QMainWindow>
+#include "ui_mainview.h"
+#include "objects/eventgateway.h"
 
-#include "../../obj/ui_mainview.h"
-
-namespace Objects { class Event; }
-namespace Services { class Memento; }
-
-class VotePopupView;
-class IntervalView;
+//class IntervalView;
 class RunnerInfoPopupView;
+class VotePopupView;
 class WeatherInfoPopupView;
 
-namespace Ui
-{
-	class MainView;
-}
-
-class MainView : public QMainWindow
+class MainView : public QMainWindow, Ui::MainView
 {
 	Q_OBJECT
 
 public:
 	MainView(QWidget *parent = 0);
+	~MainView();
 
 private slots:
 	void showCalendar();
 	void on_calendarWidget_selectionChanged();
-	void on_calendarWidget_currentPageChanged(int year, int month);
 
 	void showStatistics();
-	void on_statisticsPageEventsPushButton_clicked();
-	void on_statisticsPageShoesPushButton_clicked();
+//	void on_statisticsPageEventsPushButton_clicked();
+//	void on_statisticsPageShoesPushButton_clicked();
 
+	void showEvent();
 	void addEvent();
 	void removeEvent();
 	void editEvent();
+
 	void on_resetPushButton_clicked();
 	void on_savePushButton_clicked();
 	void on_cancelPushButton_clicked();
-	void on_eventTypeComboBox_currentIndexChanged(int index);
 	void on_distanceDoubleSpinBox_valueChanged(double value);
 	void on_durationTimeEdit_timeChanged(const QTime &value);
+	void on_eventTypeComboBox_currentIndexChanged(int index);
 	void on_eventTypeToolButton_clicked();
-	void on_votePushButton_clicked();
-	void on_intervalsPushButton_clicked();
+//	void on_intervalsPushButton_clicked();
 	void on_runnerInfoPushButton_clicked();
+	void on_votePushButton_clicked();
 	void on_weatherInfoPushButton_clicked();
 
-	void editShoe(quint32 id = 0);
 	void on_shoeToolButton_clicked();
 
-	void editEventType(quint32 id = 0);
-	void editShoeMaker(quint32 id = 0);
-	void editShoeModel(quint32 id = 0);
-	void editWeather(quint32 id = 0);
-	void editIntervalType(quint32 id = 0);
-
-	void options();
-	void systemInformation();
+	void settings();
+	void systemInformations();
 	void about();
-	void showDebugOnConsole();
 
 private:
-	void editEventBegin(Objects::Event *);
+	void editEventBegin(EventGateway &event);
 	void editEventEnd();
-	void editEventGetProperties(Objects::Event *);
-	void editEventSetProperties(Objects::Event *);
-	void editEventRefreshComboBoxes();
+	void editEventSetFields(EventGateway &event);
+	void editEventGetFields(EventGateway &event);
 	void refreshPaceLineEdit(double distance, const QTime &time);
 
 	void updateStatusbar();
 
-	Objects::Event *m_currentEvent;
-	Services::Memento *m_memento;
-	VotePopupView *m_votepopupview;
-	IntervalView *m_intervalview;
+//	IntervalView *m_intervalview;
 	RunnerInfoPopupView *m_runnerinfopopupview;
+	VotePopupView *m_votepopupview;
 	WeatherInfoPopupView *m_weatherinfopopupview;
-
-	Ui::MainView *ui;
 };
 
 #endif

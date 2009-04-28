@@ -18,21 +18,20 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef RUNNERINFOPOPUPVIEW_H
+#define RUNNERINFOPOPUPVIEW_H
 
-int main(int argc, char *argv[])
+#include <QWidget>
+
+#include "ui_runnerinfopopupview.h"
+
+class RunnerInfoPopupView : public QWidget, public Ui::RunnerInfoPopupView
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	RunnerInfoPopupView(QWidget *parent = 0);
+	void showEvent(QShowEvent *);
+};
 
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
-}
+#endif // RUNNERINFOPOPUPVIEW_H

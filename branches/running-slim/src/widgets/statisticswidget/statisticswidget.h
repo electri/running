@@ -18,21 +18,40 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef STATISTICSWIDGET_H
+#define STATISTICSWIDGET_H
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include <QPainter>
+
+//#include "../utility/statisticsservice.h"
+
+//namespace StatisticsPages {
+//	enum Page { EventsPerDate, Shoes };
+//}
+
+class StatisticsWidget : public QWidget
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	StatisticsWidget(QWidget *parent = 0);
 
-	MainView* view = new MainView();
-	view->show();
+//	void setPage(StatisticsPages::Page);
 
-	return app.exec();
-}
+//	void resetHeight();
+
+private:
+//	StatisticsPages::Page m_page;
+
+	void paintEvent(QPaintEvent *);
+//	void drawHeader(QPainter &painter, int x, int y, int cw, int ch);
+//	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::EventsPerDate &row);
+//	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::Shoes &row);
+//
+//	int findMinimumHeight();
+//
+//	int margin, cellheight, cellwidth;
+};
+
+#endif // STATISTICSWIDGET_H

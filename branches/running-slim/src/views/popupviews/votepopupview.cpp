@@ -18,21 +18,11 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#include <QtGui>
+#include "votepopupview.h"
 
-int main(int argc, char *argv[])
+VotePopupView::VotePopupView(QWidget *parent)
+	: QWidget(parent)
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
-
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
-
-	MainView* view = new MainView();
-	view->show();
-
-	return app.exec();
+	setupUi(this);
 }

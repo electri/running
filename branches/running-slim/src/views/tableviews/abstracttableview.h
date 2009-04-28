@@ -18,21 +18,38 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef ABSTRACTTABLEVIEW_H
+#define ABSTRACTTABLEVIEW_H
 
-int main(int argc, char *argv[])
+#include <QDialog>
+#include <QModelIndex>
+
+class QTableView;
+class QSqlTableModel;
+
+class AbstractTableView : public QDialog
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	AbstractTableView(QWidget *parent = 0);
+	virtual ~AbstractTableView();
 
-	MainView* view = new MainView();
-	view->show();
+protected slots:
+	virtual void currentRowChanged(const QModelIndex &current, const QModelIndex &previous) = 0;
 
-	return app.exec();
-}
+	void on_addPushButton_clicked();
+	void on_removePushButton_clicked();
+	void on_resetPushButton_clicked();
+	void on_savePushButton_clicked();
+	void on_cancelPushButton_clicked();
+
+protected:
+	virtual void setControlsEnabled(bool value);
+	void refresh(quint32 id = 0);
+
+	QSqlTableModel *m_model;
+	QTableView *m_tableView;
+};
+
+#endif // ABSTRACTTABLEVIEW_H

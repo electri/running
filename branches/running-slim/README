@@ -1,0 +1,19 @@
+running slim version
+--------------------
+
+This is a partial rewrite of the 0.2 main branch version. The purpose is to
+reduce code size and code complexity by removing some of the enterprise
+patters used. Were removed: the domain model, the repository service and all
+the data-mappers, the identity service, the memento. To access the database
+are now used rowgateway and finder patterns (much smaller).
+
+Feature still to be migrated to the new code:
+Shoes
+Intervals
+Settings
+Statistics Widget
+Translations
+Database creation / migration on startup
+
+Feature that are not to be migrated:
+Database transactions

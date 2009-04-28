@@ -18,21 +18,22 @@
 
 ****************************************************************************/
 
-#include <QApplication>
-#include "views/mainview.h"
+#ifndef WEATHERINFOPOPUPVIEW_H
+#define WEATHERINFOPOPUPVIEW_H
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include "ui_weatherinfopopupview.h"
+
+class WeatherInfoPopupView : public QWidget, public Ui::WeatherInfoPopupView
 {
-	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
+	Q_OBJECT
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
-	app.setOrganizationDomain("http://code.google.com/p/running");
+public:
+	WeatherInfoPopupView(QWidget *parent = 0);
+	void showEvent(QShowEvent *);
 
-	MainView* view = new MainView();
-	view->show();
+private slots:
+	void on_weatherToolButton_clicked();
+};
 
-	return app.exec();
-}
+#endif // WEATHERINFOPOPUPVIEW_H
