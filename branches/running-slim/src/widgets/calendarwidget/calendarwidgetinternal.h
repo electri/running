@@ -62,6 +62,7 @@ private:
 	void drawHeaderCell(QPainter *painter, const QRect &rect, int weekday);
 	void drawEmptyCell(QPainter *painter, const QRect &rect);
 	void drawItemCell(QPainter *painter, const QRect &rect, int weekday, int day);
+	void computeMonthBoundaries();
 	QDate findDate(QPoint pos) const;
 	bool isDate(QPoint pos) const;
 

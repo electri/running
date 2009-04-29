@@ -26,9 +26,7 @@
 
 //#include "../utility/statisticsservice.h"
 
-//namespace StatisticsPages {
-//	enum Page { EventsPerDate, Shoes };
-//}
+enum StatisticsPage { StatisticsPageEventsPerDate, StatisticsPageShoes };
 
 class StatisticsWidget : public QWidget
 {
@@ -37,21 +35,21 @@ class StatisticsWidget : public QWidget
 public:
 	StatisticsWidget(QWidget *parent = 0);
 
-//	void setPage(StatisticsPages::Page);
+	void setPage(StatisticsPage page);
 
 //	void resetHeight();
 
 private:
-//	StatisticsPages::Page m_page;
+	StatisticsPage m_page;
 
 	void paintEvent(QPaintEvent *);
-//	void drawHeader(QPainter &painter, int x, int y, int cw, int ch);
+	void drawHeader(QPainter &painter, int x, int y, int cw, int ch);
 //	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::EventsPerDate &row);
 //	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::Shoes &row);
-//
-//	int findMinimumHeight();
-//
-//	int margin, cellheight, cellwidth;
+
+	int findMinimumHeight();
+
+	int margin, cellheight, cellwidth;
 };
 
 #endif // STATISTICSWIDGET_H

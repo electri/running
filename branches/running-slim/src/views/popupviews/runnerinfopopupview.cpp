@@ -20,6 +20,7 @@
 
 #include <QtGui>
 #include "runnerinfopopupview.h"
+#include "objects/settingsgateway.h"
 
 RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
 	: QWidget(parent)
@@ -29,5 +30,5 @@ RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
 
 void RunnerInfoPopupView::showEvent(QShowEvent *)
 {
-	weightDoubleSpinBox->setSuffix(" kg");
+	weightDoubleSpinBox->setSuffix(QString(" %1").arg(SettingsGateway::instance()->weightUnit_description()));
 }

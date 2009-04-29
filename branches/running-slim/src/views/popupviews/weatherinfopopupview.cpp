@@ -21,6 +21,7 @@
 #include <QtGui>
 #include "weatherinfopopupview.h"
 #include "views/tableviews/weatherview.h"
+#include "objects/settingsgateway.h"
 #include "utility/comboboxhelper.h"
 
 WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
@@ -33,7 +34,7 @@ WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 
 void WeatherInfoPopupView::showEvent(QShowEvent *)
 {
-	temperatureDoubleSpinBox->setSuffix(" °C");
+	temperatureDoubleSpinBox->setSuffix(QString(" %1").arg(SettingsGateway::instance()->temperatureUnit_description()));
 }
 
 void WeatherInfoPopupView::on_weatherToolButton_clicked()
