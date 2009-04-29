@@ -48,7 +48,6 @@ public:
 private slots:
 	void showCalendar();
 	void on_calendarWidget_selectionChanged();
-	void on_calendarWidget_currentPageChanged(int year, int month);
 
 	void showStatistics();
 	void on_statisticsPageEventsPushButton_clicked();
