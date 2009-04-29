@@ -43,8 +43,8 @@ private slots:
 	void on_calendarWidget_selectionChanged();
 
 	void showStatistics();
-//	void on_statisticsPageEventsPushButton_clicked();
-//	void on_statisticsPageShoesPushButton_clicked();
+	void on_statisticsPageEventsPushButton_clicked();
+	void on_statisticsPageShoesPushButton_clicked();
 
 	void showEvent();
 	void addEvent();
@@ -74,7 +74,6 @@ private:
 	void editEventEnd();
 	void editEventSetFields(EventGateway &event);
 	void editEventGetFields(EventGateway &event);
-	void refreshPaceLineEdit(double distance, const QTime &time);
 
 	void updateStatusbar();
 

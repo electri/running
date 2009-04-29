@@ -19,47 +19,23 @@
 ****************************************************************************/
 
 #include "utility.h"
+#include "objects/settingsgateway.h"
 
 QString Utility::formatDistance(qreal d, quint8 precision)
 {
-	QString s = "0";
-	s = QString("%L1").arg(d, 0, 'f', precision);
-	while ((s.contains(",") || s.contains(".")) && s.endsWith("0")) {
-		if (s.endsWith("0")) s.chop(1);
-		if (s.endsWith(",") || s.endsWith(".")) s.chop(1);
-	}
+	QString s = QString("%1 %2").arg(_formatReal(d, precision))
+				.arg(SettingsGateway::instance()->distanceUnit_description());
 	return s;
 }
 
 QString Utility::formatDuration(const QTime &t)
 {
-	QString s = "00\"";
-	if (t.isValid()) {
-		if (t.hour() > 0) {
-			s = t.toString("h'h' mm'' ss'\"'");
-		} else {
-			if (t.minute() > 0) {
-				s = t.toString("m'' ss'\"'");
-			} else {
-				s = t.toString("s'\"'");
-			}
-		}
-	}
-	return s;
+	return _formatTime(t);
 }
 
 QString Utility::formatDuration(const QDateTime &t)
 {
-	QString s = "00\"";
-	if (t.isValid()) {
-		qint32 days = QDateTime(QDate(1970, 1, 1)).daysTo(t);
-		if (days > 0) {
-			s = QString("%1g ").arg(days) + t.time().toString("h'h' mm'' ss'\"'");
-		} else {
-			s = formatDuration(t.time());
-		}
-	}
-	return s;
+	return _formatTime(t);
 }
 
 QTime Utility::paceTime(qreal distance, const QTime &duration)
@@ -121,4 +97,70 @@ qreal Utility::paceSpeed(qreal distance, const QDateTime &duration)
 		}
 	}
 	return d;
+}
+
+QString Utility::formatPace(qreal distance, const QDateTime &duration)
+{
+
+	QTime time = paceTime(distance, duration);
+	qreal speed = paceSpeed(distance, duration);
+	QString s = QString("%1 min/%3 or %2 %3/h")
+				.arg(_formatTime(time))
+				.arg(_formatReal(speed, 2))
+				.arg(SettingsGateway::instance()->distanceUnit_description());
+	return s;
+}
+
+QString Utility::formatPace(qreal distance, const QTime &duration)
+{
+
+	QTime time = paceTime(distance, duration);
+	qreal speed = paceSpeed(distance, duration);
+	QString s = QString("%1 min/%3 or %2 %3/h")
+				.arg(_formatTime(time))
+				.arg(_formatReal(speed, 2))
+				.arg(SettingsGateway::instance()->distanceUnit_description());
+	return s;
+}
+
+QString Utility::_formatReal(qreal d, quint8 precision)
+{
+	QString s = "0";
+	s = QString("%L1").arg(d, 0, 'f', precision);
+	while ((s.contains(",") || s.contains(".")) && s.endsWith("0")) {
+		if (s.endsWith("0")) s.chop(1);
+		if (s.endsWith(",") || s.endsWith(".")) s.chop(1);
+	}
+	return s;
+}
+
+QString Utility::_formatTime(const QTime &t)
+{
+	QString s = "00\"";
+	if (t.isValid()) {
+		if (t.hour() > 0) {
+			s = t.toString("h'h' mm'' ss'\"'");
+		} else {
+			if (t.minute() > 0) {
+				s = t.toString("m'' ss'\"'");
+			} else {
+				s = t.toString("s'\"'");
+			}
+		}
+	}
+	return s;
+}
+
+QString Utility::_formatTime(const QDateTime &t)
+{
+	QString s = "00\"";
+	if (t.isValid()) {
+		qint32 days = QDateTime(QDate(1970, 1, 1)).daysTo(t);
+		if (days > 0) {
+			s = QString("%1g ").arg(days) + t.time().toString("h'h' mm'' ss'\"'");
+		} else {
+			s = formatDuration(t.time());
+		}
+	}
+	return s;
 }

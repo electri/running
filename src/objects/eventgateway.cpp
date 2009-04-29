@@ -100,7 +100,7 @@ bool EventGateway::_insert()
 
 bool EventGateway::_update()
 {
-	QString queryText = QString("UPDATE Event SET (Start = :start, Name = :name, Description = :description, EventTypeId = :eventtypeid, Distance = :distance, Duration = :duration, Notes = :notes, ShoeId = :shoeid, Vote = :vote, Quality = :quality, Effort = :effort, Weight = :weight, WeatherId = :weatherid, Temperature = :temperature) WHERE (Id = :id)");
+	QString queryText = QString("UPDATE Event SET Start = :start, Name = :name, Description = :description, EventTypeId = :eventtypeid, Distance = :distance, Duration = :duration, Notes = :notes, ShoeId = :shoeid, Vote = :vote, Quality = :quality, Effort = :effort, Weight = :weight, WeatherId = :weatherid, Temperature = :temperature WHERE Id = :id");
 
 	m_lastError = "";
 	QSqlDatabase db = QSqlDatabase::database();
@@ -137,7 +137,7 @@ bool EventGateway::_update()
 
 bool EventGateway::_delete()
 {
-	QString queryText = QString("DELETE FROM Event WHERE (Id = %1)").arg(m_id);
+	QString queryText = QString("DELETE FROM Event WHERE Id = %1").arg(m_id);
 
 	m_lastError = "";
 	QSqlDatabase db = QSqlDatabase::database();

@@ -18,30 +18,33 @@
 
 ****************************************************************************/
 
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef SETTINGSVIEW_H
+#define SETTINGSVIEW_H
 
-#include <QString>
-#include <QDateTime>
+#include <QWidget>
+#include "ui_settingsview.h"
 
-class Utility
+class QStringListModel;
+
+class SettingsView : public QDialog, public Ui::SettingsView
 {
-public:
-	static QString formatDistance(qreal d, quint8 precision);
-	static QString formatDuration(const QTime &t);
-	static QString formatDuration(const QDateTime &t);
+	Q_OBJECT
 
-	static QTime paceTime(qreal distance, const QTime &duration);
-	static QTime paceTime(qreal distance, const QDateTime &duration);
-	static qreal paceSpeed(qreal distance, const QTime &duration);
-	static qreal paceSpeed(qreal distance, const QDateTime &duration);
-	static QString formatPace(qreal distance, const QTime &duration);
-	static QString formatPace(qreal distance, const QDateTime &duration);
+public:
+	SettingsView(QWidget *parent = 0);
+	~SettingsView();
+
+private slots:
+	void on_resetPushButton_clicked();
+	void on_savePushButton_clicked();
+	void on_cancelPushButton_clicked();
+	void on_treeView_clicked(const QModelIndex &);
 
 private:
-	static QString _formatReal(qreal d, quint8 precision);
-	static QString _formatTime(const QTime &t);
-	static QString _formatTime(const QDateTime &t);
+	void setFields();
+	void getFields();
+
+	QStringListModel *m_model;
 };
 
-#endif
+#endif // SETTINGSVIEW_H

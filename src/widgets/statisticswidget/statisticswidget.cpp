@@ -20,49 +20,50 @@
 
 #include <QtGui>
 #include "statisticswidget.h"
+#include "objects/settingsgateway.h"
 //#include "utility.h"
 
 StatisticsWidget::StatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
-//	m_page = StatisticsPages::EventsPerDate;
-//
-//	margin = 5;
-//	cellwidth = 130;
-//	cellheight = 28;
+	m_page = StatisticsPageEventsPerDate;
+
+	margin = 5;
+	cellwidth = 130;
+	cellheight = 28;
 }
 
-//void StatisticsWidget::setPage(StatisticsPages::Page page)
-//{
-//	m_page = page;
-//
-//	this->setMinimumHeight(this->findMinimumHeight());
-//	this->update();
-//}
+void StatisticsWidget::setPage(StatisticsPage page)
+{
+	m_page = page;
 
-//void StatisticsWidget::drawHeader(QPainter &painter, int x, int y, int cw, int ch)
-//{
-//	QPen pen1(palette().text().color());
-//	QPen pen2(palette().shadow().color());
-//	int flags = Qt::AlignCenter;
-//
-//	painter.setPen(pen1);
-//	painter.drawText(x + cw, y, cw, ch, flags, tr("DISTANCE\n(km)"));
-//	painter.drawText(x + (cw * 2), y, cw, ch, flags, tr("DURATION\n(h min sec)"));
-//	switch (m_page)
-//	{
-//		case StatisticsPages::EventsPerDate:
-//			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("AVR. SPEED\n(min/km - km/h)"));
-//			break;
-//		case StatisticsPages::Shoes:
-//			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(/km)"));
-//			break;
-//	}
-//
-//	pen2.setWidth(4);
-//	painter.setPen(pen2);
-//	painter.drawLine(x, y + ch, x + (cw * 4) - 1, y + ch);
-//}
+	setMinimumHeight(findMinimumHeight());
+	update();
+}
+
+void StatisticsWidget::drawHeader(QPainter &painter, int x, int y, int cw, int ch)
+{
+	QPen pen1(palette().text().color());
+	QPen pen2(palette().shadow().color());
+	int flags = Qt::AlignCenter;
+
+	painter.setPen(pen1);
+	painter.drawText(x + cw, y, cw, ch, flags, tr("DISTANCE\n(%1)").arg(SettingsGateway::instance()->distanceUnit_description()));
+	painter.drawText(x + (cw * 2), y, cw, ch, flags, tr("DURATION\n(h min sec)"));
+	switch (m_page)
+	{
+		case StatisticsPageEventsPerDate:
+			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("AVR. SPEED\n(min/%1 - %1/h)").arg(SettingsGateway::instance()->distanceUnit_description()));
+			break;
+		case StatisticsPageShoes:
+			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(%1/%2)").arg(SettingsGateway::instance()->currencyUnit_description()).arg(SettingsGateway::instance()->distanceUnit_description()));
+			break;
+	}
+
+	pen2.setWidth(4);
+	painter.setPen(pen2);
+	painter.drawLine(x, y + ch, x + (cw * 4) - 1, y + ch);
+}
 
 //void StatisticsWidget::drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::EventsPerDate &row)
 //{
@@ -128,33 +129,33 @@ void StatisticsWidget::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 
-//	QPainter painter(this);
-//
-//	painter.setFont(QFont("MS Shell Dlg 2", 9));
-//
-//	QPalette palette = this->palette();
-//	switch (m_page)
-//	{
-//		case StatisticsPages::EventsPerDate:
-//			palette.setColor(QPalette::Shadow, QColor(0, 128, 0));
-//			palette.setColor(QPalette::Midlight, QColor(192, 255, 192));
-//			break;
-//		case StatisticsPages::Shoes:
-//			palette.setColor(QPalette::Shadow, QColor(128, 0, 0));
-//			palette.setColor(QPalette::Midlight, QColor(255, 192, 192));
-//			break;
-//	}
-//	this->setPalette(palette);
-//
-//	cellwidth = (rect().width() - (margin * 2)) / 4;
-//
-//	int x = margin;
-//	int y = margin;
-//	int col = 1;
-//
-//	this->drawHeader(painter, x, y, cellwidth, cellheight + 16);
-//	y += (cellheight + 16 + 2);
-//
+	QPainter painter(this);
+
+	painter.setFont(QFont("Arial", 9));
+
+	QPalette palette = this->palette();
+	switch (m_page)
+	{
+		case StatisticsPageEventsPerDate:
+			palette.setColor(QPalette::Shadow, QColor(0, 128, 0));
+			palette.setColor(QPalette::Midlight, QColor(192, 255, 192));
+			break;
+		case StatisticsPageShoes:
+			palette.setColor(QPalette::Shadow, QColor(128, 0, 0));
+			palette.setColor(QPalette::Midlight, QColor(255, 192, 192));
+			break;
+	}
+	this->setPalette(palette);
+
+	cellwidth = (rect().width() - (margin * 2)) / 4;
+
+	int x = margin;
+	int y = margin;
+	int col = 1;
+
+	this->drawHeader(painter, x, y, cellwidth, cellheight + 16);
+	y += (cellheight + 16 + 2);
+
 //	switch (m_page)
 //	{
 //		case StatisticsPages::EventsPerDate:
@@ -185,27 +186,27 @@ void StatisticsWidget::paintEvent(QPaintEvent *event)
 //	}
 }
 
-//int StatisticsWidget::findMinimumHeight()
-//{
-//	int height = 0;
-//	height += margin;
-//	height += (cellheight + 16 + 2); // header
-//	switch (m_page)
-//	{
-//		case StatisticsPages::EventsPerDate:
-//		{
+int StatisticsWidget::findMinimumHeight()
+{
+	int height = 0;
+	height += margin;
+	height += (cellheight + 16 + 2); // header
+	switch (m_page)
+	{
+		case StatisticsPageEventsPerDate:
+		{
 //			QList<StatisticsResults::EventsPerDate> list = Utility::StatisticsService::instance()->eventsPerDate();
 //			height += (cellheight * list.size());
-//		}
-//		break;
-//		case StatisticsPages::Shoes:
-//		{
+		}
+		break;
+		case StatisticsPageShoes:
+		{
 //			QList<StatisticsResults::Shoes> list = Utility::StatisticsService::instance()->shoes();
 //			height += (cellheight * list.size());
-//		}
-//		break;
-//	}
-//	height += margin;
-//
-//	return height;
-//}
+		}
+		break;
+	}
+	height += margin;
+
+	return height;
+}

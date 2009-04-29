@@ -46,7 +46,9 @@ HEADERS += src/views/mainview.h \
 	src/utility/completerhelper.h \
 	src/utility/comboboxhelper.h \
 	src/objects/eventfinder.h \
-	src/widgets/statisticswidget/statisticswidget.h
+	src/widgets/statisticswidget/statisticswidget.h \
+	src/views/settingsview.h \
+	src/objects/settingsgateway.h
 FORMS += src/views/mainview.ui \
 	src/widgets/calendarwidget/calendarwidget.ui \
 	src/views/popupviews/weatherinfopopupview.ui \
@@ -54,7 +56,8 @@ FORMS += src/views/mainview.ui \
 	src/views/popupviews/runnerinfopopupview.ui \
 	src/views/tableviews/eventtypeview.ui \
 	src/views/tableviews/weatherview.ui \
-	src/views/tableviews/intervaltypeview.ui
+	src/views/tableviews/intervaltypeview.ui \
+	src/views/settingsview.ui
 SOURCES += src/main.cpp \
 	src/views/mainview.cpp \
 	src/widgets/calendarwidget/calendarwidgetinternal.cpp \
@@ -76,7 +79,9 @@ SOURCES += src/main.cpp \
 	src/utility/completerhelper.cpp \
 	src/utility/comboboxhelper.cpp \
 	src/objects/eventfinder.cpp \
-	src/widgets/statisticswidget/statisticswidget.cpp
+	src/widgets/statisticswidget/statisticswidget.cpp \
+	src/views/settingsview.cpp \
+	src/objects/settingsgateway.cpp
 RESOURCES += resources/application.qrc
 win32:RC_FILE = resources/application.rc
 macx:ICON = resources/running.icns

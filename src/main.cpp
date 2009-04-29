@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
 	app.setOrganizationName("Project hosted at Google Code");
 	app.setOrganizationDomain("http://code.google.com/p/running");
 
-	MainView* view = new MainView();
-	view->show();
+	MainView view;
+	view.show();
 
 	return app.exec();
 }

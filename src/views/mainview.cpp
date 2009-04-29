@@ -23,6 +23,7 @@
 #include "mainview.h"
 #include "utility/utility.h"
 #include "objects/eventfinder.h"
+#include "objects/settingsgateway.h"
 //#include "views/intervalview.h"
 #include "views/popupviews/runnerinfopopupview.h"
 #include "views/popupviews/votepopupview.h"
@@ -31,7 +32,7 @@
 //#include "views/shoeview.h"
 //#include "views/shoemakerview.h"
 //#include "views/shoemodelview.h"
-//#include "views/optionsview.h"
+#include "views/settingsview.h"
 #include "widgets/calendarwidget/calendarwidgetdelegate.h"
 #include "utility/comboboxhelper.h"
 #include "utility/completerhelper.h"
@@ -77,6 +78,7 @@ MainView::MainView(QWidget *parent)
 
 	if (dbInit) {
 		calendarWidget->setDelegate(new CalendarWidgetDelegate());
+		calendarWidget->setFirstDayOfWeek(SettingsGateway::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 		connect(calendarWidget, SIGNAL(activated()), this, SLOT(editEvent()));
 
 		connect(actionCalendar, SIGNAL(triggered()), this, SLOT(showCalendar()));
@@ -85,8 +87,6 @@ MainView::MainView(QWidget *parent)
 		connect(actionRemove, SIGNAL(triggered()), this, SLOT(removeEvent()));
 		connect(actionEdit, SIGNAL(triggered()), this, SLOT(editEvent()));
 		connect(actionSettings, SIGNAL(triggered()), this, SLOT(settings()));
-
-//		->calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 	} else {
 		actionCalendar->setEnabled(false);
 		actionStatistics->setEnabled(false);
@@ -148,6 +148,16 @@ void MainView::showStatistics()
 	stackedWidget->setCurrentIndex(stackedWidget->indexOf(statisticsPage));
 }
 
+void MainView::on_statisticsPageEventsPushButton_clicked()
+{
+	statisticsWidget->setPage(StatisticsPageEventsPerDate);
+}
+
+void MainView::on_statisticsPageShoesPushButton_clicked()
+{
+	statisticsWidget->setPage(StatisticsPageShoes);
+}
+
 
 
 // EDIT EVENT
@@ -166,10 +176,10 @@ void MainView::showEvent()
 void MainView::addEvent()
 {
 	EventGateway event;
+	event.setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
 	if (EventFinder::find(event, calendarWidget->selectedDate())) {
 		QMessageBox::warning(this, tr("Add a new event"), tr("The selected day already has an event."));
 	} else {
-		event.setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
 		showEvent();
 		editEventBegin(event);
 
@@ -226,7 +236,7 @@ void MainView::editEventBegin(EventGateway &event)
 	nameLineEdit->setCompleter(CompleterHelper::completer("Event", "Name", nameLineEdit));
 	descriptionLineEdit->setCompleter(CompleterHelper::completer("Event", "Description", descriptionLineEdit));
 
-	distanceDoubleSpinBox->setSuffix(" km");
+	distanceDoubleSpinBox->setSuffix(" " + SettingsGateway::instance()->distanceUnit_description());
 
 	ComboBoxHelper::fillComboBox(eventTypeComboBox, "EventType", false);
 	ComboBoxHelper::fillShoesComboBox(shoeComboBox, false);
@@ -260,11 +270,13 @@ void MainView::editEventSetFields(EventGateway &event)
 	ComboBoxHelper::setSelectedId(eventTypeComboBox, event.eventType_id());
 	ComboBoxHelper::setSelectedId(shoeComboBox, event.shoe_id());
 	ComboBoxHelper::setSelectedId(m_weatherinfopopupview->weatherComboBox, event.weather_id());
+
+	paceLineEdit->setText(Utility::formatPace(event.distance(), event.duration()));
 }
 
 void MainView::editEventGetFields(EventGateway &event)
 {
-	event.setStart(QDateTime(event.start().date(), startTimeEdit->time()));
+	event.setStart(QDateTime(calendarWidget->selectedDate(), startTimeEdit->time()));
 	event.setName(nameLineEdit->text());
 	event.setDescription(descriptionLineEdit->text());
 	event.setDistance(distanceDoubleSpinBox->value());
@@ -328,21 +340,13 @@ void MainView::on_eventTypeComboBox_currentIndexChanged(int)
 void MainView::on_distanceDoubleSpinBox_valueChanged(double value)
 {
 	QTime time = durationTimeEdit->time();
-	refreshPaceLineEdit(value, time);
+	paceLineEdit->setText(Utility::formatPace(value, time));
 }
 
 void MainView::on_durationTimeEdit_timeChanged(const QTime &value)
 {
 	double distance = distanceDoubleSpinBox->value();
-	refreshPaceLineEdit(distance, value);
-}
-
-void MainView::refreshPaceLineEdit(double distance, const QTime &time)
-{
-	QTime paceTime = Utility::paceTime(distance, time);
-	double paceSpeed = Utility::paceSpeed(distance, time);
-	paceLineEdit->setText(tr("%1 min/km or %2 km/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)));
+	paceLineEdit->setText(Utility::formatPace(distance, value));
 }
 
 void MainView::on_eventTypeToolButton_clicked()
@@ -407,13 +411,13 @@ void MainView::on_shoeToolButton_clicked()
 
 void MainView::settings()
 {
-//	OptionsView *view = new OptionsView(this);
-//	int result = view->exec();
-//	if (result == QDialog::Accepted) {
-//		ui->calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
-//		ui->calendarWidget->update();
-//	}
-//	delete view;
+	SettingsView *view = new SettingsView(this);
+	int result = view->exec();
+	if (result == QDialog::Accepted) {
+		calendarWidget->setFirstDayOfWeek(SettingsGateway::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+		calendarWidget->update();
+	}
+	delete view;
 }
 
 
@@ -471,7 +475,7 @@ void MainView::updateStatusbar()
 		if (!event.name().isEmpty()) {
 			message += tr(" - %1").arg(event.name());
 		}
-		message += tr(" - %1 km in %3")
+		message += tr(" - %1 in %3")
 				.arg(Utility::formatDistance(event.distance(), 3))
 				.arg(Utility::formatDuration(event.duration()));
 		statusbar->showMessage(tr("Event: %1").arg(message));

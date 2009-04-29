@@ -49,7 +49,7 @@ void CalendarWidgetDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 		font.setBold(false);
 		painter->setFont(font);
 
-		QString distance = Utility::formatDistance(event.distance(), 3) + " km";
+		QString distance = Utility::formatDistance(event.distance(), 3);
 		QRect rect2 = painter->boundingRect(option.rect, Qt::TextSingleLine, distance);
 		rect2.moveCenter(option.rect.center());
 		rect2.moveTop(rect1.bottom());
@@ -83,12 +83,12 @@ QString CalendarWidgetDelegate::toolTipText(const QDate &date) const
 		tip += "<table border=0 cellpadding=0 cellspacing=6>";
 		tip += "<tr><td colspan=2><i>" + event.start().date().toString(Qt::DefaultLocaleLongDate) + "</i></td></tr>";
 		tip += "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>";
-		tip += "<tr><td>" + tr("Nome:") + "</td><td><b>" + event.name() + "</b></td></tr>";
-		tip += "<tr><td>" + tr("Descrizione:") + "</td><td>" + event.description() + "</td></tr>";
-		tip += "<tr><td>" + tr("Tipo:") + "</td><td>" + event.eventType_description() + "</td></tr>";
-		tip += "<tr><td>" + tr("Ora di inizio:") + "</td><td>" + event.start().time().toString("hh:mm") + "</td></tr>";
-		tip += "<tr><td>" + tr("Distanza:") + "</td><td>" + Utility::formatDistance(event.distance(), 2) + " km</td></tr>";
-		tip += "<tr><td>" + tr("Durata:") + "</td><td>" + Utility::formatDuration(event.duration()) + "</td></tr>";
+		tip += "<tr><td>" + tr("Name:") + "</td><td><b>" + event.name() + "</b></td></tr>";
+		tip += "<tr><td>" + tr("Description:") + "</td><td>" + event.description() + "</td></tr>";
+		tip += "<tr><td>" + tr("Type:") + "</td><td>" + event.eventType_description() + "</td></tr>";
+		tip += "<tr><td>" + tr("Start time:") + "</td><td>" + event.start().time().toString("hh:mm") + "</td></tr>";
+		tip += "<tr><td>" + tr("Distance:") + "</td><td>" + Utility::formatDistance(event.distance(), 2) + "</td></tr>";
+		tip += "<tr><td>" + tr("Duration:") + "</td><td>" + Utility::formatDuration(event.duration()) + "</td></tr>";
 		tip += "</table>";
 	}
 	return tip;
