@@ -80,35 +80,35 @@ void CalendarWidget::setDelegate(CalendarWidgetDelegate *delegate)
 
 CalendarWidgetDelegate *CalendarWidget::delegate() const
 {
-	return 	calendarWidgetInternal->delegate();
+	return calendarWidgetInternal->delegate();
 }
 
-int CalendarWidget::monthShown () const
+int CalendarWidget::monthShown() const
 {
 	return m_selectedDate.month();
 }
 
-int CalendarWidget::yearShown () const
+int CalendarWidget::yearShown() const
 {
 	return m_selectedDate.year();
 }
 
-void CalendarWidget::on_prevMonthToolButton_clicked()
+void CalendarWidget::on_prevMonthPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addMonths(-1));
 }
 
-void CalendarWidget::on_nextMonthToolButton_clicked()
+void CalendarWidget::on_nextMonthPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addMonths(1));
 }
 
-void CalendarWidget::on_prevYearToolButton_clicked()
+void CalendarWidget::on_prevYearPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addYears(-1));
 }
 
-void CalendarWidget::on_nextYearToolButton_clicked()
+void CalendarWidget::on_nextYearPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addYears(1));
 }

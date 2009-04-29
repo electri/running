@@ -53,10 +53,10 @@ public slots:
 	void setSelectedDate(const QDate &date);
 	void setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek);
 	void setDelegate(CalendarWidgetDelegate *delegate);
-	void on_prevMonthToolButton_clicked();
-	void on_nextMonthToolButton_clicked();
-	void on_prevYearToolButton_clicked();
-	void on_nextYearToolButton_clicked();
+	void on_prevMonthPushButton_clicked();
+	void on_nextMonthPushButton_clicked();
+	void on_prevYearPushButton_clicked();
+	void on_nextYearPushButton_clicked();
 
 private:
 	QDate m_selectedDate;
