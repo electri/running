@@ -44,9 +44,10 @@ MainView::MainView(QWidget *parent)
 
 #ifdef Q_WS_MAC
 	setUnifiedTitleAndToolBarOnMac(true);
+#endif
+
 	toolBar->setIconSize(QSize(32, 32));
 	toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-#endif
 
 //	m_intervalview = NULL;
 	m_runnerinfopopupview = NULL;
