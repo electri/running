@@ -63,8 +63,10 @@ bool ChildObjectTableModel::submitAll()
 
 void ChildObjectTableModel::addToParent(Objects::BaseObject *object)
 {
+	Q_UNUSED(object);
 }
 
 void ChildObjectTableModel::removeFromParent(Objects::BaseObject *object)
 {
+	Q_UNUSED(object);
 }

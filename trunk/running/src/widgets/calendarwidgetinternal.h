@@ -19,7 +19,7 @@
 ****************************************************************************/
 
 #ifndef CALENDARWIDGETINTERNAL_H
-#define CALENDARWIDGETINTERNAL
+#define CALENDARWIDGETINTERNAL_H
 
 #include <QWidget>
 #include <QDate>
@@ -35,7 +35,6 @@ class CalendarWidgetInternal : public QWidget
 
 public:
 	CalendarWidgetInternal(QWidget *parent = 0);
-	~CalendarWidgetInternal();
 
 	QDate selectedDate() const;
 	Qt::DayOfWeek firstDayOfWeek() const;
@@ -63,6 +62,7 @@ private:
 	void drawHeaderCell(QPainter *painter, const QRect &rect, int weekday);
 	void drawEmptyCell(QPainter *painter, const QRect &rect);
 	void drawItemCell(QPainter *painter, const QRect &rect, int weekday, int day);
+	void computeMonthBoundaries();
 	QDate findDate(QPoint pos) const;
 	bool isDate(QPoint pos) const;
 
