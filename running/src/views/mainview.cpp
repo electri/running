@@ -152,10 +152,6 @@ void MainView::on_calendarWidget_selectionChanged()
 	updateStatusbar();
 }
 
-void MainView::on_calendarWidget_currentPageChanged(int year, int month)
-{
-}
-
 // STATISTICS WIDGET
 
 void MainView::showStatistics()

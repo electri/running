@@ -19,9 +19,8 @@
 ****************************************************************************/
 
 #include <QtGui>
-
 #include "calendarwidgetinternal.h"
-#include "../delegates/calendardelegate.h"
+#include "delegates/calendardelegate.h"
 
 CalendarWidgetInternal::CalendarWidgetInternal(QWidget *parent)
 	: QWidget(parent)
@@ -37,20 +36,12 @@ CalendarWidgetInternal::CalendarWidgetInternal(QWidget *parent)
 	m_headHeight = m_cellHeight = m_cellWidth = 0;
 }
 
-CalendarWidgetInternal::~CalendarWidgetInternal()
-{
-}
-
 void CalendarWidgetInternal::setSelectedDate(const QDate &date)
 {
 	if (date.isValid()) {
 		if (date != m_selectedDate) {
-//			qDebug() << "CalendarWidgetInternal::setSelectedDate(" << date.toString() << ")";
-
 			m_selectedDate = date;
-			m_monthStartAt = QDate(date.year(), date.month(), 1).dayOfWeek();
-			m_monthEndAt = m_monthStartAt + date.daysInMonth() - 1;
-
+			computeMonthBoundaries();
 			update();
 
 			emit selectedDateChanged(date);
@@ -76,6 +67,8 @@ CalendarDelegate *CalendarWidgetInternal::delegate() const
 void CalendarWidgetInternal::setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek)
 {
 	m_firstDayOfWeek = dayOfWeek;
+	computeMonthBoundaries();
+	update();
 }
 
 Qt::DayOfWeek CalendarWidgetInternal::firstDayOfWeek() const
@@ -97,8 +90,6 @@ bool CalendarWidgetInternal::event(QEvent *event)
 		}
 
 		QToolTip::hideText();
-
-		qDebug() << "CalendarWidgetInternal::event(type:ToolTip)";
 	}
 
 	return QWidget::event(event);
@@ -114,8 +105,11 @@ void CalendarWidgetInternal::paintEvent(QPaintEvent *)
 	m_cellWidth = width() / 7;
 
 	for (int y = 0; y < 7; ++y) {
+		int weekday = y + m_firstDayOfWeek;
+		if (weekday > 7) weekday -= 7;
+
 		QRect rect((m_cellWidth * y), 0, y != 6 ? m_cellWidth : width() - (m_cellWidth * y) - 1, m_headHeight);
-		drawHeaderCell(&painter, rect, y);
+		drawHeaderCell(&painter, rect, weekday);
 
 		for (int x = 0; x < 6; ++x) {
 			QRect rect((m_cellWidth * y), m_headHeight + (m_cellHeight * x), y != 6 ? m_cellWidth : width() - (m_cellWidth * y) - 1, x != 5 ? m_cellHeight : height() - (m_headHeight + (m_cellHeight * x)) - 1);
@@ -123,7 +117,7 @@ void CalendarWidgetInternal::paintEvent(QPaintEvent *)
 			int offset = ((x * 7) + y) + 1;
 			if ((offset >= m_monthStartAt) && (offset <= m_monthEndAt)) {
 				int day = offset - m_monthStartAt + 1;
-				drawItemCell(&painter, rect, y, day);
+				drawItemCell(&painter, rect, weekday, day);
 			} else {
 				drawEmptyCell(&painter, rect);
 			}
@@ -137,9 +131,8 @@ void CalendarWidgetInternal::drawHeaderCell(QPainter *painter, const QRect &rect
 
 	painter->drawRect(rect);
 
-	QString dayName = QLocale::system().dayName(weekday + 1);
-//	dayName.replace(0, 1, dayName.mid(0, 1).toUpper());
-	painter->setPen(((weekday == 5) || (weekday == 6)) ? QColor(Qt::red) : palette().color(QPalette::Active, QPalette::Text));
+	QString dayName = QLocale::system().dayName(weekday);
+	painter->setPen(((weekday == Qt::Saturday) || (weekday == Qt::Sunday)) ? QColor(Qt::red) : palette().color(QPalette::Active, QPalette::Text));
 	painter->drawText(rect, Qt::AlignCenter | Qt::TextSingleLine, dayName);
 
 	painter->restore();
@@ -166,7 +159,7 @@ void CalendarWidgetInternal::drawItemCell(QPainter *painter, const QRect &rect, 
 		painter->setBrush(palette().brush(QPalette::Base));
 		painter->drawRect(rect);
 
-		painter->setPen(((weekday == 5) || (weekday == 6)) ? QColor(Qt::red) : palette().color(QPalette::Active, QPalette::Text));
+		painter->setPen(((weekday == Qt::Saturday) || (weekday == Qt::Sunday)) ? QColor(Qt::red) : palette().color(QPalette::Active, QPalette::Text));
 		painter->drawText((rect.topLeft() + QPoint(4, 12)), QString("%1").arg(day));
 	}
 
@@ -187,6 +180,23 @@ void CalendarWidgetInternal::drawItemCell(QPainter *painter, const QRect &rect, 
 	}
 
 	painter->restore();
+}
+
+void CalendarWidgetInternal::computeMonthBoundaries()
+{
+	/* m_firstDayOfWeek is enum Qt::DayOfWeek and eval to 1-7
+	 * the month start at first cell if the first day is monday and the
+	 * first column is set to monday too, and so on*/
+
+	int dayOfWeek = QDate(m_selectedDate.year(), m_selectedDate.month(), 1).dayOfWeek();
+	if (dayOfWeek < m_firstDayOfWeek) {
+		m_monthStartAt = dayOfWeek + (8 - m_firstDayOfWeek);
+	} else if (dayOfWeek > m_firstDayOfWeek) {
+		m_monthStartAt = dayOfWeek + (m_firstDayOfWeek - 1);
+	} else {
+		m_monthStartAt = 1;
+	}
+	m_monthEndAt = m_monthStartAt + m_selectedDate.daysInMonth() - 1;
 }
 
 QDate CalendarWidgetInternal::findDate(QPoint pos) const
@@ -231,8 +241,6 @@ void CalendarWidgetInternal::keyPressEvent(QKeyEvent *event)
 	} else {
 		QWidget::keyPressEvent(event);
 	}
-
-//	qDebug() << "CalendarWidgetInternal::keyPressEvent(key:" << event->key() << ")";
 }
 
 void CalendarWidgetInternal::mousePressEvent(QMouseEvent *event)
@@ -240,12 +248,11 @@ void CalendarWidgetInternal::mousePressEvent(QMouseEvent *event)
 	if (isDate(event->pos())) {
 		setSelectedDate(findDate(event->pos()));
 	}
-
-//	qDebug() << "CalendarWidgetInternal::mousePressEvent(pos x:" << event->pos().x() << ", y:" << event->pos().y() << ")";
 }
 
 void CalendarWidgetInternal::mouseReleaseEvent(QMouseEvent *event)
 {
+	Q_UNUSED(event);
 }
 
 void CalendarWidgetInternal::mouseDoubleClickEvent(QMouseEvent *event)
@@ -253,8 +260,6 @@ void CalendarWidgetInternal::mouseDoubleClickEvent(QMouseEvent *event)
 	if (isDate(event->pos())) {
 		emit activated();
 	}
-
-//	qDebug() << "CalendarWidgetInternal::mouseDoubleClickEvent(pos x:" << event->pos().x() << ", y:" << event->pos().y() << ")";
 }
 
 void CalendarWidgetInternal::wheelEvent(QWheelEvent *event)
@@ -273,6 +278,4 @@ void CalendarWidgetInternal::wheelEvent(QWheelEvent *event)
 				break;
 		}
 	}
-
-//	qDebug() << "CalendarWidgetInternal::wheelEvent(delta:" << event->delta() << ")";
 }
