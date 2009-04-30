@@ -10,10 +10,5 @@ are now used rowgateway and finder patterns (much smaller).
 Feature still to be migrated to the new code:
 Shoes
 Intervals
-Settings
-Statistics Widget
 Translations
-Database creation / migration on startup
 
-Feature that are not to be migrated:
-Database transactions

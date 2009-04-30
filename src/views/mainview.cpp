@@ -72,6 +72,8 @@ MainView::MainView(QWidget *parent)
 		calendarWidget->setFirstDayOfWeek(SettingsGateway::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 		connect(calendarWidget, SIGNAL(activated()), this, SLOT(editEvent()));
 
+		statisticsWidget->refreshCache();
+
 		connect(actionCalendar, SIGNAL(triggered()), this, SLOT(showCalendar()));
 		connect(actionStatistics, SIGNAL(triggered()), this, SLOT(showStatistics()));
 		connect(actionAdd, SIGNAL(triggered()), this, SLOT(addEvent()));
@@ -196,7 +198,7 @@ void MainView::editEvent()
 {
 	if (EventFinder::find(m_event, calendarWidget->selectedDate())) {
 		showEvent();
-		
+
 		editEventBegin();
 
 		QString message = tr("Edit event: %1").arg(m_event.start().date().toString("d MMMM yyyy"));
