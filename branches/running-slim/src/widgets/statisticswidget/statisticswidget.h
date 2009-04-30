@@ -23,8 +23,7 @@
 
 #include <QWidget>
 #include <QPainter>
-
-//#include "../utility/statisticsservice.h"
+#include <QSqlRecord>
 
 enum StatisticsPage { StatisticsPageEventsPerDate, StatisticsPageShoes };
 
@@ -36,20 +35,21 @@ public:
 	StatisticsWidget(QWidget *parent = 0);
 
 	void setPage(StatisticsPage page);
-
-//	void resetHeight();
+	void refreshCache();
 
 private:
-	StatisticsPage m_page;
-
 	void paintEvent(QPaintEvent *);
-	void drawHeader(QPainter &painter, int x, int y, int cw, int ch);
-//	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::EventsPerDate &row);
-//	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::Shoes &row);
 
-	int findMinimumHeight();
+	void _drawHeader(QPainter &painter, int x, int y, int cw, int ch);
+	void _drawEventsPerDateRow(QPainter &painter, int x, int y, int cw, int ch, int row);
+	void _drawShoesRow(QPainter &painter, int x, int y, int cw, int ch, int row);
+	void _cacheEventsPerDateRow(const QSqlRecord &record);
+	void _cacheShoesRow(const QSqlRecord &record);
+	int _minimumHeight();
 
-	int margin, cellheight, cellwidth;
+	StatisticsPage m_page;
+	int m_margin;
+	int m_cellheight, m_cellwidth;
 };
 
 #endif // STATISTICSWIDGET_H

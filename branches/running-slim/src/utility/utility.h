@@ -27,21 +27,23 @@
 class Utility
 {
 public:
-	static QString formatDistance(qreal d, quint8 precision);
-	static QString formatDuration(const QTime &t);
-	static QString formatDuration(const QDateTime &t);
-
 	static QTime paceTime(qreal distance, const QTime &duration);
 	static QTime paceTime(qreal distance, const QDateTime &duration);
 	static qreal paceSpeed(qreal distance, const QTime &duration);
 	static qreal paceSpeed(qreal distance, const QDateTime &duration);
+
+	static QString formatDistance(qreal d, quint8 precision);
+
+	static QString formatDuration(const QTime &t);
+	static QString formatDuration(const QDateTime &t);
+
 	static QString formatPace(qreal distance, const QTime &duration);
 	static QString formatPace(qreal distance, const QDateTime &duration);
 
-private:
-	static QString _formatReal(qreal d, quint8 precision);
-	static QString _formatTime(const QTime &t);
-	static QString _formatTime(const QDateTime &t);
+	static QString formatReal(qreal d, quint8 precision);
+
+	static QString formatTime(const QTime &t);
+	static QString formatTime(const QDateTime &t);
 };
 
 #endif

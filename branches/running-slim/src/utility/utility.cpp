@@ -21,23 +21,6 @@
 #include "utility.h"
 #include "objects/settingsgateway.h"
 
-QString Utility::formatDistance(qreal d, quint8 precision)
-{
-	QString s = QString("%1 %2").arg(_formatReal(d, precision))
-				.arg(SettingsGateway::instance()->distanceUnit_description());
-	return s;
-}
-
-QString Utility::formatDuration(const QTime &t)
-{
-	return _formatTime(t);
-}
-
-QString Utility::formatDuration(const QDateTime &t)
-{
-	return _formatTime(t);
-}
-
 QTime Utility::paceTime(qreal distance, const QTime &duration)
 {
 	QTime t = QTime();
@@ -99,14 +82,31 @@ qreal Utility::paceSpeed(qreal distance, const QDateTime &duration)
 	return d;
 }
 
+QString Utility::formatDistance(qreal d, quint8 precision)
+{
+	QString s = QString("%1 %2").arg(formatReal(d, precision))
+				.arg(SettingsGateway::instance()->distanceUnit_description());
+	return s;
+}
+
+QString Utility::formatDuration(const QTime &t)
+{
+	return formatTime(t);
+}
+
+QString Utility::formatDuration(const QDateTime &t)
+{
+	return formatTime(t);
+}
+
 QString Utility::formatPace(qreal distance, const QDateTime &duration)
 {
 
 	QTime time = paceTime(distance, duration);
 	qreal speed = paceSpeed(distance, duration);
 	QString s = QString("%1 min/%3 or %2 %3/h")
-				.arg(_formatTime(time))
-				.arg(_formatReal(speed, 2))
+				.arg(formatTime(time))
+				.arg(formatReal(speed, 2))
 				.arg(SettingsGateway::instance()->distanceUnit_description());
 	return s;
 }
@@ -117,13 +117,13 @@ QString Utility::formatPace(qreal distance, const QTime &duration)
 	QTime time = paceTime(distance, duration);
 	qreal speed = paceSpeed(distance, duration);
 	QString s = QString("%1 min/%3 or %2 %3/h")
-				.arg(_formatTime(time))
-				.arg(_formatReal(speed, 2))
+				.arg(formatTime(time))
+				.arg(formatReal(speed, 2))
 				.arg(SettingsGateway::instance()->distanceUnit_description());
 	return s;
 }
 
-QString Utility::_formatReal(qreal d, quint8 precision)
+QString Utility::formatReal(qreal d, quint8 precision)
 {
 	QString s = "0";
 	s = QString("%L1").arg(d, 0, 'f', precision);
@@ -134,7 +134,7 @@ QString Utility::_formatReal(qreal d, quint8 precision)
 	return s;
 }
 
-QString Utility::_formatTime(const QTime &t)
+QString Utility::formatTime(const QTime &t)
 {
 	QString s = "00\"";
 	if (t.isValid()) {
@@ -151,7 +151,7 @@ QString Utility::_formatTime(const QTime &t)
 	return s;
 }
 
-QString Utility::_formatTime(const QDateTime &t)
+QString Utility::formatTime(const QDateTime &t)
 {
 	QString s = "00\"";
 	if (t.isValid()) {
@@ -159,7 +159,7 @@ QString Utility::_formatTime(const QDateTime &t)
 		if (days > 0) {
 			s = QString("%1g ").arg(days) + t.time().toString("h'h' mm'' ss'\"'");
 		} else {
-			s = formatDuration(t.time());
+			s = formatTime(t.time());
 		}
 	}
 	return s;
