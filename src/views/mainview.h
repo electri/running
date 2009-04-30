@@ -70,13 +70,14 @@ private slots:
 	void about();
 
 private:
-	void editEventBegin(EventGateway &event);
+	void editEventBegin();
 	void editEventEnd();
-	void editEventSetFields(EventGateway &event);
-	void editEventGetFields(EventGateway &event);
+	void editEventSetFields();
+	void editEventGetFields();
 
 	void updateStatusbar();
 
+	EventGateway m_event;
 //	IntervalView *m_intervalview;
 	RunnerInfoPopupView *m_runnerinfopopupview;
 	VotePopupView *m_votepopupview;

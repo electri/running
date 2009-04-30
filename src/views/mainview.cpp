@@ -21,6 +21,7 @@
 #include <QtGui>
 #include <QtSql>
 #include "mainview.h"
+#include "utility/database.h"
 #include "utility/utility.h"
 #include "objects/eventfinder.h"
 #include "objects/settingsgateway.h"
@@ -44,10 +45,10 @@ MainView::MainView(QWidget *parent)
 
 #ifdef Q_WS_MAC
 	setUnifiedTitleAndToolBarOnMac(true);
-#endif
 
 	toolBar->setIconSize(QSize(32, 32));
 	toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+#endif
 
 //	m_intervalview = NULL;
 	m_runnerinfopopupview = NULL;
@@ -66,18 +67,7 @@ MainView::MainView(QWidget *parent)
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 	connect(actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-	bool dbInit = false;
-	QString dbName = "running.db";
-	QDir::setCurrent(QApplication::applicationDirPath());
-	if (QFile::exists(dbName)) {
-		QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-		db.setDatabaseName(dbName);
-		if (db.open()) {
-			dbInit = true;
-		}
-	}
-
-	if (dbInit) {
+	if (Database::init()) {
 		calendarWidget->setDelegate(new CalendarWidgetDelegate());
 		calendarWidget->setFirstDayOfWeek(SettingsGateway::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 		connect(calendarWidget, SIGNAL(activated()), this, SLOT(editEvent()));
@@ -96,7 +86,7 @@ MainView::MainView(QWidget *parent)
 		actionEdit->setEnabled(false);
 		actionSettings->setEnabled(false);
 
-		QMessageBox::critical(0, tr("Error"), tr("Unable to open or read the database file."), QMessageBox::Ok, QMessageBox::NoButton);
+		QMessageBox::critical(0, tr("Error"), Database::lastError(), QMessageBox::Ok, QMessageBox::NoButton);
 	}
 
 	calendarWidget->setSelectedDate(QDate::currentDate());
@@ -104,13 +94,7 @@ MainView::MainView(QWidget *parent)
 
 MainView::~MainView()
 {
-	QSqlDatabase db = QSqlDatabase::database();
-	if (db.isValid()) {
-		if (db.isOpen()) {
-			db.close();
-		}
-		db.removeDatabase(QSqlDatabase::database().connectionName());
-	}
+	Database::close();
 }
 
 
@@ -176,31 +160,30 @@ void MainView::showEvent()
 
 void MainView::addEvent()
 {
-	EventGateway event;
-	event.setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
-	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+	if (EventFinder::find(m_event, calendarWidget->selectedDate())) {
 		QMessageBox::warning(this, tr("Add a new event"), tr("The selected day already has an event."));
 	} else {
 		showEvent();
-		editEventBegin(event);
 
-		QString message = tr("Add event: %1").arg(event.start().date().toString("d MMMM yyyy"));
+		m_event.setStart(QDateTime(calendarWidget->selectedDate(), QTime()));
+		editEventBegin();
+
+		QString message = tr("Add event: %1").arg(m_event.start().date().toString("d MMMM yyyy"));
 		statusbar->showMessage(message);
 	}
 }
 
 void MainView::removeEvent()
 {
-	EventGateway event;
-	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+	if (EventFinder::find(m_event, calendarWidget->selectedDate())) {
 		if (QMessageBox::question(this, tr("Remove an event"), tr("Are you sure you want to remove the event: %1?")
-				.arg(event.start().date().toString("d MMMM yyyy")),
+				.arg(m_event.start().date().toString("d MMMM yyyy")),
 				QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			return;
 		}
 
-		if (!event.remove()) {
-			QMessageBox::critical(this, tr("Remove an event"), event.lastError());
+		if (!m_event.remove()) {
+			QMessageBox::critical(this, tr("Remove an event"), m_event.lastError());
 		}
 
 		calendarWidget->update();
@@ -211,19 +194,19 @@ void MainView::removeEvent()
 
 void MainView::editEvent()
 {
-	EventGateway event;
-	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+	if (EventFinder::find(m_event, calendarWidget->selectedDate())) {
 		showEvent();
-		editEventBegin(event);
+		
+		editEventBegin();
 
-		QString message = tr("Edit event: %1").arg(event.start().date().toString("d MMMM yyyy"));
+		QString message = tr("Edit event: %1").arg(m_event.start().date().toString("d MMMM yyyy"));
 		statusbar->showMessage(message);
 	} else {
 		QMessageBox::warning(this, tr("Edit an event"), tr("The selected day don't have an event."));
 	}
 }
 
-void MainView::editEventBegin(EventGateway &event)
+void MainView::editEventBegin()
 {
 //	m_intervalview = new IntervalView(event, this);
 //	m_intervalview->setWindowFlags(Qt::Popup);
@@ -242,7 +225,7 @@ void MainView::editEventBegin(EventGateway &event)
 	ComboBoxHelper::fillComboBox(eventTypeComboBox, "EventType", false);
 	ComboBoxHelper::fillShoesComboBox(shoeComboBox, false);
 
-	editEventSetFields(event);
+	editEventSetFields();
 }
 
 void MainView::editEventEnd()
@@ -255,62 +238,59 @@ void MainView::editEventEnd()
 	showCalendar();
 }
 
-void MainView::editEventSetFields(EventGateway &event)
+void MainView::editEventSetFields()
 {
-	startTimeEdit->setTime(event.start().time());
-	nameLineEdit->setText(event.name());
-	descriptionLineEdit->setText(event.description());
-	distanceDoubleSpinBox->setValue(event.distance());
-	durationTimeEdit->setTime(event.duration());
-	notesPlainTextEdit->setPlainText(event.notes());
-	starsSlider->setValue(event.vote());
-	m_runnerinfopopupview->weightDoubleSpinBox->setValue(event.weight());
-	m_votepopupview->qualitySpinBox->setValue(event.quality());
-	m_votepopupview->effortSpinBox->setValue(event.effort());
-	m_weatherinfopopupview->temperatureDoubleSpinBox->setValue(event.temperature());
-	ComboBoxHelper::setSelectedId(eventTypeComboBox, event.eventType_id());
-	ComboBoxHelper::setSelectedId(shoeComboBox, event.shoe_id());
-	ComboBoxHelper::setSelectedId(m_weatherinfopopupview->weatherComboBox, event.weather_id());
+	startTimeEdit->setTime(m_event.start().time());
+	nameLineEdit->setText(m_event.name());
+	descriptionLineEdit->setText(m_event.description());
+	distanceDoubleSpinBox->setValue(m_event.distance());
+	durationTimeEdit->setTime(m_event.duration());
+	notesPlainTextEdit->setPlainText(m_event.notes());
+	starsSlider->setValue(m_event.vote());
+	m_runnerinfopopupview->weightDoubleSpinBox->setValue(m_event.weight());
+	m_votepopupview->qualitySpinBox->setValue(m_event.quality());
+	m_votepopupview->effortSpinBox->setValue(m_event.effort());
+	m_weatherinfopopupview->temperatureDoubleSpinBox->setValue(m_event.temperature());
+	ComboBoxHelper::setSelectedId(eventTypeComboBox, m_event.eventType_id());
+	ComboBoxHelper::setSelectedId(shoeComboBox, m_event.shoe_id());
+	ComboBoxHelper::setSelectedId(m_weatherinfopopupview->weatherComboBox, m_event.weather_id());
 
-	paceLineEdit->setText(Utility::formatPace(event.distance(), event.duration()));
+	paceLineEdit->setText(Utility::formatPace(m_event.distance(), m_event.duration()));
 }
 
-void MainView::editEventGetFields(EventGateway &event)
+void MainView::editEventGetFields()
 {
-	event.setStart(QDateTime(calendarWidget->selectedDate(), startTimeEdit->time()));
-	event.setName(nameLineEdit->text());
-	event.setDescription(descriptionLineEdit->text());
-	event.setDistance(distanceDoubleSpinBox->value());
-	event.setDuration(durationTimeEdit->time());
-	event.setNotes(notesPlainTextEdit->toPlainText());
-	event.setVote(starsSlider->value());
-	event.setQuality(m_votepopupview->qualitySpinBox->value());
-	event.setEffort(m_votepopupview->effortSpinBox->value());
-	event.setWeight(m_runnerinfopopupview->weightDoubleSpinBox->value());
-	event.setTemperature(m_weatherinfopopupview->temperatureDoubleSpinBox->value());
-	event.setEventType_id(ComboBoxHelper::selectedId(eventTypeComboBox));
-	event.setShoe_id(ComboBoxHelper::selectedId(shoeComboBox));
-	event.setWeather_id(ComboBoxHelper::selectedId(m_weatherinfopopupview->weatherComboBox));
+	m_event.setStart(QDateTime(calendarWidget->selectedDate(), startTimeEdit->time()));
+	m_event.setName(nameLineEdit->text());
+	m_event.setDescription(descriptionLineEdit->text());
+	m_event.setDistance(distanceDoubleSpinBox->value());
+	m_event.setDuration(durationTimeEdit->time());
+	m_event.setNotes(notesPlainTextEdit->toPlainText());
+	m_event.setVote(starsSlider->value());
+	m_event.setQuality(m_votepopupview->qualitySpinBox->value());
+	m_event.setEffort(m_votepopupview->effortSpinBox->value());
+	m_event.setWeight(m_runnerinfopopupview->weightDoubleSpinBox->value());
+	m_event.setTemperature(m_weatherinfopopupview->temperatureDoubleSpinBox->value());
+	m_event.setEventType_id(ComboBoxHelper::selectedId(eventTypeComboBox));
+	m_event.setShoe_id(ComboBoxHelper::selectedId(shoeComboBox));
+	m_event.setWeather_id(ComboBoxHelper::selectedId(m_weatherinfopopupview->weatherComboBox));
 }
 
 void MainView::on_resetPushButton_clicked()
 {
 //	m_intervalview->resetAll();
 
-	EventGateway event;
-	EventFinder::find(event, event.start().date());
-	editEventSetFields(event);
+	editEventSetFields();
 }
 
 void MainView::on_savePushButton_clicked()
 {
-	EventGateway event;
-	editEventGetFields(event);
+	editEventGetFields();
 
 //	m_intervalview->saveAll();
 
-	if (!event.save()) {
-		QMessageBox::critical(this, tr("Add/Edit an event"), event.lastError());
+	if (!m_event.save()) {
+		QMessageBox::critical(this, tr("Add/Edit an event"), m_event.lastError());
 		return;
 	}
 
