@@ -20,7 +20,6 @@
 
 #include <QtGui>
 #include "calendarwidget.h"
-#include "ui_calendarwidget.h"
 
 CalendarWidget::CalendarWidget(QWidget *parent)
 	: QWidget(parent)
@@ -29,7 +28,7 @@ CalendarWidget::CalendarWidget(QWidget *parent)
 
 	QFont font;
 	font.setBold(true);
-	font.setPointSize(QApplication::font().pointSize() + 2);
+	font.setPointSize(QApplication::font().pointSize() + 1);
 	selectedDateLabel->setFont(font);
 
 	connect(this, SIGNAL(selectedDateChanged(const QDate &)), calendarWidgetInternal, SLOT(setSelectedDate(const QDate &)));

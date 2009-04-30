@@ -69,8 +69,9 @@ bool EventGateway::_insert()
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
+			QSqlQuery query(db);
 			query.prepare(queryText);
+
 			query.bindValue(":start", this->start());
 			query.bindValue(":name", this->name());
 			query.bindValue(":description", this->description());
@@ -85,7 +86,10 @@ bool EventGateway::_insert()
 			query.bindValue(":weight", this->weight());
 			query.bindValue(":weatherid", this->weather_id());
 			query.bindValue(":temperature", this->temperature());
-			if (query.exec()) {
+			
+			bool rc = query.exec();
+			qDebug() << "[INSERT] " << query.lastQuery();
+			if (rc) {
 				m_id = query.lastInsertId().toInt();
 				return true;
 			}
@@ -106,8 +110,9 @@ bool EventGateway::_update()
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
+			QSqlQuery query(db);
 			query.prepare(queryText);
+			
 			query.bindValue(":id", this->id());
 			query.bindValue(":start", this->start());
 			query.bindValue(":name", this->name());
@@ -123,7 +128,10 @@ bool EventGateway::_update()
 			query.bindValue(":weight", this->weight());
 			query.bindValue(":weatherid", this->weather_id());
 			query.bindValue(":temperature", this->temperature());
-			if (query.exec()) {
+
+			bool rc = query.exec();
+			qDebug() << "[UPDATE] " << query.lastQuery();
+			if (rc) {
 				return true;
 			}
 			m_lastError = query.lastError().text();
@@ -143,8 +151,10 @@ bool EventGateway::_delete()
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
-			if (query.exec(queryText)) {
+			QSqlQuery query(db);
+			bool rc = query.exec(queryText);
+			qDebug() << "[DELETE] " << queryText;
+			if (rc) {
 				return true;
 			}
 			m_lastError = query.lastError().text();

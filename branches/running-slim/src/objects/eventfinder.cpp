@@ -28,15 +28,26 @@ bool EventFinder::find(EventGateway &event, quint32 id)
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
-			query.exec(queryText);
-			if (query.first()) {
-				event._load(query.record());
-				return true;
+			QSqlQuery query(db);
+			bool rc = query.exec(queryText);
+//			qDebug() << query.executedQuery();
+			if (rc) {
+				if (query.first()) {
+					QSqlRecord record = query.record();
+					QString result = "[SELECT] ";
+					for (int i = 0; i < record.count(); ++i) {
+						if (i != 0) result += ",";
+						result += QString("%1:%2").arg(record.fieldName(i)).arg(record.value(i).toString());
+					}
+					qDebug() << result;
+
+					event._load(query.record());
+					return true;
+				}
 			}
 		}
 	}
-
+	
 	return false;
 }
 
@@ -47,11 +58,22 @@ bool EventFinder::find(EventGateway &event, const QDate &date)
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
-			query.exec(queryText);
-			if (query.first()) {
-				event._load(query.record());
-				return true;
+			QSqlQuery query(db);
+			bool rc = query.exec(queryText);
+//			qDebug() << query.executedQuery();
+			if (rc) {
+				if (query.first()) {
+					QSqlRecord record = query.record();
+					QString result = "[SELECT] ";
+					for (int i = 0; i < record.count(); ++i) {
+						if (i != 0) result += ",";
+						result += QString("%1:%2").arg(record.fieldName(i)).arg(record.value(i).toString());
+					}
+					qDebug() << result;
+
+					event._load(record);
+					return true;
+				}
 			}
 		}
 	}

@@ -19,25 +19,23 @@
 ****************************************************************************/
 
 #include <QtGui>
-
 #include "calendarwidget.h"
-#include "ui_calendarwidget.h"
 
 CalendarWidget::CalendarWidget(QWidget *parent)
-	: QWidget(parent), ui(new Ui::CalendarWidget)
+	: QWidget(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 
-	connect(this, SIGNAL(selectedDateChanged(const QDate &)), ui->calendarWidgetInternal, SLOT(setSelectedDate(const QDate &)));
-	connect(ui->calendarWidgetInternal, SIGNAL(selectedDateChanged(const QDate &)), this, SLOT(setSelectedDate(const QDate &)));
-	connect(ui->calendarWidgetInternal, SIGNAL(activated()), this, SIGNAL(activated()));
+	QFont font;
+	font.setBold(true);
+	font.setPointSize(QApplication::font().pointSize() + 1);
+	selectedDateLabel->setFont(font);
+
+	connect(this, SIGNAL(selectedDateChanged(const QDate &)), calendarWidgetInternal, SLOT(setSelectedDate(const QDate &)));
+	connect(calendarWidgetInternal, SIGNAL(selectedDateChanged(const QDate &)), this, SLOT(setSelectedDate(const QDate &)));
+	connect(calendarWidgetInternal, SIGNAL(activated()), this, SIGNAL(activated()));
 
 	m_selectedDate = QDate();
-}
-
-CalendarWidget::~CalendarWidget()
-{
-	delete ui;
 }
 
 void CalendarWidget::setSelectedDate(const QDate &newDate)
@@ -46,7 +44,7 @@ void CalendarWidget::setSelectedDate(const QDate &newDate)
 		QDate oldDate = m_selectedDate;
 		if (newDate != oldDate) {
 
-			ui->selectedDateLabel->setText(newDate.toString("d MMMM yyyy"));
+			selectedDateLabel->setText(newDate.toString("d MMMM yyyy"));
 			m_selectedDate = newDate;
 
 			emit selectedDateChanged(newDate);
@@ -55,8 +53,6 @@ void CalendarWidget::setSelectedDate(const QDate &newDate)
 			if((newDate.year() != oldDate.year()) && (newDate.month() != oldDate.month())) {
 				emit currentPageChanged(newDate.year(), newDate.month());
 			}
-
-//			qDebug() << "CalendarWidget::setSelectedDate(" + newDate.toString() + ")";
 		}
 	}
 }
@@ -68,30 +64,30 @@ QDate CalendarWidget::selectedDate() const
 
 void CalendarWidget::setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek)
 {
-	ui->calendarWidgetInternal->setFirstDayOfWeek(dayOfWeek);
+	calendarWidgetInternal->setFirstDayOfWeek(dayOfWeek);
 }
 
 Qt::DayOfWeek CalendarWidget::firstDayOfWeek() const
 {
-	return ui->calendarWidgetInternal->firstDayOfWeek();
+	return calendarWidgetInternal->firstDayOfWeek();
 }
 
 void CalendarWidget::setDelegate(CalendarDelegate *delegate)
 {
-	ui->calendarWidgetInternal->setDelegate(delegate);
+	calendarWidgetInternal->setDelegate(delegate);
 }
 
 CalendarDelegate *CalendarWidget::delegate() const
 {
-	return 	ui->calendarWidgetInternal->delegate();
+	return calendarWidgetInternal->delegate();
 }
 
-int CalendarWidget::monthShown () const
+int CalendarWidget::monthShown() const
 {
 	return m_selectedDate.month();
 }
 
-int CalendarWidget::yearShown () const
+int CalendarWidget::yearShown() const
 {
 	return m_selectedDate.year();
 }

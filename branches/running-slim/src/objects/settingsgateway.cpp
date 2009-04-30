@@ -54,14 +54,18 @@ bool SettingsGateway::_update()
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
+			QSqlQuery query(db);
 			query.prepare(queryText);
+			
 			query.bindValue(":mondayfirstdayofweek", m_mondayFirstDayOfWeek);
 			query.bindValue(":cfgcurrencyunitid", m_currencyUnit_id);
 			query.bindValue(":cfgdistanceunitid", m_distanceUnit_id);
 			query.bindValue(":cfgtemperatureunitid", m_temperatureUnit_id);
 			query.bindValue(":cfgweightunitid", m_weightUnit_id);
-			if (query.exec()) {
+
+			bool rc = query.exec();
+			qDebug() << "[UPDATE] " << query.lastQuery();
+			if (rc) {
 				return true;
 			}
 			m_lastError = query.lastError().text();
@@ -93,10 +97,17 @@ bool SettingsGateway::_load()
 	QSqlDatabase db = QSqlDatabase::database();
 	if (db.isValid()) {
 		if (db.isOpen()) {
-			QSqlQuery query;
+			QSqlQuery query(db);
 			query.exec(queryText);
 			if (query.first()) {
 				QSqlRecord record = query.record();
+
+				QString result = "[SELECT] ";
+				for (int i = 0; i < record.count(); ++i) {
+					if (i != 0) result += ",";
+					result += QString("%1:%2").arg(record.fieldName(i)).arg(record.value(i).toString());
+				}
+				qDebug() << result;
 
 				m_mondayFirstDayOfWeek = record.value("MondayFirstDayOfWeek").toBool();
 				m_currencyUnit_id = record.value("CfgCurrencyUnit_Id").toInt();

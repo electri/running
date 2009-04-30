@@ -23,15 +23,11 @@
 
 #include <QWidget>
 #include <QDate>
+#include "ui_calendarwidget.h"
 
 class CalendarDelegate;
 
-namespace Ui
-{
-	class CalendarWidget;
-}
-
-class CalendarWidget : public QWidget
+class CalendarWidget : public QWidget, Ui::CalendarWidget
 {
 	Q_OBJECT
 
@@ -40,7 +36,6 @@ class CalendarWidget : public QWidget
 
 public:
 	CalendarWidget(QWidget *parent = 0);
-	~CalendarWidget();
 
 	QDate selectedDate() const;
 	Qt::DayOfWeek firstDayOfWeek() const;
@@ -65,8 +60,6 @@ public slots:
 
 private:
 	QDate m_selectedDate;
-
-	Ui::CalendarWidget *ui;
 };
 
 #endif // CALENDARWIDGET_H

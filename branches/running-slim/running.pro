@@ -31,6 +31,7 @@ HEADERS += src/views/mainview.h \
 	src/widgets/qxtstars/qxtpimpl.h \
 	src/widgets/qxtstars/qxtglobal.h \
 	src/widgets/calendarwidget/calendarwidgetdelegate.h \
+	src/utility/database.h \
 	src/utility/utility.h \
 	src/objects/eventgateway.h \
 	src/views/popupviews/weatherinfopopupview.h \
@@ -64,6 +65,7 @@ SOURCES += src/main.cpp \
 	src/widgets/calendarwidget/calendarwidget.cpp \
 	src/widgets/qxtstars/qxtstars.cpp \
 	src/widgets/calendarwidget/calendarwidgetdelegate.cpp \
+	src/utility/database.cpp \
 	src/utility/utility.cpp \
 	src/objects/eventgateway.cpp \
 	src/views/popupviews/weatherinfopopupview.cpp \
