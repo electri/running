@@ -23,10 +23,15 @@
 #include "database.h"
 
 const QString DATABASENAME = "running.db";
-const int DATABASEVERSION = 1;
+const int DATABASEVERSION = 2;
 
 QString Database::sm_lastError = "";
 
+/*
+ * Open and initialize the database. First is checked if the file exists. If
+ * true is checked the existing database version, and if needed is performed an
+ * upgrade. If the file didn't exist a new database is created and initialized.
+ */
 bool Database::init()
 {
 	sm_lastError = "";
@@ -66,6 +71,9 @@ bool Database::init()
 	return true;
 }
 
+/*
+ * Close and remove the database.
+ */
 void Database::close()
 {
 	QSqlDatabase db = QSqlDatabase::database();
@@ -77,6 +85,9 @@ void Database::close()
 	}
 }
 
+/*
+ * Return the last error.
+ */
 QString Database::lastError()
 {
 	QString message;
@@ -92,6 +103,9 @@ QString Database::lastError()
 	return message;
 }
 
+/*
+ * Check the database version (the user version).
+ */
 int Database::_databaseVersion(QSqlDatabase &db)
 {
 	QSqlQuery query(db);
@@ -102,6 +116,10 @@ int Database::_databaseVersion(QSqlDatabase &db)
 	return 0;
 }
 
+/*
+ * Perform a new database creation. It call _alterDatabase with the "create"
+ * script name.
+ */
 bool Database::_createDatabase(QSqlDatabase &db)
 {
 	bool rc = _alterDatabase(db, "create", tr("Creating database ..."));
@@ -113,9 +131,18 @@ bool Database::_createDatabase(QSqlDatabase &db)
 	return true;
 }
 
+/*
+ * Perform a database upgrade from oldVersion to "oldVersion + 1". It call
+ * _alterDatabase with the generated upgrade script name. A backup copy of the
+ * original file is made.
+ */
 bool Database::_upgradeDatabase(QSqlDatabase &db, int oldVersion)
 {
 	bool result = true;
+
+	if (!QFile::copy(DATABASENAME, DATABASENAME + ".bkp")) {
+		return false;
+	}
 
 	for (int i = oldVersion; i < DATABASEVERSION; ++i) {
 		QString scriptName = QString("upgrade_%1-%2").arg(i).arg(i + 1);
@@ -125,8 +152,19 @@ bool Database::_upgradeDatabase(QSqlDatabase &db, int oldVersion)
 	return result;
 }
 
+/*
+ * Execute a resource stored SQL script. Can be a text file with queries for
+ * perform a database new creation, or a upgrade. The text file must be a list
+ * of queries separated by blank lines. While executing queries it display a
+ * progress bar. If exists an initialization script for the upgrade it is
+ * also executed (<scriptName>_init).
+ *
+ * TODO: Enclose the queries in a transaction.
+ */
 bool Database::_alterDatabase(QSqlDatabase &db, const QString &scriptName, const QString &message)
 {
+	qDebug() << "[ALTER DATABASE] Executing: " << scriptName;
+
 	QProgressDialog progress;
 	progress.setWindowModality(Qt::WindowModal);
 	progress.setLabelText(message);
@@ -143,13 +181,12 @@ bool Database::_alterDatabase(QSqlDatabase &db, const QString &scriptName, const
 	queries << buffer.split("\n\n", QString::SkipEmptyParts);
 
 	QFile file1(QString(":/sql/%1_init.sql").arg(scriptName));
-	if (!file1.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		return false;
+	if (file1.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream textStream1(&file1);
+		buffer = textStream1.readAll();
+		file1.close();
+		queries << buffer.split("\n\n", QString::SkipEmptyParts);
 	}
-	QTextStream textStream1(&file1);
-	buffer = textStream1.readAll();
-	file1.close();
-	queries << buffer.split("\n\n", QString::SkipEmptyParts);
 
 	progress.setMinimum(0);
 	progress.setMaximum(queries.count());
@@ -161,6 +198,7 @@ bool Database::_alterDatabase(QSqlDatabase &db, const QString &scriptName, const
 		qApp->processEvents();
 
 		if (!query.exec(text)) {
+			qDebug() << "[ALTER DATABASE] Error executing: " << text;
 			return false;
 		}
 	}

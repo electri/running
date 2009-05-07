@@ -19,7 +19,7 @@
 ****************************************************************************/
 
 #include "utility.h"
-#include "objects/settingsgateway.h"
+#include "settings.h"
 
 QTime Utility::paceTime(qreal distance, const QTime &duration)
 {
@@ -84,8 +84,9 @@ qreal Utility::paceSpeed(qreal distance, const QDateTime &duration)
 
 QString Utility::formatDistance(qreal d, quint8 precision)
 {
-	QString s = QString("%1 %2").arg(formatReal(d, precision))
-				.arg(SettingsGateway::instance()->distanceUnit_description());
+	QString s = QString("%1 %2")
+				.arg(formatReal(d, precision))
+				.arg(Settings::instance()->distanceUnit());
 	return s;
 }
 
@@ -101,25 +102,25 @@ QString Utility::formatDuration(const QDateTime &t)
 
 QString Utility::formatPace(qreal distance, const QDateTime &duration)
 {
-
+	QSettings settings;
 	QTime time = paceTime(distance, duration);
 	qreal speed = paceSpeed(distance, duration);
 	QString s = QString("%1 min/%3 or %2 %3/h")
 				.arg(formatTime(time))
 				.arg(formatReal(speed, 2))
-				.arg(SettingsGateway::instance()->distanceUnit_description());
+				.arg(Settings::instance()->distanceUnit());
 	return s;
 }
 
 QString Utility::formatPace(qreal distance, const QTime &duration)
 {
-
+	QSettings settings;
 	QTime time = paceTime(distance, duration);
 	qreal speed = paceSpeed(distance, duration);
 	QString s = QString("%1 min/%3 or %2 %3/h")
 				.arg(formatTime(time))
 				.arg(formatReal(speed, 2))
-				.arg(SettingsGateway::instance()->distanceUnit_description());
+				.arg(Settings::instance()->distanceUnit());
 	return s;
 }
 

@@ -18,23 +18,42 @@
 
 ****************************************************************************/
 
-#ifndef WEATHERINFOPOPUPVIEW_H
-#define WEATHERINFOPOPUPVIEW_H
+#ifndef SHOEVIEW_H
+#define SHOEVIEW_H
 
-#include <QWidget>
-#include "ui_weatherinfopopupview.h"
+#include "abstracttableview.h"
+#include "ui_shoeview.h"
 
-class WeatherInfoPopupView : public QWidget, public Ui::WeatherInfoPopupView
+class ShoeView : public AbstractTableView, public Ui::ShoeView
 {
 	Q_OBJECT
 
 public:
-	WeatherInfoPopupView(QWidget *parent = 0);
+	ShoeView(QWidget *parent = 0, quint32 id = 0);
+	~ShoeView();
+
 	void showEvent(QShowEvent *);
-	void reloadLists();
 
 private slots:
-	void on_weatherToolButton_clicked();
+	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
+
+	void on_shoeMakerComboBox_currentIndexChanged(int index);
+	void on_shoeModelComboBox_currentIndexChanged(int index);
+	void on_initialDistanceDoubleSpinBox_valueChanged(double value);
+	void on_purchaseDateDateEdit_dateChanged(const QDate &value);
+	void on_sizeDoubleSpinBox_valueChanged(double value);
+	void on_priceDoubleSpinBox_valueChanged(double value);
+	void on_retiredCheckBox_stateChanged(int state);
+	void on_notesPlainTextEdit_textChanged();
+
+	void on_shoeMakerToolButton_clicked();
+	void on_shoeModelToolButton_clicked();
+
+private:
+	void setControlsEnabled(bool enable);
+
+//	double m_distance;
+	bool m_isRefreshingFields;
 };
 
-#endif // WEATHERINFOPOPUPVIEW_H
+#endif // SHOEVIEW_H

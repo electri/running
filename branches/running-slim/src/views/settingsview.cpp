@@ -21,7 +21,7 @@
 #include <QtGui>
 #include <QtSql>
 #include "settingsview.h"
-#include "objects/settingsgateway.h"
+#include "settings.h"
 #include "utility/comboboxhelper.h"
 
 SettingsView::SettingsView(QWidget *parent)
@@ -31,17 +31,28 @@ SettingsView::SettingsView(QWidget *parent)
 
 	m_model = new QStringListModel(this);
 	QList<QString> list;
-	list << tr("Calendar") << tr("Units of measurement");
+	list << tr("General") << tr("Calendar") << tr("Units of measurement");
 	m_model->setStringList(list);
 
 	treeView->setModel(m_model);
+
+	toolbarIconSizeComboBox->addItem("16", 16);
+	toolbarIconSizeComboBox->addItem("24", 24);
+	toolbarIconSizeComboBox->addItem("32", 32);
+	toolbarIconSizeComboBox->addItem("48", 48);
+	toolbarIconSizeComboBox->addItem("64", 64);
+
+	toolbarToolButtonStyleComboBox->addItem(tr("Only display the icon"), 0);
+	toolbarToolButtonStyleComboBox->addItem(tr("Only display the text"), 1);
+	toolbarToolButtonStyleComboBox->addItem(tr("The text appears beside the icon"), 2);
+	toolbarToolButtonStyleComboBox->addItem(tr("The text appears under the icon"), 3);
 
 	ComboBoxHelper::fillComboBox(currencyUnitComboBox, "CfgCurrencyUnit", false);
 	ComboBoxHelper::fillComboBox(distanceUnitComboBox, "CfgDistanceUnit", false);
 	ComboBoxHelper::fillComboBox(temperatureUnitComboBox, "CfgTemperatureUnit", false);
 	ComboBoxHelper::fillComboBox(weightUnitComboBox, "CfgWeightUnit", false);
 
-	setFields();
+	_refresh();
 }
 
 SettingsView::~SettingsView()
@@ -50,17 +61,20 @@ SettingsView::~SettingsView()
 
 void SettingsView::on_resetPushButton_clicked()
 {
-	setFields();
+	_refresh();
 }
 
 void SettingsView::on_savePushButton_clicked()
 {
-	getFields();
+	QSettings *settings = Settings::instance()->m_settings;
 
-	if (!SettingsGateway::instance()->update()) {
-		QMessageBox::critical(this, tr("Edit settings"), SettingsGateway::instance()->lastError());
-		return;
-	}
+	settings->setValue("General/Toolbar Icon Size", ComboBoxHelper::selected(toolbarIconSizeComboBox));
+	settings->setValue("General/Toolbar Tool Button Style", ComboBoxHelper::selected(toolbarToolButtonStyleComboBox));
+	settings->setValue("Calendar/Monday is first day of week", mondayFirstDayOfWeekCheckBox->isChecked());
+	settings->setValue("Units of measurement/Currency Unit", currencyUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Distance Unit", distanceUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Temperature Unit", temperatureUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Weight Unit", weightUnitComboBox->currentText());
 
 	accept();
 }
@@ -77,20 +91,13 @@ void SettingsView::on_treeView_clicked(const QModelIndex &index)
 	}
 }
 
-void SettingsView::setFields()
+void SettingsView::_refresh()
 {
-	mondayFirstDayOfWeekCheckBox->setChecked(SettingsGateway::instance()->isMondayFirstDayOfWeek());
-	ComboBoxHelper::setSelectedId(currencyUnitComboBox, SettingsGateway::instance()->currencyUnit_id());
-	ComboBoxHelper::setSelectedId(distanceUnitComboBox, SettingsGateway::instance()->distanceUnit_id());
-	ComboBoxHelper::setSelectedId(temperatureUnitComboBox, SettingsGateway::instance()->temperatureUnit_id());
-	ComboBoxHelper::setSelectedId(weightUnitComboBox, SettingsGateway::instance()->weightUnit_id());
-}
-
-void SettingsView::getFields()
-{
-	SettingsGateway::instance()->setMondayFirstDayOfWeek(mondayFirstDayOfWeekCheckBox->isChecked());
-	SettingsGateway::instance()->setCurrencyUnitId(ComboBoxHelper::selectedId(currencyUnitComboBox));
-	SettingsGateway::instance()->setDistanceUnitId(ComboBoxHelper::selectedId(distanceUnitComboBox));
-	SettingsGateway::instance()->setTemperatureUnitId(ComboBoxHelper::selectedId(temperatureUnitComboBox));
-	SettingsGateway::instance()->setWeightUnitId(ComboBoxHelper::selectedId(weightUnitComboBox));
+	ComboBoxHelper::setSelected(toolbarToolButtonStyleComboBox, Settings::instance()->toolbarToolButtonStyle());
+	ComboBoxHelper::setSelected(toolbarIconSizeComboBox, Settings::instance()->toolbarIconSize());
+	mondayFirstDayOfWeekCheckBox->setChecked(Settings::instance()->isMondayFirstDayOfWeek());
+	ComboBoxHelper::setSelected(currencyUnitComboBox, Settings::instance()->currencyUnit());
+	ComboBoxHelper::setSelected(distanceUnitComboBox, Settings::instance()->distanceUnit());
+	ComboBoxHelper::setSelected(temperatureUnitComboBox, Settings::instance()->temperatureUnit());
+	ComboBoxHelper::setSelected(weightUnitComboBox, Settings::instance()->weightUnit());
 }

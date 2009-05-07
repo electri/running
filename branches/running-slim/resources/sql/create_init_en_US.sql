@@ -1,7 +1,3 @@
-INSERT INTO Cfg VALUES(1, 'false', 1, 1, 1, 1);
-
-
-
 INSERT INTO EventType VALUES(1, 'Easy', 'false', 'false');
 
 INSERT INTO EventType VALUES(2, 'Long', 'false', 'false');

@@ -36,7 +36,7 @@ void EventGateway::clear()
 	m_eventType_description = "";
 	m_eventType_hasMedal = false;
 	m_distance = 0.0;
-	m_duration = QTime();
+	m_duration = QTime(0, 0, 0);
 	m_notes = "";
 	m_shoe_id = 0;
 	m_shoe_description = "";
@@ -86,7 +86,7 @@ bool EventGateway::_insert()
 			query.bindValue(":weight", this->weight());
 			query.bindValue(":weatherid", this->weather_id());
 			query.bindValue(":temperature", this->temperature());
-			
+
 			bool rc = query.exec();
 			qDebug() << "[INSERT] " << query.lastQuery();
 			if (rc) {
@@ -112,7 +112,7 @@ bool EventGateway::_update()
 		if (db.isOpen()) {
 			QSqlQuery query(db);
 			query.prepare(queryText);
-			
+
 			query.bindValue(":id", this->id());
 			query.bindValue(":start", this->start());
 			query.bindValue(":name", this->name());
@@ -166,7 +166,7 @@ bool EventGateway::_delete()
 	return false;
 }
 
-bool EventGateway::_load(const QSqlRecord &record)
+void EventGateway::_load(const QSqlRecord &record)
 {
 	clear();
 
@@ -185,10 +185,8 @@ bool EventGateway::_load(const QSqlRecord &record)
 	m_vote = record.value("Vote").toInt();
 	m_quality = record.value("Quality").toInt();
 	m_effort = record.value("Effort").toInt();
-	m_weight = record.value("Weight").toInt();
+	m_weight = record.value("Weight").toDouble();
 	m_weather_id = record.value("Weather_Id").toInt();
 	m_weather_description = record.value("Weather_Description").toString();
-	m_temperature = record.value("Temperature").toInt();
-
-	return true;
+	m_temperature = record.value("Temperature").toDouble();
 }

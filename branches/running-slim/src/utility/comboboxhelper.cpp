@@ -23,6 +23,11 @@
 
 void ComboBoxHelper::fillComboBox(QComboBox *comboBox, const QString &tableName, bool blankItem)
 {
+	fillComboBox(comboBox, tableName, "", blankItem);
+}
+
+void ComboBoxHelper::fillComboBox(QComboBox *comboBox, const QString &tableName, const QString &filter, bool blankItem)
+{
 	int id = comboBox->itemData(comboBox->currentIndex()).toInt();
 
 	comboBox->clear();
@@ -30,13 +35,23 @@ void ComboBoxHelper::fillComboBox(QComboBox *comboBox, const QString &tableName,
 		comboBox->addItem("", 0);
 	}
 
-	QString queryText = QString("SELECT Id, Description FROM %1 ORDER BY Description").arg(tableName);
-	QSqlQuery query;
-	query.exec(queryText);
-	while (query.next()) {
-		int id = query.value(0).toInt();
-		QString description = query.value(1).toString();
-		comboBox->addItem(description, id);
+	QString queryText = QString("SELECT Id, Description FROM %1").arg(tableName);
+	if (!filter.isEmpty()) {
+		queryText += QString(" WHERE %1").arg(filter);
+	}
+	queryText += QString(" ORDER BY Description");
+
+	QSqlDatabase db = QSqlDatabase::database();
+	if (db.isValid()) {
+		if (db.isOpen()) {
+			QSqlQuery query(db);
+			query.exec(queryText);
+			while (query.next()) {
+				int id = query.value(0).toInt();
+				QString description = query.value(1).toString();
+				comboBox->addItem(description, id);
+			}
+		}
 	}
 
 	if (id != -1) {
@@ -58,12 +73,17 @@ void ComboBoxHelper::fillShoesComboBox(QComboBox *comboBox, bool blankItem)
 	}
 
 	QString queryText = QString("SELECT Shoe.Id, ShoeMaker.Description || ' ' || ShoeModel.Description AS Description FROM Shoe LEFT JOIN ShoeModel ON ShoeModel.Id = Shoe.ShoeModelId LEFT JOIN ShoeMaker ON ShoeMaker.Id = ShoeModel.ShoeMakerId");
-	QSqlQuery query;
-	query.exec(queryText);
-	while (query.next()) {
-		int id = query.value(0).toInt();
-		QString description = query.value(1).toString();
-		comboBox->addItem(description, id);
+	QSqlDatabase db = QSqlDatabase::database();
+	if (db.isValid()) {
+		if (db.isOpen()) {
+			QSqlQuery query(db);
+			query.exec(queryText);
+			while (query.next()) {
+				int id = query.value(0).toInt();
+				QString description = query.value(1).toString();
+				comboBox->addItem(description, id);
+			}
+		}
 	}
 
 	if (id != -1) {
@@ -98,12 +118,17 @@ void ComboBoxHelper::fillShoesComboBox(QComboBox *comboBox, bool blankItem)
 //	comboBox->setCurrentIndex(0);
 //}
 
-void ComboBoxHelper::setSelectedId(QComboBox *comboBox, int id)
+void ComboBoxHelper::setSelected(QComboBox *comboBox, int id)
 {
 	comboBox->setCurrentIndex(comboBox->findData(id));
 }
 
-int ComboBoxHelper::selectedId(QComboBox *comboBox)
+void ComboBoxHelper::setSelected(QComboBox *comboBox, const QString &text)
+{
+	comboBox->setCurrentIndex(comboBox->findText(text));
+}
+
+int ComboBoxHelper::selected(QComboBox *comboBox)
 {
 	return comboBox->itemData(comboBox->currentIndex()).toInt();
 }

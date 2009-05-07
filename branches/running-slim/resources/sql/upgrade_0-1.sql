@@ -61,15 +61,3 @@ CREATE TABLE CfgCurrencyUnit
 INSERT INTO CfgCurrencyUnit VALUES(1, '$');
 
 INSERT INTO CfgCurrencyUnit VALUES(2, '€');
-
-CREATE TABLE Cfg
-(
-	-- header
-	Id INTEGER PRIMARY KEY AUTOINCREMENT,
-	-- table
-	MondayFirstDayOfWeek TEXT,
-	CfgDistanceUnitId INTEGER NOT NULL,
-	CfgWeightUnitId INTEGER NOT NULL,
-	CfgTemperatureUnitId INTEGER NOT NULL,
-	CfgCurrencyUnitId INTEGER NOT NULL
-);

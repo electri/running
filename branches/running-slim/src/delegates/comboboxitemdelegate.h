@@ -18,42 +18,34 @@
 
 ****************************************************************************/
 
-#ifndef MAINVIEW_H
-#define MAINVIEW_H
+#ifndef COMBOBOXITEMDELEGATE_H
+#define COMBOBOXITEMDELEGATE_H
 
-#include <QMainWindow>
-#include "ui_mainview.h"
+#include <QItemDelegate>
 
-class MainView : public QMainWindow, Ui::MainView
+class ComboBoxItemDelegate : public QItemDelegate
 {
 	Q_OBJECT
 
 public:
-	MainView(QWidget *parent = 0);
-	~MainView();
+	ComboBoxItemDelegate(const QString &tableName, QObject *parent = 0);
+	~ComboBoxItemDelegate();
 
-private slots:
-	void showCalendar();
-	void on_calendarWidget_selectionChanged();
-	void on_calendarWidget_activated();
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
-	void showStatistics();
-	void on_statisticsPageEventsPushButton_clicked();
-	void on_statisticsPageShoesPushButton_clicked();
+//	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-	void showEvent();
-	void addEvent();
-	void removeEvent();
-	void editEvent();
-	void editEventAccepted();
-	void editEventRejected();
+//	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+//	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
-	void settings();
-	void systemInformations();
-	void about();
+//	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+	void refreshItems();
 
 private:
-	void updateStatusbar();
+	QString m_tableName;
+	QHash<int, QString> m_objects;
 };
 
 #endif

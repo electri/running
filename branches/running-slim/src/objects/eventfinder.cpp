@@ -47,7 +47,7 @@ bool EventFinder::find(EventGateway &event, quint32 id)
 			}
 		}
 	}
-	
+
 	return false;
 }
 

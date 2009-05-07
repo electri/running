@@ -25,6 +25,12 @@
 #include <QString>
 #include <QSqlDatabase>
 
+/*
+ * Static class to perform operations on the database.
+ *
+ * Call init() to open or initialize a new database. Call close() to remove all
+ * connections.
+ */
 class Database : public QObject
 {
 	Q_OBJECT

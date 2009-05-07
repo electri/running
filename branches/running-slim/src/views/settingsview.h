@@ -41,8 +41,7 @@ private slots:
 	void on_treeView_clicked(const QModelIndex &);
 
 private:
-	void setFields();
-	void getFields();
+	void _refresh();
 
 	QStringListModel *m_model;
 };

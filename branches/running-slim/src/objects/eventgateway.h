@@ -73,7 +73,7 @@ public:
 	QString lastError() const { return m_lastError; }
 
 private:
-	bool _load(const QSqlRecord &record);
+	void _load(const QSqlRecord &record);
 	bool _insert();
 	bool _update();
 	bool _delete();

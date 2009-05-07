@@ -27,10 +27,11 @@ class ComboBoxHelper
 {
 public:
 	static void fillComboBox(QComboBox *comboBox, const QString &tableName, bool blankItem = false);
+	static void fillComboBox(QComboBox *comboBox, const QString &tableName, const QString &filter, bool blankItem = false);
 	static void fillShoesComboBox(QComboBox *comboBox, bool blankItem = false);
-//	static void fillShoeMakerModelsComboBox(QComboBox *);
-	static void setSelectedId(QComboBox *comboBox, int id);
-	static int selectedId(QComboBox *comboBox);
+	static void setSelected(QComboBox *comboBox, int id);
+	static void setSelected(QComboBox *comboBox, const QString &text);
+	static int selected(QComboBox *comboBox);
 };
 
 #endif // COMBOBOXHELPER_H
