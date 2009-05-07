@@ -18,17 +18,33 @@
 
 ****************************************************************************/
 
-#include <QtGui>
-#include "runnerinfopopupview.h"
-#include "settings.h"
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-}
+#include <QSettings>
+#include <QString>
 
-void RunnerInfoPopupView::showEvent(QShowEvent *)
+class Settings
 {
-	weightDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->weightUnit()));
-}
+friend class SettingsView;
+
+public:
+	static Settings *instance();
+	~Settings();
+
+	int toolbarIconSize() const;
+	Qt::ToolButtonStyle toolbarToolButtonStyle() const;
+	bool isMondayFirstDayOfWeek() const;
+	QString currencyUnit() const;
+	QString distanceUnit() const;
+	QString temperatureUnit() const;
+	QString weightUnit() const;
+
+private:
+	Settings();
+	static Settings *sm_instance;
+
+	QSettings *m_settings;
+};
+
+#endif // SETTINGS_H

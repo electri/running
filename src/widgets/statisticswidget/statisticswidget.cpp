@@ -21,7 +21,7 @@
 #include <QtGui>
 #include <QtSql>
 #include "statisticswidget.h"
-#include "objects/settingsgateway.h"
+#include "settings.h"
 #include "utility/utility.h"
 
 struct EventsPerDate
@@ -173,15 +173,15 @@ void StatisticsWidget::_drawHeader(QPainter &painter, int x, int y, int cw, int 
 	int flags = Qt::AlignCenter;
 
 	painter.setPen(pen1);
-	painter.drawText(x + cw, y, cw, ch, flags, tr("DISTANCE\n(%1)").arg(SettingsGateway::instance()->distanceUnit_description()));
+	painter.drawText(x + cw, y, cw, ch, flags, tr("DISTANCE\n(%1)").arg(Settings::instance()->distanceUnit()));
 	painter.drawText(x + (cw * 2), y, cw, ch, flags, tr("DURATION\n(h min sec)"));
 	switch (m_page)
 	{
 		case StatisticsPageEventsPerDate:
-			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("AVR. SPEED\n(min/%1 - %1/h)").arg(SettingsGateway::instance()->distanceUnit_description()));
+			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("AVR. SPEED\n(min/%1 - %1/h)").arg(Settings::instance()->distanceUnit()));
 			break;
 		case StatisticsPageShoes:
-			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(%1/%2)").arg(SettingsGateway::instance()->currencyUnit_description()).arg(SettingsGateway::instance()->distanceUnit_description()));
+			painter.drawText(x + (cw * 3), y, cw, ch, flags, tr("COST\n(%1/%2)").arg(Settings::instance()->currencyUnit()).arg(Settings::instance()->distanceUnit()));
 			break;
 	}
 

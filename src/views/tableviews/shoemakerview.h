@@ -18,17 +18,27 @@
 
 ****************************************************************************/
 
-#include <QtGui>
-#include "runnerinfopopupview.h"
-#include "settings.h"
+#ifndef SHOEMAKERVIEW_H
+#define SHOEMAKERVIEW_H
 
-RunnerInfoPopupView::RunnerInfoPopupView(QWidget *parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-}
+#include "abstracttableview.h"
+#include "ui_shoemakerview.h"
 
-void RunnerInfoPopupView::showEvent(QShowEvent *)
+class ShoeMakerView : public AbstractTableView, public Ui::ShoeMakerView
 {
-	weightDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->weightUnit()));
-}
+	Q_OBJECT
+
+public:
+	ShoeMakerView(QWidget *parent = 0, quint32 id = 0);
+	~ShoeMakerView();
+
+private slots:
+	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
+
+	void on_descriptionLineEdit_textChanged(const QString &value);
+
+private:
+	void setControlsEnabled(bool enable);
+};
+
+#endif // SHOEMAKERVIEW_H

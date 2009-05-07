@@ -1,4 +1,4 @@
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;
 
 
 
@@ -38,14 +38,14 @@ END;
 CREATE TRIGGER fku_ShoeModel_ShoeMaker_Id
 BEFORE UPDATE ON ShoeModel
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_ShoeModel_ShoeMaker_Id UPDATE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fku_ShoeModel_ShoeMaker_Id UPDATE foreign key constraint failed')
 	WHERE (SELECT Id FROM ShoeMaker WHERE Id = NEW.ShoeMakerId) IS NULL;
 END;
 
 CREATE TRIGGER fkd_ShoeModel_ShoeMaker_Id
 BEFORE DELETE ON ShoeMaker
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_ShoeModel_ShoeMaker_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_ShoeModel_ShoeMaker_Id DELETE foreign key constraint failed')
 	WHERE (SELECT ShoeMakerId FROM ShoeModel WHERE ShoeMakerId = OLD.Id) IS NOT NULL;
 END;
 
@@ -56,6 +56,7 @@ CREATE TABLE Shoe
 	-- header
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	-- table
+	ShoeMakerId INTEGER,
 	ShoeModelId INTEGER,
 	Size REAL,
 	PurchaseDate TEXT,
@@ -64,6 +65,27 @@ CREATE TABLE Shoe
 	Retired TEXT,
 	Notes TEXT
 );
+
+CREATE TRIGGER fki_Shoe_ShoeMaker_Id
+BEFORE INSERT ON Shoe
+FOR EACH ROW BEGIN
+	SELECT RAISE(ROLLBACK, 'fki_Shoe_ShoeMaker_Id INSERT foreign key constraint failed')
+	WHERE (SELECT Id FROM ShoeMaker WHERE Id = NEW.ShoeMakerId) IS NULL;
+END;
+
+CREATE TRIGGER fku_Shoe_ShoeMaker_Id
+BEFORE UPDATE ON Shoe
+FOR EACH ROW BEGIN
+	SELECT RAISE(ROLLBACK, 'fku_Shoe_ShoeMaker_Id UPDATE foreign key constraint failed')
+	WHERE (SELECT Id FROM ShoeMaker WHERE Id = NEW.ShoeMakerId) IS NULL;
+END;
+
+CREATE TRIGGER fkd_Shoe_ShoeMaker_Id
+BEFORE DELETE ON ShoeMaker
+FOR EACH ROW BEGIN
+	SELECT RAISE(ROLLBACK, 'fkd_Shoe_ShoeMaker_Id DELETE foreign key constraint failed')
+	WHERE (SELECT ShoeMakerId FROM Shoe WHERE ShoeMakerId = OLD.Id) IS NOT NULL;
+END;
 
 CREATE TRIGGER fki_Shoe_ShoeModel_Id
 BEFORE INSERT ON Shoe
@@ -75,14 +97,14 @@ END;
 CREATE TRIGGER fku_Shoe_ShoeModel_Id
 BEFORE UPDATE ON Shoe
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Shoe_ShoeModel_Id UPDATE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fku_Shoe_ShoeModel_Id UPDATE foreign key constraint failed')
 	WHERE (SELECT Id FROM ShoeModel WHERE Id = NEW.ShoeModelId) IS NULL;
 END;
 
 CREATE TRIGGER fkd_Shoe_ShoeModel_Id
 BEFORE DELETE ON ShoeModel
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Shoe_ShoeModel_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Shoe_ShoeModel_Id DELETE foreign key constraint failed')
 	WHERE (SELECT ShoeModelId FROM Shoe WHERE ShoeModelId = OLD.Id) IS NOT NULL;
 END;
 
@@ -153,28 +175,28 @@ END;
 CREATE TRIGGER fku_Event_EventType_Id
 BEFORE UPDATE ON Event
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Event_EventType_Id UPDATE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fku_Event_EventType_Id UPDATE foreign key constraint failed')
 	WHERE (SELECT Id FROM EventType WHERE Id = NEW.EventTypeId) IS NULL;
 END;
 
 CREATE TRIGGER fkd_Event_EventType_Id
 BEFORE DELETE ON EventType
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Event_EventType_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Event_EventType_Id DELETE foreign key constraint failed')
 	WHERE (SELECT EventTypeId FROM Event WHERE EventTypeId = OLD.Id) IS NOT NULL;
 END;
 
 CREATE TRIGGER fkd_Event_Shoe_Id
 BEFORE DELETE ON Shoe
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Event_Shoe_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Event_Shoe_Id DELETE foreign key constraint failed')
 	WHERE (SELECT ShoeId FROM Event WHERE ShoeId = OLD.Id) IS NOT NULL;
 END;
 
 CREATE TRIGGER fkd_Event_Weather_Id
 BEFORE DELETE ON Weather
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Event_Weather_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Event_Weather_Id DELETE foreign key constraint failed')
 	WHERE (SELECT WeatherId FROM Event WHERE WeatherId = OLD.Id) IS NOT NULL;
 END;
 
@@ -216,14 +238,14 @@ END;
 CREATE TRIGGER fku_Interval_Event_Id
 BEFORE UPDATE ON Interval
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Interval_Event_Id UPDATE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fku_Interval_Event_Id UPDATE foreign key constraint failed')
 	WHERE (SELECT Id FROM IntervalType WHERE Id = NEW.EventId) IS NULL;
 END;
 
 CREATE TRIGGER fkd_Interval_Event_Id
 BEFORE DELETE ON Event
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Interval_Event_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Interval_Event_Id DELETE foreign key constraint failed')
 	WHERE (SELECT EventId FROM Interval WHERE EventId = OLD.Id) IS NOT NULL;
 END;
 
@@ -237,14 +259,14 @@ END;
 CREATE TRIGGER fku_Interval_IntervalType_Id
 BEFORE UPDATE ON Interval
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Interval_IntervalType_Id UPDATE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fku_Interval_IntervalType_Id UPDATE foreign key constraint failed')
 	WHERE (SELECT Id FROM IntervalType WHERE Id = NEW.IntervalTypeId) IS NULL;
 END;
 
 CREATE TRIGGER fkd_Interval_IntervalType_Id
 BEFORE DELETE ON IntervalType
 FOR EACH ROW BEGIN
-	SELECT RAISE(ROLLBACK, 'fki_Interval_IntervalType_Id DELETE foreign key constraint failed')
+	SELECT RAISE(ROLLBACK, 'fkd_Interval_IntervalType_Id DELETE foreign key constraint failed')
 	WHERE (SELECT IntervalTypeId FROM Interval WHERE IntervalTypeId = OLD.Id) IS NOT NULL;
 END;
 
@@ -309,18 +331,6 @@ CREATE TABLE CfgCurrencyUnit
 INSERT INTO CfgCurrencyUnit VALUES(1, '$');
 
 INSERT INTO CfgCurrencyUnit VALUES(2, '€');
-
-CREATE TABLE Cfg
-(
-	-- header
-	Id INTEGER PRIMARY KEY AUTOINCREMENT,
-	-- table
-	MondayFirstDayOfWeek TEXT,
-	CfgDistanceUnitId INTEGER NOT NULL,
-	CfgWeightUnitId INTEGER NOT NULL,
-	CfgTemperatureUnitId INTEGER NOT NULL,
-	CfgCurrencyUnitId INTEGER NOT NULL
-);
 
 
 

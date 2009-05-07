@@ -44,12 +44,16 @@ protected slots:
 	void on_savePushButton_clicked();
 	void on_cancelPushButton_clicked();
 
+private slots:
+	void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+
 protected:
 	virtual void setControlsEnabled(bool value);
 	void refresh(quint32 id = 0);
 
 	QSqlTableModel *m_model;
 	QTableView *m_tableView;
+	bool m_pendingDataChanges;
 };
 
 #endif // ABSTRACTTABLEVIEW_H

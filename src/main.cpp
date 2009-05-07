@@ -24,11 +24,11 @@
 int main(int argc, char *argv[])
 {
 	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2 (slim branch)");
-	app.setOrganizationName("Project hosted at Google Code");
+	QApplication app(argc, argv);
+	app.setApplicationName("Running");
+	app.setApplicationVersion("pre 0.3 (Slim Branch)");
+	app.setOrganizationName("Marco Gasparetto");
 	app.setOrganizationDomain("http://code.google.com/p/running");
 
 	MainView view;

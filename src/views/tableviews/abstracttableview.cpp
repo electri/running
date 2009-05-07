@@ -26,6 +26,11 @@ AbstractTableView::AbstractTableView(QWidget *parent)
 	: QDialog(parent)
 {
 	m_model = new QSqlTableModel(this);
+	m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+	m_pendingDataChanges = false;
+
+	connect(m_model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 }
 
 AbstractTableView::~AbstractTableView()
@@ -55,7 +60,12 @@ void AbstractTableView::on_removePushButton_clicked()
 
 void AbstractTableView::on_resetPushButton_clicked()
 {
+	if (m_pendingDataChanges) {
+		if (QMessageBox::question(this, tr("Reset"), tr("There are pending changes to save. Are you sure to reset?"), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) return;
+	}
+
 	m_model->revertAll();
+	m_pendingDataChanges = false;
 
 	refresh();
 }
@@ -73,7 +83,16 @@ void AbstractTableView::on_savePushButton_clicked()
 
 void AbstractTableView::on_cancelPushButton_clicked()
 {
+	if (m_pendingDataChanges) {
+		if (QMessageBox::question(this, tr("Cancel"), tr("There are pending changes to save. Are you sure to cancel?"), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) return;
+	}
+
 	reject();
+}
+
+void AbstractTableView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+	m_pendingDataChanges = true;
 }
 
 void AbstractTableView::setControlsEnabled(bool value)

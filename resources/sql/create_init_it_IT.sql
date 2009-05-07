@@ -1,7 +1,3 @@
-INSERT INTO Cfg VALUES(1, 'true', 2, 2, 2, 2);
-
-
-
 INSERT INTO EventType VALUES(1, 'Corsa (generica)', 'false', 'false');
 
 INSERT INTO EventType VALUES(2, 'Corsa intervallata', 'false', 'false');
