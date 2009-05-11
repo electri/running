@@ -37,8 +37,8 @@ MainView::MainView(QWidget *parent)
 #ifdef Q_WS_MAC
 	setUnifiedTitleAndToolBarOnMac(true);
 #endif
-
-	toolBar->setIconSize(QSize(Settings::instance()->toolbarIconSize(), Settings::instance()->toolbarIconSize()));
+        const int iconSize = Settings::instance()->toolbarIconSize();
+        toolBar->setIconSize(QSize(iconSize, iconSize));
 	toolBar->setToolButtonStyle(Settings::instance()->toolbarToolButtonStyle());
 	calendarWidget->setFirstDayOfWeek(Settings::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 
