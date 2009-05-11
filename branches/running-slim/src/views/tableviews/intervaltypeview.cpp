@@ -31,6 +31,8 @@ IntervalTypeView::IntervalTypeView(QWidget *parent, quint32 id)
 	m_model->setTable("IntervalType");
 	m_model->select();
 
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Description"), Qt::DisplayRole);
+
 	m_tableView = tableView;
 
 	tableView->setModel(m_model);
@@ -57,11 +59,7 @@ void IntervalTypeView::currentRowChanged(const QModelIndex &current, const QMode
 
 void IntervalTypeView::on_descriptionLineEdit_textChanged(const QString &value)
 {
-	QModelIndex index = tableView->currentIndex();
-	QString description = index.sibling(index.row(), 1).data().toString();
-	if (value != description) {
-		m_model->setData(index.sibling(index.row(), 1), value);
-	}
+	onTextChanged(1, value);
 }
 
 void IntervalTypeView::setControlsEnabled(bool enable)

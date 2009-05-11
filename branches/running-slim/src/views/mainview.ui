@@ -38,13 +38,10 @@
        </layout>
       </widget>
       <widget class="QWidget" name="eventPage">
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QVBoxLayout" name="eventPageVerticalLayout">
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="EventWidget" name="eventWidget" native="true"/>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="statisticsPage">
@@ -97,8 +94,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>615</width>
-             <height>440</height>
+             <width>96</width>
+             <height>26</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -192,7 +189,7 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -364,12 +361,6 @@
    <class>StatisticsWidget</class>
    <extends>QWidget</extends>
    <header>widgets/statisticswidget/statisticswidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>EventWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/eventwidget/eventwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

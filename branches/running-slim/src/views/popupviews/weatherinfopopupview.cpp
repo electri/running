@@ -28,26 +28,22 @@ WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+
+	ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
 }
 
 void WeatherInfoPopupView::on_weatherToolButton_clicked()
 {
 	quint32 id = ComboBoxHelper::selected(weatherComboBox);
 
-	WeatherView *view = new WeatherView(this, id);
-	int result = view->exec();
+	WeatherView view(this, id);
+	int result = view.exec();
 	if (result == QDialog::Accepted) {
-		reloadLists();
+		ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
 	}
-	delete view;
 }
 
 void WeatherInfoPopupView::showEvent(QShowEvent *)
 {
 	temperatureDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->temperatureUnit()));
-}
-
-void WeatherInfoPopupView::reloadLists()
-{
-	ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
 }

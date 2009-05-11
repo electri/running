@@ -34,6 +34,9 @@ ShoeModelView::ShoeModelView(QWidget *parent, quint32 id)
 	m_model->setTable("ShoeModel");
 	m_model->select();
 
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Description"), Qt::DisplayRole);
+	m_model->setHeaderData(2, Qt::Horizontal, tr("Maker"), Qt::DisplayRole);
+
 	m_tableView = tableView;
 
 	tableView->setModel(m_model);
@@ -45,11 +48,11 @@ ShoeModelView::ShoeModelView(QWidget *parent, quint32 id)
 	QHeaderView *headerView = tableView->horizontalHeader();
 	headerView->swapSections(2, 1);
 
+	ComboBoxHelper::fillComboBox(shoeMakerComboBox, "ShoeMaker", false);
+
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
 	descriptionLineEdit->setCompleter(CompleterHelper::completer("ShoeModel", "Description", descriptionLineEdit));
-
-	ComboBoxHelper::fillComboBox(shoeMakerComboBox, "ShoeMaker", false);
 
 	refresh(id);
 }
@@ -66,24 +69,15 @@ void ShoeModelView::currentRowChanged(const QModelIndex &current, const QModelIn
 	descriptionLineEdit->setText(current.sibling(current.row(), 1).data().toString());
 }
 
-void ShoeModelView::on_shoeMakerComboBox_currentIndexChanged(int id)
+void ShoeModelView::on_shoeMakerComboBox_currentIndexChanged(int index)
 {
-	int value = shoeMakerComboBox->itemData(id).toInt();
-
-	QModelIndex index = tableView->currentIndex();
-	int data = index.sibling(index.row(), 2).data().toInt();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 2), value);
-	}
+	int value = shoeMakerComboBox->itemData(index).toInt();
+	onIntChanged(2, value);
 }
 
 void ShoeModelView::on_descriptionLineEdit_textChanged(const QString &value)
 {
-	QModelIndex index = tableView->currentIndex();
-	QString description = index.sibling(index.row(), 1).data().toString();
-	if (value != description) {
-		m_model->setData(index.sibling(index.row(), 1), value);
-	}
+	onTextChanged(1, value);
 }
 
 void ShoeModelView::on_shoeMakerToolButton_clicked()

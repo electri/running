@@ -52,9 +52,11 @@ bool Database::init()
 			sm_lastError = tr("The database file is for a newer version of the software.");
 			return false;
 		} else if (dbver < DATABASEVERSION) {
-			if (!_upgradeDatabase(db, dbver)) {
-				sm_lastError = tr("An error has occurred upgrading the database.");
-				return false;
+			for (int i = dbver; i < DATABASEVERSION; ++i) {
+				if (!_upgradeDatabase(db, i)) {
+					sm_lastError = tr("An error has occurred upgrading the database.");
+					return false;
+				}
 			}
 		}
 	} else {

@@ -19,6 +19,7 @@
 ****************************************************************************/
 
 #include <QApplication>
+#include <QTranslator>
 #include "views/mainview.h"
 
 int main(int argc, char *argv[])
@@ -30,6 +31,11 @@ int main(int argc, char *argv[])
 	app.setApplicationVersion("pre 0.3 (Slim Branch)");
 	app.setOrganizationName("Marco Gasparetto");
 	app.setOrganizationDomain("http://code.google.com/p/running");
+
+	QTranslator myappTranslator;
+	if (myappTranslator.load(":/translations/running.qm")) {
+		app.installTranslator(&myappTranslator);
+	}
 
 	MainView view;
 	view.show();

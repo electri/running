@@ -31,7 +31,6 @@ class WeatherInfoPopupView : public QWidget, public Ui::WeatherInfoPopupView
 public:
 	WeatherInfoPopupView(QWidget *parent = 0);
 	void showEvent(QShowEvent *);
-	void reloadLists();
 
 private slots:
 	void on_weatherToolButton_clicked();

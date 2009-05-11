@@ -88,7 +88,7 @@ bool EventGateway::_insert()
 			query.bindValue(":temperature", this->temperature());
 
 			bool rc = query.exec();
-			qDebug() << "[INSERT] " << query.lastQuery();
+//			qDebug() << "[INSERT] " << query.lastQuery();
 			if (rc) {
 				m_id = query.lastInsertId().toInt();
 				return true;
@@ -130,7 +130,7 @@ bool EventGateway::_update()
 			query.bindValue(":temperature", this->temperature());
 
 			bool rc = query.exec();
-			qDebug() << "[UPDATE] " << query.lastQuery();
+//			qDebug() << "[UPDATE] " << query.lastQuery();
 			if (rc) {
 				return true;
 			}
@@ -153,7 +153,7 @@ bool EventGateway::_delete()
 		if (db.isOpen()) {
 			QSqlQuery query(db);
 			bool rc = query.exec(queryText);
-			qDebug() << "[DELETE] " << queryText;
+//			qDebug() << "[DELETE] " << queryText;
 			if (rc) {
 				return true;
 			}
