@@ -271,11 +271,6 @@
                 </disabled>
                </palette>
               </property>
-              <property name="font">
-               <font>
-                <italic>true</italic>
-               </font>
-              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>
