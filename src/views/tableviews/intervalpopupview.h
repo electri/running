@@ -18,41 +18,50 @@
 
 ****************************************************************************/
 
-#ifndef SHOEVIEW_H
-#define SHOEVIEW_H
+#ifndef INTERVALPOPUPVIEW_H
+#define INTERVALPOPUPVIEW_H
 
+#include <QSqlRecord>
 #include "abstracttableview.h"
-#include "ui_shoeview.h"
+#include "ui_intervalpopupview.h"
 
-class ShoeView : public AbstractTableView, public Ui::ShoeView
+class EventGateway;
+class QSqlTableModel;
+
+class IntervalPopupView : public AbstractTableView, public Ui::IntervalPopupView
 {
 	Q_OBJECT
 
 public:
-	ShoeView(QWidget *parent = 0, quint32 id = 0);
-	~ShoeView();
+	IntervalPopupView(EventGateway *event, QWidget *parent = 0);
+	~IntervalPopupView();
 
 	void showEvent(QShowEvent *);
+
+	void setEvent(EventGateway *event);
+	EventGateway *event() const;
+	QSqlTableModel *model() const;
+
+	void resetAll();
+	bool saveAll();
 
 private slots:
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	void on_shoeMakerComboBox_currentIndexChanged(int index);
-	void on_shoeModelComboBox_currentIndexChanged(int index);
-	void on_initialDistanceDoubleSpinBox_valueChanged(double value);
-	void on_purchaseDateDateEdit_dateChanged(const QDate &value);
-	void on_sizeDoubleSpinBox_valueChanged(double value);
-	void on_priceDoubleSpinBox_valueChanged(double value);
-	void on_retiredCheckBox_stateChanged(int state);
+	void on_rowUpPushButton_clicked();
+	void on_rowDownPushButton_clicked();
+
+	void on_intervalTypeComboBox_currentIndexChanged(int index);
+	void on_distanceDoubleSpinBox_valueChanged(double value);
+	void on_durationTimeEdit_timeChanged(const QTime &value);
 	void on_notesPlainTextEdit_textChanged();
 
-	void on_shoeMakerToolButton_clicked();
-	void on_shoeModelToolButton_clicked();
+	void on_intervalTypeToolButton_clicked();
 
 private:
 	void setControlsEnabled(bool enable);
 
-//	double m_distance;
+	EventGateway *m_event;
 };
 
-#endif // SHOEVIEW_H
+#endif // INTERVALPOPUPVIEW_H

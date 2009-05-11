@@ -32,6 +32,10 @@ EventTypeView::EventTypeView(QWidget *parent, quint32 id)
 	m_model->setTable("EventType");
 	m_model->select();
 
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Description"), Qt::DisplayRole);
+	m_model->setHeaderData(2, Qt::Horizontal, tr("Medal"), Qt::DisplayRole);
+	m_model->setHeaderData(3, Qt::Horizontal, tr("Intervals"), Qt::DisplayRole);
+
 	m_tableView = tableView;
 
 	tableView->setModel(m_model);
@@ -64,31 +68,17 @@ void EventTypeView::currentRowChanged(const QModelIndex &current, const QModelIn
 
 void EventTypeView::on_descriptionLineEdit_textChanged(const QString &value)
 {
-	QModelIndex index = tableView->currentIndex();
-	QString description = index.sibling(index.row(), 1).data().toString();
-	if (value != description) {
-		m_model->setData(index.sibling(index.row(), 1), value);
-	}
+	onTextChanged(1, value);
 }
 
-void EventTypeView::on_hasMedalCheckBox_stateChanged(int value)
+void EventTypeView::on_hasMedalCheckBox_stateChanged(int state)
 {
-	bool state = value > 0;
-	QModelIndex index = tableView->currentIndex();
-	bool hasMedal = index.sibling(index.row(), 2).data().toBool();
-	if (state != hasMedal) {
-		m_model->setData(index.sibling(index.row(), 2), state);
-	}
+	onBoolChanged(2, state);
 }
 
-void EventTypeView::on_hasIntervalsCheckBox_stateChanged(int value)
+void EventTypeView::on_hasIntervalsCheckBox_stateChanged(int state)
 {
-	bool state = value > 0;
-	QModelIndex index = tableView->currentIndex();
-	bool hasIntervals = index.sibling(index.row(), 3).data().toBool();
-	if (state != hasIntervals) {
-		m_model->setData(index.sibling(index.row(), 3), state);
-	}
+	onBoolChanged(3, state);
 }
 
 void EventTypeView::setControlsEnabled(bool value)

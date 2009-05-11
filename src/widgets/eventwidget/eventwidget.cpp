@@ -19,19 +19,20 @@
 ****************************************************************************/
 
 #include <QtGui>
+#include <QtSql>
 #include "eventwidget.h"
 #include "settings.h"
 #include "utility/comboboxhelper.h"
 #include "utility/completerhelper.h"
 #include "utility/utility.h"
-//#include "views/intervalview.h"
 #include "views/popupviews/runnerinfopopupview.h"
 #include "views/popupviews/votepopupview.h"
 #include "views/popupviews/weatherinfopopupview.h"
 #include "views/tableviews/eventtypeview.h"
+#include "views/tableviews/intervalpopupview.h"
 #include "views/tableviews/shoeview.h"
 
-EventWidget::EventWidget(QWidget *parent)
+EventWidget::EventWidget(const EventGateway &event, QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
@@ -44,8 +45,16 @@ EventWidget::EventWidget(QWidget *parent)
 	palette.setColor(QPalette::Highlight, QColor("yellow"));
 	starsSlider->setPalette(palette);
 
-//	m_intervalview = new IntervalView(event, this);
-//	m_intervalview->setWindowFlags(Qt::Popup);
+	ComboBoxHelper::fillComboBox(eventTypeComboBox, "EventType", false);
+	ComboBoxHelper::fillShoesComboBox(shoeComboBox, false);
+
+	nameLineEdit->setCompleter(CompleterHelper::completer("Event", "Name", nameLineEdit));
+	descriptionLineEdit->setCompleter(CompleterHelper::completer("Event", "Description", descriptionLineEdit));
+
+	m_event = event;
+
+	m_intervalpopupview = new IntervalPopupView(&m_event, this);
+	m_intervalpopupview->setWindowFlags(Qt::Popup);
 	m_runnerinfopopupview = new RunnerInfoPopupView(this);
 	m_runnerinfopopupview->setWindowFlags(Qt::Popup);
 	m_votepopupview = new VotePopupView(this);
@@ -53,51 +62,26 @@ EventWidget::EventWidget(QWidget *parent)
 	m_weatherinfopopupview = new WeatherInfoPopupView(this);
 	m_weatherinfopopupview->setWindowFlags(Qt::Popup);
 
-	m_event = EventGateway();
+	_setFields();
+
+	m_pendingDataChanges = false;
 }
 
 EventWidget::~EventWidget()
 {
-//	delete m_intervalview;
+	delete m_intervalpopupview;
 	delete m_runnerinfopopupview;
 	delete m_votepopupview;
 	delete m_weatherinfopopupview;
 }
 
-void EventWidget::applySettings()
+void EventWidget::showEvent(QShowEvent *)
 {
 	distanceDoubleSpinBox->setSuffix(" " + Settings::instance()->distanceUnit());
 	paceLineEdit->setText(Utility::formatPace(m_event.distance(), m_event.duration()));
 }
 
-void EventWidget::reloadLists()
-{
-	nameLineEdit->setCompleter(CompleterHelper::completer("Event", "Name", nameLineEdit));
-	descriptionLineEdit->setCompleter(CompleterHelper::completer("Event", "Description", descriptionLineEdit));
-
-	ComboBoxHelper::fillComboBox(eventTypeComboBox, "EventType", false);
-	ComboBoxHelper::fillShoesComboBox(shoeComboBox, false);
-	m_weatherinfopopupview->reloadLists();
-}
-
-void EventWidget::setEvent(const EventGateway &event)
-{
-	reloadLists();
-
-	m_event = event;
-	setFields();
-
-//	paceLineEdit->setText(Utility::formatPace(m_event.distance(), m_event.duration()));
-
-	m_pendingDataChanges = false;
-}
-
-EventGateway EventWidget::event() const
-{
-	return m_event;
-}
-
-void EventWidget::setFields()
+void EventWidget::_setFields()
 {
 	ComboBoxHelper::setSelected(eventTypeComboBox, m_event.eventType_id());
 	starsSlider->setValue(m_event.vote());
@@ -113,9 +97,11 @@ void EventWidget::setFields()
 	m_runnerinfopopupview->weightDoubleSpinBox->setValue(m_event.weight());
 	ComboBoxHelper::setSelected(m_weatherinfopopupview->weatherComboBox, m_event.weather_id());
 	m_weatherinfopopupview->temperatureDoubleSpinBox->setValue(m_event.temperature());
+
+	paceLineEdit->setText(Utility::formatPace(m_event.distance(), m_event.duration()));
 }
 
-void EventWidget::getFields()
+void EventWidget::_getFields()
 {
 	m_event.setEventType_id(ComboBoxHelper::selected(eventTypeComboBox));
 	m_event.setVote(starsSlider->value());
@@ -139,24 +125,33 @@ void EventWidget::on_resetPushButton_clicked()
 		if (QMessageBox::question(this, tr("Reset"), tr("There are pending changes to save. Are you sure to reset?"), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) return;
 	}
 
-//	m_intervalview->resetAll();
+	_setFields();
+	m_intervalpopupview->resetAll();
 
-	setFields();
 	m_pendingDataChanges = false;
 }
 
 void EventWidget::on_savePushButton_clicked()
 {
-	getFields();
-
-//	m_intervalview->saveAll();
-
+	QSqlDatabase db = QSqlDatabase::database();
+	db.transaction();
+	
+	_getFields();
 	if (!m_event.save()) {
+		db.rollback();
 		QMessageBox::critical(this, tr("Add/Edit an event"), m_event.lastError());
 		return;
 	}
 
-	emit accept();
+	if (!m_intervalpopupview->saveAll()) {
+		db.rollback();
+		QMessageBox::critical(this, tr("Add/Edit an event"), m_intervalpopupview->model()->lastError().text());
+		return;
+	}
+
+	db.commit();
+	
+	emit accepted();
 }
 
 void EventWidget::on_cancelPushButton_clicked()
@@ -165,7 +160,7 @@ void EventWidget::on_cancelPushButton_clicked()
 		if (QMessageBox::question(this, tr("Cancel"), tr("There are pending changes to save. Are you sure to cancel?"), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) return;
 	}
 
-	emit reject();
+	emit rejected();
 }
 
 void EventWidget::on_distanceDoubleSpinBox_valueChanged(double value)
@@ -180,43 +175,59 @@ void EventWidget::on_durationTimeEdit_timeChanged(const QTime &value)
 	paceLineEdit->setText(Utility::formatPace(distance, value));
 }
 
-void EventWidget::on_eventTypeComboBox_currentIndexChanged(int)
+void EventWidget::on_eventTypeComboBox_currentIndexChanged(int index)
 {
+	bool hasIntervals = false;
+	quint32 id = eventTypeComboBox->itemData(index).toInt();
 
+	QString queryText = QString("SELECT HasIntervals FROM EventType WHERE Id = %1").arg(id);
+	QSqlDatabase db = QSqlDatabase::database();
+	if (db.isValid()) {
+		if (db.isOpen()) {
+			QSqlQuery query(db);
+			bool rc = query.exec(queryText);
+			if (rc) {
+				if (query.first()) {
+					QSqlRecord record = query.record();
+					hasIntervals = record.value("HasIntervals").toBool();
+				}
+			}
+		}
+	}
+
+	intervalsPushButton->setEnabled(hasIntervals);
 }
 
 void EventWidget::on_eventTypeToolButton_clicked()
 {
 	quint32 id = ComboBoxHelper::selected(eventTypeComboBox);
 
-	EventTypeView *view = new EventTypeView(this, id);
-	int result = view->exec();
+	EventTypeView view(this, id);
+	int result = view.exec();
 	if (result == QDialog::Accepted) {
 //		statisticsWidget->refreshCache();
 //		calendarWidget->update();
 		ComboBoxHelper::fillComboBox(eventTypeComboBox, "EventType", false);
 	}
-	delete view;
 }
 
 void EventWidget::on_shoeToolButton_clicked()
 {
 	quint32 id = ComboBoxHelper::selected(shoeComboBox);
 
-	ShoeView *view = new ShoeView(this, id);
-	int result = view->exec();
+	ShoeView view(this, id);
+	int result = view.exec();
 	if (result == QDialog::Accepted) {
 //		statisticsWidget->refreshCache();
 //		calendarWidget->update();
 		ComboBoxHelper::fillShoesComboBox(shoeComboBox, false);
 	}
-	delete view;
 }
 
 void EventWidget::on_intervalsPushButton_clicked()
 {
-//	m_intervalview->move(ui->intervalsPushButton->mapToGlobal(QPoint(0, (m_intervalview->height() + 10) * -1)));
-//	m_intervalview->show();
+	m_intervalpopupview->move(intervalsPushButton->mapToGlobal(QPoint(0, (m_intervalpopupview->height() + 10) * -1)));
+	m_intervalpopupview->show();
 }
 
 void EventWidget::on_runnerInfoPushButton_clicked()

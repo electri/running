@@ -26,6 +26,7 @@
 
 class QTableView;
 class QSqlTableModel;
+class QPlainTextEdit;
 
 class AbstractTableView : public QDialog
 {
@@ -49,7 +50,16 @@ private slots:
 
 protected:
 	virtual void setControlsEnabled(bool value);
-	void refresh(quint32 id = 0);
+	void refresh(int id = -1);
+	void swapRows(int row1, int row2);
+
+	void onBoolChanged(int column,  int state);
+	void onIntChanged(int column, int value);
+	void onDoubleChanged(int column, double value);
+	void onDateChanged(int column, const QDate &value);
+	void onTimeChanged(int column, const QTime &value);
+	void onTextChanged(int column, const QString &value);
+	void onPlainTextChanged(int column, const QPlainTextEdit *widget);
 
 	QSqlTableModel *m_model;
 	QTableView *m_tableView;

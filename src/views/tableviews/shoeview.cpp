@@ -37,6 +37,12 @@ ShoeView::ShoeView(QWidget *parent, quint32 id)
 	m_model->setTable("Shoe");
 	m_model->select();
 
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Maker"), Qt::DisplayRole);
+	m_model->setHeaderData(2, Qt::Horizontal, tr("Model"), Qt::DisplayRole);
+	m_model->setHeaderData(3, Qt::Horizontal, tr("Size"), Qt::DisplayRole);
+	m_model->setHeaderData(4, Qt::Horizontal, tr("Purchase Date"), Qt::DisplayRole);
+	m_model->setHeaderData(7, Qt::Horizontal, tr("Retired"), Qt::DisplayRole);
+
 	m_tableView = tableView;
 
 	tableView->setModel(m_model);
@@ -56,7 +62,6 @@ ShoeView::ShoeView(QWidget *parent, quint32 id)
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
 	ComboBoxHelper::fillComboBox(shoeMakerComboBox, "ShoeMaker", false);
-//	ComboBoxHelper::fillComboBox(shoeModelComboBox, "ShoeModel", QString("ShoeMakerId = %1").arg(ComboBoxHelper::selectedId(shoeMakerComboBox)), false);
 
 	refresh(id);
 }
@@ -70,6 +75,7 @@ void ShoeView::showEvent(QShowEvent *event)
 	Q_UNUSED(event);
 
 	initialDistanceDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->distanceUnit()));
+	priceDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->currencyUnit()));
 	distanceDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->distanceUnit()));
 	pricePerDistanceDoubleSpinBox->setSuffix(QString(" %1/%2").arg(Settings::instance()->currencyUnit()).arg(Settings::instance()->distanceUnit()));
 }
@@ -78,18 +84,22 @@ void ShoeView::currentRowChanged(const QModelIndex &current, const QModelIndex &
 {
 	Q_UNUSED(previous);
 
-	m_isRefreshingFields = true;
+	shoeMakerComboBox->blockSignals(true);
+	shoeModelComboBox->blockSignals(true);
+	int shoeMakerId = current.sibling(current.row(), 1).data().toInt();
+	ComboBoxHelper::setSelected(shoeMakerComboBox, shoeMakerId);
+	ComboBoxHelper::fillComboBox(shoeModelComboBox, "ShoeModel", QString("ShoeMakerId = %1").arg(shoeMakerId), false);
+	int shoeModelId = current.sibling(current.row(), 2).data().toInt();
+	ComboBoxHelper::setSelected(shoeModelComboBox, shoeModelId);
+	shoeMakerComboBox->blockSignals(false);
+	shoeModelComboBox->blockSignals(false);
 
-	ComboBoxHelper::setSelected(shoeMakerComboBox, current.sibling(current.row(), 1).data().toInt());
-	ComboBoxHelper::setSelected(shoeModelComboBox, current.sibling(current.row(), 2).data().toInt());
 	sizeDoubleSpinBox->setValue(current.sibling(current.row(), 3).data().toDouble());
 	purchaseDateDateEdit->setDate(current.sibling(current.row(), 4).data().toDate());
 	priceDoubleSpinBox->setValue(current.sibling(current.row(), 5).data().toDouble());
 	initialDistanceDoubleSpinBox->setValue(current.sibling(current.row(), 6).data().toDouble());
 	retiredCheckBox->setChecked(current.sibling(current.row(), 7).data().toBool());
 	notesPlainTextEdit->setPlainText(current.sibling(current.row(), 8).data().toString());
-
-	m_isRefreshingFields = false;
 
 //	quint32 shoeId = current.sibling(current.row(), 0).data().toInt();
 //	StatisticsResults::Shoes r = Utility::StatisticsService::instance()->shoe(shoeId);
@@ -101,65 +111,33 @@ void ShoeView::currentRowChanged(const QModelIndex &current, const QModelIndex &
 	pricePerDistanceDoubleSpinBox->setValue(0.0);
 }
 
-void ShoeView::on_shoeMakerComboBox_currentIndexChanged(int id)
+void ShoeView::on_shoeMakerComboBox_currentIndexChanged(int index)
 {
-	int value = shoeMakerComboBox->itemData(id).toInt();
+	int value = shoeMakerComboBox->itemData(index).toInt();
+	onIntChanged(1, value);
 
 	ComboBoxHelper::fillComboBox(shoeModelComboBox, "ShoeModel", QString("ShoeMakerId = %1").arg(value), false);
-
-	if (m_isRefreshingFields) return;
-
-	QModelIndex index = tableView->currentIndex();
-	int data = index.sibling(index.row(), 1).data().toInt();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 1), value);
-	}
 }
 
-void ShoeView::on_shoeModelComboBox_currentIndexChanged(int id)
+void ShoeView::on_shoeModelComboBox_currentIndexChanged(int index)
 {
-	if (m_isRefreshingFields) return;
-
-	int value = shoeModelComboBox->itemData(id).toInt();
-
-	QModelIndex index = tableView->currentIndex();
-	int data = index.sibling(index.row(), 2).data().toInt();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 2), value);
-	}
+	int value = shoeModelComboBox->itemData(index).toInt();
+	onIntChanged(2, value);
 }
 
 void ShoeView::on_sizeDoubleSpinBox_valueChanged(double value)
 {
-	if (m_isRefreshingFields) return;
-
-	QModelIndex index = tableView->currentIndex();
-	double data = index.sibling(index.row(), 3).data().toDouble();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 3), value);
-	}
+	onDoubleChanged(3, value);
 }
 
 void ShoeView::on_purchaseDateDateEdit_dateChanged(const QDate &value)
 {
-	if (m_isRefreshingFields) return;
-
-	QModelIndex index = tableView->currentIndex();
-	QDate data = index.sibling(index.row(), 4).data().toDate();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 4), value);
-	}
+	onDateChanged(4, value);
 }
 
 void ShoeView::on_priceDoubleSpinBox_valueChanged(double value)
 {
-	if (m_isRefreshingFields) return;
-
-	QModelIndex index = tableView->currentIndex();
-	double data = index.sibling(index.row(), 5).data().toDouble();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 5), value);
-	}
+	onDoubleChanged(5, value);
 
 //	qreal distance = distanceDoubleSpinBox->value();
 //	pricePerDistanceDoubleSpinBox->setValue((distance > 0.0) ? (value / distance) : 0.0);
@@ -167,41 +145,19 @@ void ShoeView::on_priceDoubleSpinBox_valueChanged(double value)
 
 void ShoeView::on_initialDistanceDoubleSpinBox_valueChanged(double value)
 {
-	if (m_isRefreshingFields) return;
-
-	QModelIndex index = tableView->currentIndex();
-	double data = index.sibling(index.row(), 6).data().toDouble();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 6), value);
-	}
+	onDoubleChanged(6, value);
 
 //	distanceDoubleSpinBox->setValue(m_distance + value);
 }
 
 void ShoeView::on_retiredCheckBox_stateChanged(int state)
 {
-	if (m_isRefreshingFields) return;
-
-	bool value = state > 0;
-
-	QModelIndex index = tableView->currentIndex();
-	bool data = index.sibling(index.row(), 7).data().toBool();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 7), value);
-	}
+	onBoolChanged(7, state);
 }
 
 void ShoeView::on_notesPlainTextEdit_textChanged()
 {
-	if (m_isRefreshingFields) return;
-
-	QString value = notesPlainTextEdit->toPlainText();
-
-	QModelIndex index = tableView->currentIndex();
-	QString data = index.sibling(index.row(), 8).data().toString();
-	if (value != data) {
-		m_model->setData(index.sibling(index.row(), 8), value);
-	}
+	onPlainTextChanged(8, notesPlainTextEdit);
 }
 
 void ShoeView::on_shoeMakerToolButton_clicked()

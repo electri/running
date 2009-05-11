@@ -1,14 +1,18 @@
 running slim version
 --------------------
 
-This is a partial rewrite of the 0.2 main branch version. The purpose is to
-reduce code size and code complexity by removing some of the enterprise
-patters used. Were removed: the domain model, the repository service and all
-the data-mappers, the identity service, the memento. To access the database
-are now used rowgateway and finder patterns (much smaller).
+This is a partial rewrite of the 0.2 version. The purpose is to reduce code
+size and complexity by removing some of the enterprise patters used.
+Were removed: the domain model, the repository service and all the
+data-mappers, the identity-map service, the memento. To access the database
+now are used the rowgateway and finder patterns (much smaller code), or
+directly the Qt tablemodel classes.
 
-Feature still to be migrated to the new code:
-Shoes
-Intervals
-Translations
+All the existing feature were migrated to the new code.
 
+The database filename has changed: the extension was *.db3, now is *.db. Please
+rename the file to have an upgrade at the next program start.
+
+New features:
+Settings stored not in database anymore but in a platform-depending location.
+Bigger icons and configurable toolbar layout.

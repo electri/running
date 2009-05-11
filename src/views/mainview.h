@@ -23,6 +23,9 @@
 
 #include <QMainWindow>
 #include "ui_mainview.h"
+#include "objects/eventgateway.h"
+
+class EventWidget;
 
 class MainView : public QMainWindow, Ui::MainView
 {
@@ -33,27 +36,31 @@ public:
 	~MainView();
 
 private slots:
-	void showCalendar();
+	void showCalendarAction();
 	void on_calendarWidget_selectionChanged();
 	void on_calendarWidget_activated();
 
-	void showStatistics();
+	void showStatisticsAction();
 	void on_statisticsPageEventsPushButton_clicked();
 	void on_statisticsPageShoesPushButton_clicked();
 
-	void showEvent();
-	void addEvent();
-	void removeEvent();
-	void editEvent();
-	void editEventAccepted();
-	void editEventRejected();
+	void addEventAction();
+	void removeEventAction();
+	void editEventAction();
+	void on_eventWidget_accepted();
+	void on_eventWidget_rejected();
 
 	void settings();
 	void systemInformations();
 	void about();
 
 private:
-	void updateStatusbar();
+	void _addEvent(EventGateway &event);
+	void _editEvent(EventGateway &event);
+	void _showEventWidget(EventGateway &event);
+	void _updateStatusbar();
+
+	EventWidget *m_eventWidget;
 };
 
 #endif

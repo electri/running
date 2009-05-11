@@ -26,7 +26,7 @@
 #include "ui_eventwidget.h"
 #include "objects/eventgateway.h"
 
-//class IntervalView;
+class IntervalPopupView;
 class RunnerInfoPopupView;
 class VotePopupView;
 class WeatherInfoPopupView;
@@ -35,23 +35,22 @@ class EventWidget : public QWidget, Ui::EventWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(EventGateway event READ event WRITE setEvent)
-
 public:
-	EventWidget(QWidget *parent = 0);
+	EventWidget(const EventGateway &event, QWidget *parent = 0);
 	~EventWidget();
 
-	EventGateway event() const;
+	void showEvent(QShowEvent *);
 
 signals:
-	void accept();
-	void reject();
+	void accepted();
+	void rejected();
 
 public slots:
-	void setEvent(const EventGateway &event);
-	void applySettings();
-	void reloadLists();
+	void on_resetPushButton_clicked();
+	void on_savePushButton_clicked();
+	void on_cancelPushButton_clicked();
 
+private slots:
 	void on_distanceDoubleSpinBox_valueChanged(double value);
 	void on_durationTimeEdit_timeChanged(const QTime &value);
 	void on_eventTypeComboBox_currentIndexChanged(int index);
@@ -62,17 +61,13 @@ public slots:
 	void on_weatherInfoPushButton_clicked();
 	void on_shoeToolButton_clicked();
 
-	void on_resetPushButton_clicked();
-	void on_savePushButton_clicked();
-	void on_cancelPushButton_clicked();
-
 private:
-	void setFields();
-	void getFields();
+	void _setFields();
+	void _getFields();
 
 	EventGateway m_event;
 	bool m_pendingDataChanges;
-//	IntervalView *m_intervalview;
+	IntervalPopupView *m_intervalpopupview;
 	RunnerInfoPopupView *m_runnerinfopopupview;
 	VotePopupView *m_votepopupview;
 	WeatherInfoPopupView *m_weatherinfopopupview;
