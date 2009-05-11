@@ -50,8 +50,6 @@ HEADERS += src/views/mainview.h \
     src/views/settingsview.h \
     src/delegates/comboboxitemdelegate.h \
     src/views/tableviews/shoeview.h \
-    src/objects/shoegateway.h \
-    src/objects/shoefinder.h \
     src/views/tableviews/shoemakerview.h \
     src/views/tableviews/shoemodelview.h \
     src/settings.h \
@@ -95,8 +93,6 @@ SOURCES += src/main.cpp \
     src/views/settingsview.cpp \
     src/delegates/comboboxitemdelegate.cpp \
     src/views/tableviews/shoeview.cpp \
-    src/objects/shoegateway.cpp \
-    src/objects/shoefinder.cpp \
     src/views/tableviews/shoemakerview.cpp \
     src/views/tableviews/shoemodelview.cpp \
     src/settings.cpp \
