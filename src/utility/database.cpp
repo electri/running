@@ -52,11 +52,9 @@ bool Database::init()
 			sm_lastError = tr("The database file is for a newer version of the software.");
 			return false;
 		} else if (dbver < DATABASEVERSION) {
-			for (int i = dbver; i < DATABASEVERSION; ++i) {
-				if (!_upgradeDatabase(db, i)) {
-					sm_lastError = tr("An error has occurred upgrading the database.");
-					return false;
-				}
+			if (!_upgradeDatabase(db, dbver)) {
+				sm_lastError = tr("An error has occurred upgrading the database.");
+				return false;
 			}
 		}
 	} else {
@@ -140,18 +138,18 @@ bool Database::_createDatabase(QSqlDatabase &db)
  */
 bool Database::_upgradeDatabase(QSqlDatabase &db, int oldVersion)
 {
-	bool result = true;
-
 	if (!QFile::copy(DATABASENAME, DATABASENAME + ".bkp")) {
 		return false;
 	}
 
 	for (int i = oldVersion; i < DATABASEVERSION; ++i) {
 		QString scriptName = QString("upgrade_%1-%2").arg(i).arg(i + 1);
-		result &= _alterDatabase(db, scriptName, tr("Upgrading database ..."));
+		if (!_alterDatabase(db, scriptName, tr("Upgrading database ..."))) {
+			return false;
+		}
 	}
 
-	return result;
+	return true;
 }
 
 /*
@@ -165,7 +163,7 @@ bool Database::_upgradeDatabase(QSqlDatabase &db, int oldVersion)
  */
 bool Database::_alterDatabase(QSqlDatabase &db, const QString &scriptName, const QString &message)
 {
-	qDebug() << "[ALTER DATABASE] Executing: " << scriptName;
+	qDebug() << "[ALTER DATABASE] Executing:" << scriptName;
 
 	QProgressDialog progress;
 	progress.setWindowModality(Qt::WindowModal);
@@ -200,7 +198,7 @@ bool Database::_alterDatabase(QSqlDatabase &db, const QString &scriptName, const
 		qApp->processEvents();
 
 		if (!query.exec(text)) {
-			qDebug() << "[ALTER DATABASE] Error executing: " << text;
+			qDebug() << "[ALTER DATABASE] Error executing:" << text;
 			return false;
 		}
 	}
