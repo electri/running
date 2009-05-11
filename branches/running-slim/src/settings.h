@@ -30,7 +30,6 @@ friend class SettingsView;
 
 public:
 	static Settings *instance();
-	~Settings();
 
 	int toolbarIconSize() const;
 	Qt::ToolButtonStyle toolbarToolButtonStyle() const;
@@ -39,7 +38,19 @@ public:
 	QString distanceUnit() const;
 	QString temperatureUnit() const;
 	QString weightUnit() const;
-
+protected:
+        /* only instance of this class can destroy itself
+           otherwise:
+           Settings * instance = Settings::instance();
+           delete instance; // not good :-)
+           better to use Meyer's singleton
+           static Singleton & instance()
+           {
+               static Singleton instance_;
+               return instance_;
+           }
+         */
+        ~Settings();
 private:
 	Settings();
 	static Settings *sm_instance;

@@ -20,11 +20,11 @@
 
 #include "settings.h"
 
-Settings *Settings::sm_instance = NULL;
+Settings *Settings::sm_instance = 0 /*NULL*/;// NULL is not defined , wait for nullptr in C++0x
 
 Settings *Settings::instance()
 {
-	if (sm_instance == NULL) {
+        if (!sm_instance) {
 		sm_instance = new Settings;
 	}
 	return sm_instance;
@@ -64,6 +64,7 @@ Settings::Settings()
 Settings::~Settings()
 {
 	delete m_settings;
+        m_settings = 0;
 }
 
 int Settings::toolbarIconSize() const
