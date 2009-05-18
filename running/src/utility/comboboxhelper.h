@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,25 +18,20 @@
 
 ****************************************************************************/
 
-#ifndef VIEWHELPER_H
-#define VIEWHELPER_H
+#ifndef COMBOBOXHELPER_H
+#define COMBOBOXHELPER_H
 
 #include <QComboBox>
 
-#include "../objects/baseobject.h"
-
-namespace ViewHelper
+class ComboBoxHelper
 {
+public:
+	static void fillComboBox(QComboBox *comboBox, const QString &tableName, bool blankItem = false);
+	static void fillComboBox(QComboBox *comboBox, const QString &tableName, const QString &filter, bool blankItem = false);
+	static void fillShoesComboBox(QComboBox *comboBox, bool blankItem = false);
+	static void setSelected(QComboBox *comboBox, int id);
+	static void setSelected(QComboBox *comboBox, const QString &text);
+	static int selected(QComboBox *comboBox);
+};
 
-void fillComboBox(QComboBox *, Objects::Types::Type, bool blankItem = false);
-void fillShoesComboBox(QComboBox *);
-void fillShoeMakerModelsComboBox(QComboBox *);
-Objects::BaseObject *getObjectOnComboBox(QComboBox *, Objects::Types::Type type, Objects::BaseObject *old_object);
-void setIndexOnComboBox(QComboBox *, Objects::BaseObject *);
-void setIndexOnComboBox(QComboBox *, int id);
-
-QCompleter *completer(QWidget *widget, const QString &tableName, const QString &columnName);
-
-}
-
-#endif
+#endif // COMBOBOXHELPER_H

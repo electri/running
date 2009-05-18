@@ -1,10 +1,11 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ShoeMakerView</class>
- <widget class="QDialog" name="ShoeMakerView" >
-  <property name="windowModality" >
+ <widget class="QDialog" name="ShoeMakerView">
+  <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
-  <property name="geometry" >
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,37 +13,37 @@
     <height>400</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Edit "Shoe maker"</string>
+  <property name="windowTitle">
+   <string>Edit &quot;Shoe maker&quot;</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="addPushButton" >
-       <property name="icon" >
-        <iconset>
-         <normaloff>:table_add</normaloff>:table_add</iconset>
+      <widget class="QPushButton" name="addPushButton">
+       <property name="icon">
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/list_add</normaloff>:/images/list_add</iconset>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="removePushButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="removePushButton">
+       <property name="text">
         <string/>
        </property>
-       <property name="icon" >
-        <iconset>
-         <normaloff>:table_delete</normaloff>:table_delete</iconset>
+       <property name="icon">
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/list_remove</normaloff>:/images/list_remove</iconset>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -53,69 +54,69 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableView" name="tableView" >
-     <property name="editTriggers" >
+    <widget class="QTableView" name="tableView">
+     <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
-     <property name="selectionMode" >
+     <property name="selectionMode">
       <enum>QAbstractItemView::SingleSelection</enum>
      </property>
-     <property name="selectionBehavior" >
+     <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
-     <property name="cornerButtonEnabled" >
+     <property name="cornerButtonEnabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string/>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="descriptionLabel" >
-        <property name="text" >
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="descriptionLabel">
+        <property name="text">
          <string>Description</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>descriptionLineEdit</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="QLineEdit" name="descriptionLineEdit" />
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="descriptionLineEdit"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line" >
-     <property name="orientation" >
+    <widget class="Line" name="line">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="resetPushButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="resetPushButton">
+       <property name="text">
         <string>Reset</string>
        </property>
-       <property name="icon" >
-        <iconset>
-         <normaloff>:reset</normaloff>:reset</iconset>
+       <property name="icon">
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/reset</normaloff>:/images/reset</iconset>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -124,27 +125,27 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="savePushButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="savePushButton">
+       <property name="text">
         <string>Save</string>
        </property>
-       <property name="icon" >
-        <iconset>
-         <normaloff>:save</normaloff>:save</iconset>
+       <property name="icon">
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/save</normaloff>:/images/save</iconset>
        </property>
-       <property name="default" >
+       <property name="default">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelPushButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="cancelPushButton">
+       <property name="text">
         <string>Cancel</string>
        </property>
-       <property name="icon" >
-        <iconset>
-         <normaloff>:cancel</normaloff>:cancel</iconset>
+       <property name="icon">
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/cancel</normaloff>:/images/cancel</iconset>
        </property>
       </widget>
      </item>
@@ -153,7 +154,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../resources/application.qrc" />
+  <include location="../../../resources/application.qrc"/>
  </resources>
  <connections/>
 </ui>

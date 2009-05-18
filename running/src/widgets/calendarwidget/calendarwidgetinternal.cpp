@@ -20,7 +20,7 @@
 
 #include <QtGui>
 #include "calendarwidgetinternal.h"
-#include "delegates/calendardelegate.h"
+#include "calendarwidgetdelegate.h"
 
 CalendarWidgetInternal::CalendarWidgetInternal(QWidget *parent)
 	: QWidget(parent)
@@ -54,12 +54,12 @@ QDate CalendarWidgetInternal::selectedDate() const
 	return m_selectedDate;
 }
 
-void CalendarWidgetInternal::setDelegate(CalendarDelegate *delegate)
+void CalendarWidgetInternal::setDelegate(CalendarWidgetDelegate *delegate)
 {
 	m_delegate = delegate;
 }
 
-CalendarDelegate *CalendarWidgetInternal::delegate() const
+CalendarWidgetDelegate *CalendarWidgetInternal::delegate() const
 {
 	return m_delegate;
 }
@@ -220,26 +220,39 @@ bool CalendarWidgetInternal::isDate(QPoint pos) const
 
 void CalendarWidgetInternal::keyPressEvent(QKeyEvent *event)
 {
-	if ((event->key() == Qt::Key_Left) || (event->key() == Qt::Key_Right)) {
-		int offset = event->key() == Qt::Key_Left ? -1 : 1;
-		switch (event->modifiers()) {
-			case Qt::ControlModifier:
-				setSelectedDate(m_selectedDate.addYears(offset));
-				break;
-			case Qt::ShiftModifier:
-				setSelectedDate(m_selectedDate.addMonths(offset));
-				break;
-			case Qt::NoModifier:
-				setSelectedDate(m_selectedDate.addDays(offset));
-				break;
+	int key = event->key();
+	switch (key) {
+		case Qt::Key_Left:
+		case Qt::Key_Right:
+		{
+			int offset = ((key == Qt::Key_Left) ? -1 : 1);
+			Qt::KeyboardModifiers modifiers = event->modifiers();
+			switch (modifiers) {
+				case Qt::ControlModifier:
+					setSelectedDate(m_selectedDate.addYears(offset));
+					break;
+				case Qt::ShiftModifier:
+					setSelectedDate(m_selectedDate.addMonths(offset));
+					break;
+				default:
+					setSelectedDate(m_selectedDate.addDays(offset));
+					break;
+			}
+			break;
 		}
-	} else if ((event->key() == Qt::Key_Up) || (event->key() == Qt::Key_Down)) {
-		int offset = event->key() == Qt::Key_Up ? -7 : 7;
-		setSelectedDate(m_selectedDate.addDays(offset));
-	} else if ((event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Enter)) {
-		emit activated();
-	} else {
-		QWidget::keyPressEvent(event);
+		case Qt::Key_Up:
+		case Qt::Key_Down:
+		{
+			int offset = ((key == Qt::Key_Up) ? -7 : 7);
+			setSelectedDate(m_selectedDate.addDays(offset));
+			break;
+		}
+		case Qt::Key_Return:
+		case Qt::Key_Enter:
+			emit activated();
+			break;
+		default:
+			QWidget::keyPressEvent(event);
 	}
 }
 

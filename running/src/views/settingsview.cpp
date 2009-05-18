@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,106 +19,85 @@
 ****************************************************************************/
 
 #include <QtGui>
+#include <QtSql>
+#include "settingsview.h"
+#include "settings.h"
+#include "utility/comboboxhelper.h"
 
-#include "optionsview.h"
-
-#include "../application.h"
-#include "../objects/cfg.h"
-#include "../services/memento.h"
-#include "../views/viewhelper.h"
-
-OptionsView::OptionsView(QWidget *parent)
+SettingsView::SettingsView(QWidget *parent)
 	: QDialog(parent)
 {
 	setupUi(this);
 
 	m_model = new QStringListModel(this);
 	QList<QString> list;
-	list << tr("Calendar") << tr("Units of measurement");
+	list << tr("General") << tr("Calendar") << tr("Units of measurement");
 	m_model->setStringList(list);
 
 	treeView->setModel(m_model);
 
-	this->refreshComboBoxes();
+	toolbarIconSizeComboBox->addItem("16", 16);
+	toolbarIconSizeComboBox->addItem("24", 24);
+	toolbarIconSizeComboBox->addItem("32", 32);
+	toolbarIconSizeComboBox->addItem("48", 48);
+	toolbarIconSizeComboBox->addItem("64", 64);
 
-	m_cfg = static_cast<Objects::Cfg *>(Application::instance()->objectMap()->getObjectById(Objects::Types::Cfg, 1));
-	this->setProperties(m_cfg);
+	toolbarToolButtonStyleComboBox->addItem(tr("Only display the icon"), 0);
+	toolbarToolButtonStyleComboBox->addItem(tr("Only display the text"), 1);
+	toolbarToolButtonStyleComboBox->addItem(tr("The text appears beside the icon"), 2);
+	toolbarToolButtonStyleComboBox->addItem(tr("The text appears under the icon"), 3);
 
-	m_memento = new Services::Memento(m_cfg);
+	ComboBoxHelper::fillComboBox(currencyUnitComboBox, "CfgCurrencyUnit", false);
+	ComboBoxHelper::fillComboBox(distanceUnitComboBox, "CfgDistanceUnit", false);
+	ComboBoxHelper::fillComboBox(temperatureUnitComboBox, "CfgTemperatureUnit", false);
+	ComboBoxHelper::fillComboBox(weightUnitComboBox, "CfgWeightUnit", false);
+
+	_refresh();
 }
 
-OptionsView::~OptionsView()
+SettingsView::~SettingsView()
 {
-	Application::instance()->objectMap()->discardObject(m_cfg);
-
-	delete m_memento;
 }
 
-
-
-void OptionsView::on_resetPushButton_clicked()
+void SettingsView::on_resetPushButton_clicked()
 {
-	m_memento->revert();
-	Objects::Cfg *item = static_cast<Objects::Cfg *>(m_memento->copy());
-	this->setProperties(item);
+	_refresh();
 }
 
-void OptionsView::on_savePushButton_clicked()
+void SettingsView::on_savePushButton_clicked()
 {
-	Objects::Cfg *item = static_cast<Objects::Cfg *>(m_memento->copy());
-	this->getProperties(item);
+	QSettings *settings = Settings::instance()->m_settings;
 
-	if (!Application::instance()->objectMap()->saveObject(m_memento->copy())) {
-		QMessageBox::critical(this, tr("Edit options"), Application::instance()->objectMap()->lastError());
-		return;
-	}
-	m_memento->submit();
+	settings->setValue("General/Toolbar Icon Size", ComboBoxHelper::selected(toolbarIconSizeComboBox));
+	settings->setValue("General/Toolbar Tool Button Style", ComboBoxHelper::selected(toolbarToolButtonStyleComboBox));
+	settings->setValue("Calendar/Monday is first day of week", mondayFirstDayOfWeekCheckBox->isChecked());
+	settings->setValue("Units of measurement/Currency Unit", currencyUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Distance Unit", distanceUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Temperature Unit", temperatureUnitComboBox->currentText());
+	settings->setValue("Units of measurement/Weight Unit", weightUnitComboBox->currentText());
 
-	this->accept();
+	accept();
 }
 
-void OptionsView::on_cancelPushButton_clicked()
+void SettingsView::on_cancelPushButton_clicked()
 {
-	this->reject();
+	reject();
 }
 
-
-
-void OptionsView::on_treeView_clicked(const QModelIndex &index)
+void SettingsView::on_treeView_clicked(const QModelIndex &index)
 {
 	if (index.isValid()) {
 		stackedWidget->setCurrentIndex(index.row());
 	}
 }
 
-
-
-void OptionsView::getProperties(Objects::Cfg *object)
+void SettingsView::_refresh()
 {
-	if (object) {
-		object->setMondayFirstDayOfWeek(mondayFirstDayOfWeekCheckBox->isChecked());
-		object->setCfgDistanceUnit(static_cast<Objects::CfgDistanceUnit *>(ViewHelper::getObjectOnComboBox(cfgDistanceUnitComboBox, Objects::Types::CfgDistanceUnit, object->cfgDistanceUnit())));
-		object->setCfgWeightUnit(static_cast<Objects::CfgWeightUnit *>(ViewHelper::getObjectOnComboBox(cfgWeightUnitComboBox, Objects::Types::CfgWeightUnit, object->cfgWeightUnit())));
-		object->setCfgTemperatureUnit(static_cast<Objects::CfgTemperatureUnit *>(ViewHelper::getObjectOnComboBox(cfgTemperatureUnitComboBox, Objects::Types::CfgTemperatureUnit, object->cfgTemperatureUnit())));
-		object->setCfgCurrencyUnit(static_cast<Objects::CfgCurrencyUnit *>(ViewHelper::getObjectOnComboBox(cfgCurrencyUnitComboBox, Objects::Types::CfgCurrencyUnit, object->cfgCurrencyUnit())));
-	}
-}
-
-void OptionsView::setProperties(Objects::Cfg *object)
-{
-	if (object) {
-		mondayFirstDayOfWeekCheckBox->setChecked(object->isMondayFirstDayOfWeek());
-		ViewHelper::setIndexOnComboBox(cfgDistanceUnitComboBox, object->cfgDistanceUnit());
-		ViewHelper::setIndexOnComboBox(cfgWeightUnitComboBox, object->cfgWeightUnit());
-		ViewHelper::setIndexOnComboBox(cfgTemperatureUnitComboBox, object->cfgTemperatureUnit());
-		ViewHelper::setIndexOnComboBox(cfgCurrencyUnitComboBox, object->cfgCurrencyUnit());
-	}
-}
-
-void OptionsView::refreshComboBoxes()
-{
-	ViewHelper::fillComboBox(cfgDistanceUnitComboBox, Objects::Types::CfgDistanceUnit);
-	ViewHelper::fillComboBox(cfgWeightUnitComboBox, Objects::Types::CfgWeightUnit);
-	ViewHelper::fillComboBox(cfgTemperatureUnitComboBox, Objects::Types::CfgTemperatureUnit);
-	ViewHelper::fillComboBox(cfgCurrencyUnitComboBox, Objects::Types::CfgCurrencyUnit);
+	ComboBoxHelper::setSelected(toolbarToolButtonStyleComboBox, Settings::instance()->toolbarToolButtonStyle());
+	ComboBoxHelper::setSelected(toolbarIconSizeComboBox, Settings::instance()->toolbarIconSize());
+	mondayFirstDayOfWeekCheckBox->setChecked(Settings::instance()->isMondayFirstDayOfWeek());
+	ComboBoxHelper::setSelected(currencyUnitComboBox, Settings::instance()->currencyUnit());
+	ComboBoxHelper::setSelected(distanceUnitComboBox, Settings::instance()->distanceUnit());
+	ComboBoxHelper::setSelected(temperatureUnitComboBox, Settings::instance()->temperatureUnit());
+	ComboBoxHelper::setSelected(weightUnitComboBox, Settings::instance()->weightUnit());
 }

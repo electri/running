@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,13 +21,10 @@
 #ifndef EVENTTYPEVIEW_H
 #define EVENTTYPEVIEW_H
 
-#include <QWidget>
+#include "abstracttableview.h"
+#include "ui_eventtypeview.h"
 
-#include "../../obj/ui_eventtypeview.h"
-
-class EventTypeTableModel;
-
-class EventTypeView : public QDialog, public Ui::EventTypeView
+class EventTypeView : public AbstractTableView, public Ui::EventTypeView
 {
 	Q_OBJECT
 
@@ -36,22 +33,14 @@ public:
 	~EventTypeView();
 
 private slots:
-	void on_addPushButton_clicked();
-	void on_removePushButton_clicked();
-	void on_resetPushButton_clicked();
-	void on_savePushButton_clicked();
-	void on_cancelPushButton_clicked();
-
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	void on_descriptionLineEdit_textChanged(const QString &text);
+	void on_descriptionLineEdit_textChanged(const QString &value);
 	void on_hasMedalCheckBox_stateChanged(int state);
 	void on_hasIntervalsCheckBox_stateChanged(int state);
 
 private:
-	void setControlsEnabled(bool enable);
-
-	EventTypeTableModel *m_model;
+	void setControlsEnabled(bool value);
 };
 
-#endif
+#endif // EVENTTYPEVIEW_H

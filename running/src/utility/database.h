@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,31 +21,32 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <QObject>
 #include <QString>
 #include <QSqlDatabase>
 
-namespace Services {
-
-class Database
+/*
+ * Static class to perform operations on the database.
+ *
+ * Call init() to open or initialize a new database. Call close() to remove all
+ * connections.
+ */
+class Database : public QObject
 {
-public:
-	Database();
-	virtual ~Database();
+	Q_OBJECT
 
-	bool isActive() const { return m_active; }
-	QString lastError() const;
+public:
+	static bool init();
+	static void close();
+	static QString lastError();
 
 private:
-	int databaseVersion() const;
-	bool createDatabase();
-	bool upgradeDatabase(int oldVersion);
-	bool alterDatabase(const QString &scriptName, const QString &message);
+	static int _databaseVersion(QSqlDatabase &db);
+	static bool _createDatabase(QSqlDatabase &db);
+	static bool _upgradeDatabase(QSqlDatabase &db, int oldVersion);
+	static bool _alterDatabase(QSqlDatabase &db, const QString &scriptName, const QString &message);
 
-	bool m_active;
-	QSqlDatabase m_database;
-	QString m_lastError;
+	static QString sm_lastError;
 };
-
-}
 
 #endif

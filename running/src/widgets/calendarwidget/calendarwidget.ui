@@ -27,6 +27,41 @@
        <number>4</number>
       </property>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="prevYearPushButton">
+          <property name="icon">
+           <iconset resource="../../../resources/application.qrc">
+            <normaloff>:/images/prev_year</normaloff>:/images/prev_year</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="prevMonthPushButton">
+          <property name="icon">
+           <iconset resource="../../../resources/application.qrc">
+            <normaloff>:/images/prev_month</normaloff>:/images/prev_month</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -38,35 +73,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QToolButton" name="prevYearToolButton">
-          <property name="icon">
-           <iconset>
-            <normaloff>:prevYear</normaloff>:prevYear</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="prevMonthToolButton">
-          <property name="icon">
-           <iconset>
-            <normaloff>:prevMonth</normaloff>:prevMonth</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
       <item>
        <widget class="QLabel" name="selectedDateLabel">
@@ -116,35 +122,6 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QToolButton" name="nextMonthToolButton">
-          <property name="icon">
-           <iconset>
-            <normaloff>:nextMonth</normaloff>:nextMonth</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="nextYearToolButton">
-          <property name="icon">
-           <iconset>
-            <normaloff>:nextYear</normaloff>:nextYear</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -156,6 +133,41 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="nextMonthPushButton">
+          <property name="icon">
+           <iconset resource="../../../resources/application.qrc">
+            <normaloff>:/images/next_month</normaloff>:/images/next_month</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="nextYearPushButton">
+          <property name="icon">
+           <iconset resource="../../../resources/application.qrc">
+            <normaloff>:/images/next_year</normaloff>:/images/next_year</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -176,10 +188,12 @@
   <customwidget>
    <class>CalendarWidgetInternal</class>
    <extends>QWidget</extends>
-   <header>widgets/calendarwidgetinternal.h</header>
+   <header>widgets/calendarwidget/calendarwidgetinternal.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../resources/application.qrc"/>
+ </resources>
  <connections/>
 </ui>

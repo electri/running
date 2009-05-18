@@ -19,537 +19,319 @@
 ****************************************************************************/
 
 #include <QtGui>
-
+#include <QtSql>
 #include "mainview.h"
-
-#include "../application.h"
-#include "../objects/event.h"
-#include "../objects/eventtype.h"
-#include "../objects/shoe.h"
-#include "../objects/weather.h"
-#include "../services/memento.h"
-#include "../utility/statisticsservice.h"
-#include "../utility/utility.h"
-#include "../views/votepopupview.h"
-#include "../views/runnerinfopopupview.h"
-#include "../views/weatherinfopopupview.h"
-#include "../views/eventtypeview.h"
-#include "../views/shoeview.h"
-#include "../views/shoemakerview.h"
-#include "../views/shoemodelview.h"
-#include "../views/weatherview.h"
-#include "../views/intervalview.h"
-#include "../views/intervaltypeview.h"
-#include "../views/optionsview.h"
-#include "../views/viewhelper.h"
-#include "../delegates/calendardelegate.h"
-#include "../widgets/qxtstars/qxtstars.h"
+#include "settings.h"
+#include "utility/database.h"
+#include "utility/utility.h"
+#include "objects/eventfinder.h"
+#include "views/settingsview.h"
+#include "widgets/calendarwidget/calendarwidgetdelegate.h"
+#include "widgets/eventwidget/eventwidget.h"
 
 MainView::MainView(QWidget *parent)
-	: QMainWindow(parent), ui(new Ui::MainView)
+	: QMainWindow(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 
-	m_currentEvent = NULL;
-	m_memento = NULL;
-	m_votepopupview = NULL;
-	m_intervalview = NULL;
-	m_runnerinfopopupview = NULL;
-	m_weatherinfopopupview = NULL;
+#ifdef Q_WS_MAC
+	setUnifiedTitleAndToolBarOnMac(true);
+#endif
+        const int iconSize = Settings::instance()->toolbarIconSize();
+        toolBar->setIconSize(QSize(iconSize, iconSize));
+	toolBar->setToolButtonStyle(Settings::instance()->toolbarToolButtonStyle());
+	calendarWidget->setFirstDayOfWeek(Settings::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 
-	ui->starsSlider->setMinimum(0);
-	ui->starsSlider->setMaximum(5);
-	ui->starsSlider->setSingleStep(1);
-	ui->starsSlider->setPageStep(1);
-	QPalette palette = ui->starsSlider->palette();
-	palette.setColor(QPalette::Highlight, QColor("yellow"));
-	ui->starsSlider->setPalette(palette);
+	connect(actionSystemInformations, SIGNAL(triggered()), this, SLOT(systemInformations()));
+	connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+	connect(actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-	connect(ui->actionSystemInformation, SIGNAL(triggered()), this, SLOT(systemInformation()));
-	connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-	connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-	connect(ui->calendarWidget, SIGNAL(activated()), this, SLOT(editEvent()));
+	if (Database::init()) {
+		calendarWidget->setDelegate(new CalendarWidgetDelegate());
 
-	if (Application::instance()->init()) {
-		ui->calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
+		statisticsWidget->refreshCache();
 
-		connect(ui->actionShowCalendar, SIGNAL(triggered()), this, SLOT(showCalendar()));
-		connect(ui->actionShowStatistics, SIGNAL(triggered()), this, SLOT(showStatistics()));
-		connect(ui->actionAdd, SIGNAL(triggered()), this, SLOT(addEvent()));
-		connect(ui->actionRemove, SIGNAL(triggered()), this, SLOT(removeEvent()));
-		connect(ui->actionEdit, SIGNAL(triggered()), this, SLOT(editEvent()));
-		connect(ui->actionEditShoe, SIGNAL(triggered()), this, SLOT(editShoe()));
-		connect(ui->actionEditEventType, SIGNAL(triggered()), this, SLOT(editEventType()));
-		connect(ui->actionEditShoeMaker, SIGNAL(triggered()), this, SLOT(editShoeMaker()));
-		connect(ui->actionEditShoeModel, SIGNAL(triggered()), this, SLOT(editShoeModel()));
-		connect(ui->actionEditWeather, SIGNAL(triggered()), this, SLOT(editWeather()));
-		connect(ui->actionEditIntervalType, SIGNAL(triggered()), this, SLOT(editIntervalType()));
-		connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(options()));
+		connect(actionSettings, SIGNAL(triggered()), this, SLOT(settings()));
+		connect(actionCalendar, SIGNAL(triggered()), this, SLOT(showCalendarAction()));
+		connect(actionStatistics, SIGNAL(triggered()), this, SLOT(showStatisticsAction()));
+		connect(actionAdd, SIGNAL(triggered()), this, SLOT(addEventAction()));
+		connect(actionRemove, SIGNAL(triggered()), this, SLOT(removeEventAction()));
+		connect(actionEdit, SIGNAL(triggered()), this, SLOT(editEventAction()));
 	} else {
-		ui->actionShowCalendar->setEnabled(false);
-		ui->actionShowStatistics->setEnabled(false);
-		ui->actionAdd->setEnabled(false);
-		ui->actionRemove->setEnabled(false);
-		ui->actionEdit->setEnabled(false);
-		ui->actionEditShoe->setEnabled(false);
-		ui->actionEditEventType->setEnabled(false);
-		ui->actionEditShoeMaker->setEnabled(false);
-		ui->actionEditShoeModel->setEnabled(false);
-		ui->actionEditWeather->setEnabled(false);
-		ui->actionEditIntervalType->setEnabled(false);
+		actionCalendar->setEnabled(false);
+		actionStatistics->setEnabled(false);
+		actionAdd->setEnabled(false);
+		actionRemove->setEnabled(false);
+		actionEdit->setEnabled(false);
+		actionSettings->setEnabled(false);
 
-		QMessageBox::critical(0, tr("Error"), tr("Unable to open or read the database file."), QMessageBox::Ok, QMessageBox::NoButton);
+		QMessageBox::critical(0, tr("Error"), Database::lastError(), QMessageBox::Ok, QMessageBox::NoButton);
 	}
 
-	ui->calendarWidget->setDelegate(new CalendarDelegate());
-	ui->calendarWidget->setSelectedDate(QDate::currentDate());
-	//on_calendarWidget_selectionChanged();
+	calendarWidget->setSelectedDate(QDate::currentDate());
+}
 
-#ifdef QT_DEBUG
-	QTimer *timer = new QTimer(this);
-	QObject::connect(timer, SIGNAL(timeout()), this, SLOT(showDebugOnConsole()));
-	timer->start(3000);
-#endif
+MainView::~MainView()
+{
+	Database::close();
 }
 
 
 
 // CALENDAR WIDGET
 
-void MainView::showCalendar()
+void MainView::showCalendarAction()
 {
-	ui->stackedWidget->setCurrentIndex(ui->stackedWidget->indexOf(ui->calendarPage));
+	actionCalendar->setEnabled(true);
+	actionStatistics->setEnabled(true);
+	actionAdd->setEnabled(true);
+	actionEdit->setEnabled(true);
+	actionRemove->setEnabled(true);
 
-	ui->actionShowCalendar->setEnabled(true);
-	ui->actionShowStatistics->setEnabled(true);
-	ui->actionAdd->setEnabled(true);
-	ui->actionEdit->setEnabled(true);
-	ui->actionRemove->setEnabled(true);
-
+	stackedWidget->setCurrentIndex(stackedWidget->indexOf(calendarPage));
 	on_calendarWidget_selectionChanged();
 }
 
 void MainView::on_calendarWidget_selectionChanged()
 {
-	Services::ObjectMap *session = Application::instance()->objectMap();
-
-	if (m_currentEvent) {
-		session->discardObject(m_currentEvent);
-		m_currentEvent = NULL;
-	}
-
-	QDate date = ui->calendarWidget->selectedDate();
-	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
-	if (!list.isEmpty()) {
-		m_currentEvent = static_cast<Objects::Event *>(list.takeFirst());
-	}
-	if (!list.isEmpty()) {
-		foreach (Objects::BaseObject *object, list) {
-			session->discardObject(object);
-		}
-	}
-
-	updateStatusbar();
+	_updateStatusbar();
 }
+
+void MainView::on_calendarWidget_activated()
+{
+	EventGateway event;
+	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+		_editEvent(event);
+	} else {
+		_addEvent(event);
+	}
+}
+
+
 
 // STATISTICS WIDGET
 
-void MainView::showStatistics()
+void MainView::showStatisticsAction()
 {
-	ui->stackedWidget->setCurrentIndex(ui->stackedWidget->indexOf(ui->statisticsPage));
-	ui->statisticsWidget->setPage(StatisticsPages::EventsPerDate);
+	actionCalendar->setEnabled(true);
+	actionStatistics->setEnabled(true);
+	actionAdd->setEnabled(false);
+	actionRemove->setEnabled(false);
+	actionEdit->setEnabled(false);
 
-	ui->actionAdd->setEnabled(false);
-	ui->actionEdit->setEnabled(false);
-	ui->actionRemove->setEnabled(false);
-
-	QString message = tr("Calendar statistics.");
-	ui->statusbar->showMessage(message);
+	stackedWidget->setCurrentIndex(stackedWidget->indexOf(statisticsPage));
 }
 
 void MainView::on_statisticsPageEventsPushButton_clicked()
 {
-	ui->statisticsWidget->setPage(StatisticsPages::EventsPerDate);
+	statisticsWidget->setPage(StatisticsPageEventsPerDate);
 }
 
 void MainView::on_statisticsPageShoesPushButton_clicked()
 {
-	ui->statisticsWidget->setPage(StatisticsPages::Shoes);
+	statisticsWidget->setPage(StatisticsPageShoes);
 }
+
+
 
 // EDIT EVENT
 
-void MainView::addEvent()
+void MainView::addEventAction()
 {
-	if (m_currentEvent) {
+	EventGateway event;
+	if (EventFinder::find(event, calendarWidget->selectedDate())) {
 		QMessageBox::warning(this, tr("Add a new event"), tr("The selected day already has an event."));
 	} else {
-		m_currentEvent = static_cast<Objects::Event *>(Application::instance()->objectMap()->createObject(Objects::Types::Event));
-		m_currentEvent->setStart(QDateTime(ui->calendarWidget->selectedDate(), QTime()));
-
-		editEventBegin(m_currentEvent);
-
-		QString message = tr("Add event: %1.").arg(m_currentEvent->start().date().toString("d MMMM yyyy"));
-		ui->statusbar->showMessage(message);
+		_addEvent(event);
 	}
 }
 
-void MainView::removeEvent()
+void MainView::removeEventAction()
 {
-	if (m_currentEvent)	{
+	EventGateway event;
+	if (EventFinder::find(event, calendarWidget->selectedDate())) {
 		if (QMessageBox::question(this, tr("Remove an event"), tr("Are you sure you want to remove the event: %1?")
-				.arg(m_currentEvent->start().date().toString("d MMMM yyyy")),
+				.arg(event.start().date().toString("d MMMM yyyy")),
 				QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			return;
 		}
 
-		if (!Application::instance()->objectMap()->eraseObject(m_currentEvent)) {
-			QMessageBox::critical(this, tr("Remove an event"), Application::instance()->objectMap()->lastError());
+		QSqlDatabase db = QSqlDatabase::database();
+		db.transaction();
+
+		QSqlQuery query(db);
+		bool rc = query.exec(QString("DELETE FROM Interval WHERE EventId = %1").arg(event.id()));
+		if (!rc) {
+			db.rollback();
+			QMessageBox::critical(this, tr("Remove an event"), query.lastError().text());
+			return;
 		}
 
-		on_calendarWidget_selectionChanged();
+		if (!event.remove()) {
+			db.rollback();
+			QMessageBox::critical(this, tr("Remove an event"), event.lastError());
+			return;
+		}
+
+		db.commit();
+
+		statisticsWidget->refreshCache();
+		calendarWidget->update();
 	} else {
 		QMessageBox::warning(this, tr("Remove an event"), tr("The selected day don't have an event."));
 	}
 }
 
-void MainView::editEvent()
+void MainView::editEventAction()
 {
-	if (m_currentEvent) {
-		editEventBegin(m_currentEvent);
-
-		QString message = tr("Edit event: %1.").arg(m_currentEvent->start().date().toString("d MMMM yyyy"));
-		ui->statusbar->showMessage(message);
+	EventGateway event;
+	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+		_editEvent(event);
 	} else {
 		QMessageBox::warning(this, tr("Edit an event"), tr("The selected day don't have an event."));
 	}
 }
 
-void MainView::editEventBegin(Objects::Event *object)
+void MainView::_addEvent(EventGateway &event)
 {
-	m_memento = new Services::Memento(object);
+	event.clear();
+	event.setStart(QDateTime(calendarWidget->selectedDate(), QTime(0, 0, 0)));
 
-	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
+	_showEventWidget(event);
 
-	m_votepopupview = new VotePopupView(this);
-	m_votepopupview->setWindowFlags(Qt::Popup);
-
-	m_intervalview = new IntervalView(event, this);
-	m_intervalview->setWindowFlags(Qt::Popup);
-
-	m_runnerinfopopupview = new RunnerInfoPopupView(this);
-	m_runnerinfopopupview->setWindowFlags(Qt::Popup);
-
-	m_weatherinfopopupview = new WeatherInfoPopupView(this);
-	m_weatherinfopopupview->setWindowFlags(Qt::Popup);
-
-	editEventRefreshComboBoxes();
-
-	editEventSetProperties(event);
-
-	ui->stackedWidget->setCurrentIndex(ui->stackedWidget->indexOf(ui->eventPage));
-
-	ui->actionShowCalendar->setEnabled(false);
-	ui->actionShowStatistics->setEnabled(false);
-	ui->actionAdd->setEnabled(false);
-	ui->actionEdit->setEnabled(false);
-	ui->actionRemove->setEnabled(false);
-
-	ui->nameLineEdit->setCompleter(ViewHelper::completer(ui->nameLineEdit, "Event", "Name"));
-	ui->descriptionLineEdit->setCompleter(ViewHelper::completer(ui->descriptionLineEdit, "Event", "Description"));
-
-	ui->distanceDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgDistanceUnit()->description());
+	QString message = tr("Add event: %1").arg(event.start().date().toString("d MMMM yyyy"));
+	statusbar->showMessage(message);
 }
 
-void MainView::editEventEnd()
+void MainView::_editEvent(EventGateway &event)
 {
-	delete m_votepopupview;
-	delete m_intervalview;
-	delete m_runnerinfopopupview;
-	delete m_weatherinfopopupview;
+	_showEventWidget(event);
 
-	delete m_memento;
-
-	showCalendar();
+	QString message = tr("Edit event: %1").arg(event.start().date().toString("d MMMM yyyy"));
+	statusbar->showMessage(message);
 }
 
-void MainView::editEventGetProperties(Objects::Event *object)
+void MainView::_showEventWidget(EventGateway &event)
 {
-	if (object) {
-		object->setStart(QDateTime(object->start().date(), ui->startTimeEdit->time()));
-		object->setName(ui->nameLineEdit->text());
-		object->setDescription(ui->descriptionLineEdit->text());
-		object->setEventType(static_cast<Objects::EventType *>(ViewHelper::getObjectOnComboBox(ui->eventTypeComboBox, Objects::Types::EventType, object->eventType())));
-		object->setDistance(ui->distanceDoubleSpinBox->value());
-		object->setDuration(ui->durationTimeEdit->time());
-		object->setNotes(ui->notesPlainTextEdit->toPlainText());
-		object->setShoe(static_cast<Objects::Shoe *>(ViewHelper::getObjectOnComboBox(ui->shoeComboBox, Objects::Types::Shoe, object->shoe())));
-		object->setVote(ui->starsSlider->value());
-		object->setQuality(m_votepopupview->qualitySpinBox->value());
-		object->setEffort(m_votepopupview->effortSpinBox->value());
-		object->setWeight(m_runnerinfopopupview->weightDoubleSpinBox->value());
-		object->setWeather(static_cast<Objects::Weather *>(ViewHelper::getObjectOnComboBox(m_weatherinfopopupview->weatherComboBox, Objects::Types::Weather, object->weather())));
-		object->setTemperature(m_weatherinfopopupview->temperatureDoubleSpinBox->value());
-	}
+	actionCalendar->setEnabled(false);
+	actionStatistics->setEnabled(false);
+	actionAdd->setEnabled(false);
+	actionEdit->setEnabled(false);
+	actionRemove->setEnabled(false);
+
+	m_eventWidget = new EventWidget(event, eventPage);
+	connect(m_eventWidget, SIGNAL(accepted()), this, SLOT(on_eventWidget_accepted()));
+	connect(m_eventWidget, SIGNAL(rejected()), this, SLOT(on_eventWidget_rejected()));
+
+	eventPageVerticalLayout->addWidget(m_eventWidget);
+
+	stackedWidget->setCurrentIndex(stackedWidget->indexOf(eventPage));
 }
 
-void MainView::editEventSetProperties(Objects::Event *object)
+void MainView::on_eventWidget_accepted()
 {
-	if (object) {
-		ui->startTimeEdit->setTime(object->start().time());
-		ui->nameLineEdit->setText(object->name());
-		ui->descriptionLineEdit->setText(object->description());
-		ViewHelper::setIndexOnComboBox(ui->eventTypeComboBox, object->eventType());
-		ui->distanceDoubleSpinBox->setValue(object->distance());
-		ui->durationTimeEdit->setTime(object->duration());
-		ui->notesPlainTextEdit->setPlainText(object->notes());
-		ViewHelper::setIndexOnComboBox(ui->shoeComboBox, object->shoe());
-		ui->starsSlider->setValue(object->vote());
-		m_votepopupview->qualitySpinBox->setValue(object->quality());
-		m_votepopupview->effortSpinBox->setValue(object->effort());
-		m_runnerinfopopupview->weightDoubleSpinBox->setValue(object->weight());
-		ViewHelper::setIndexOnComboBox(m_weatherinfopopupview->weatherComboBox, object->weather());
-		m_weatherinfopopupview->temperatureDoubleSpinBox->setValue(object->temperature());
-	}
+	statisticsWidget->refreshCache();
+
+	showCalendarAction();
+
+	disconnect(this, SLOT(on_eventWidget_accepted()));
+	disconnect(this, SLOT(on_eventWidget_rejected()));
+	delete m_eventWidget;
 }
 
-void MainView::editEventRefreshComboBoxes()
+void MainView::on_eventWidget_rejected()
 {
-	ViewHelper::fillComboBox(ui->eventTypeComboBox, Objects::Types::EventType, false);
-	ViewHelper::fillShoesComboBox(ui->shoeComboBox);
+	showCalendarAction();
+
+	disconnect(this, SLOT(on_eventWidget_accepted()));
+	disconnect(this, SLOT(on_eventWidget_rejected()));
+	delete m_eventWidget;
 }
 
-void MainView::on_resetPushButton_clicked()
+
+
+// SETTINGS
+
+void MainView::settings()
 {
-	m_intervalview->resetAll();
+	SettingsView view(this);
+	int result = view.exec();
+	if (result == QDialog::Accepted) {
+		toolBar->setIconSize(QSize(Settings::instance()->toolbarIconSize(), Settings::instance()->toolbarIconSize()));
+		toolBar->setToolButtonStyle(Settings::instance()->toolbarToolButtonStyle());
 
-	m_memento->revert();
+		calendarWidget->setFirstDayOfWeek(Settings::instance()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
 
-	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
-	editEventSetProperties(event);
-}
-
-void MainView::on_savePushButton_clicked()
-{
-	Objects::Event *event = static_cast<Objects::Event *>(m_memento->copy());
-	editEventGetProperties(event);
-
-	m_intervalview->saveAll();
-
-	if (!Application::instance()->objectMap()->saveObject(m_memento->copy())) {
-		QMessageBox::critical(this, tr("Add/Edit an event"), Application::instance()->objectMap()->lastError());
-		return;
-	}
-	m_memento->submit();
-
-	editEventEnd();
-}
-
-void MainView::on_cancelPushButton_clicked()
-{
-	editEventEnd();
-}
-
-void MainView::on_eventTypeComboBox_currentIndexChanged(int)
-{
-	Services::ObjectMap *session = Application::instance()->objectMap();
-
-	quint32 eventTypeId = ui->eventTypeComboBox->itemData(ui->eventTypeComboBox->currentIndex()).toInt();
-	if (eventTypeId != 0) {
-		Objects::EventType *eventType = static_cast<Objects::EventType *>(session->getObjectById(Objects::Types::EventType, eventTypeId));
-		if (eventType) {
-			ui->intervalsPushButton->setEnabled(eventType->hasIntervals());
-			session->discardObject(eventType);
+		if (stackedWidget->currentIndex() == stackedWidget->indexOf(calendarPage)) {
+			calendarWidget->update();
+		} else if (stackedWidget->currentIndex() == stackedWidget->indexOf(eventPage)) {
+			m_eventWidget->showEvent(NULL);
 		}
-	} else {
-		ui->intervalsPushButton->setEnabled(false);
 	}
 }
 
-void MainView::on_distanceDoubleSpinBox_valueChanged(double value)
-{
-	QTime time = ui->durationTimeEdit->time();
-	refreshPaceLineEdit(value, time);
-}
 
-void MainView::on_durationTimeEdit_timeChanged(const QTime &value)
-{
-	double distance = ui->distanceDoubleSpinBox->value();
-	refreshPaceLineEdit(distance, value);
-}
-
-void MainView::refreshPaceLineEdit(double distance, const QTime &time)
-{
-	QTime paceTime = Utility::paceTime(distance, time);
-	double paceSpeed = Utility::paceSpeed(distance, time);
-	ui->paceLineEdit->setText(tr("%1 min/%3 or %2 %3/h")
-			.arg(Utility::formatDuration(paceTime)).arg(Utility::formatDistance(paceSpeed, 2)).arg(Application::instance()->cfg()->cfgDistanceUnit()->description()));
-}
-
-void MainView::on_eventTypeToolButton_clicked()
-{
-	quint32 id = ui->eventTypeComboBox->itemData(ui->eventTypeComboBox->currentIndex()).toInt();
-	editEventType(id);
-}
-
-void MainView::on_votePushButton_clicked()
-{
-	m_votepopupview->move(ui->votePushButton->mapToGlobal(QPoint(0, ui->votePushButton->height() + 10)));
-	m_votepopupview->show();
-}
-
-void MainView::on_intervalsPushButton_clicked()
-{
-	m_intervalview->move(ui->intervalsPushButton->mapToGlobal(QPoint(0, (m_intervalview->height() + 10) * -1)));
-	m_intervalview->show();
-}
-
-void MainView::on_runnerInfoPushButton_clicked()
-{
-	m_runnerinfopopupview->move(ui->runnerInfoPushButton->mapToGlobal(QPoint(0, (m_runnerinfopopupview->height() + 10) * -1)));
-	m_runnerinfopopupview->show();
-}
-
-void MainView::on_weatherInfoPushButton_clicked()
-{
-	m_weatherinfopopupview->move(ui->weatherInfoPushButton->mapToGlobal(QPoint(0, (m_weatherinfopopupview->height() + 10) * -1)));
-	m_weatherinfopopupview->show();
-}
-
-// EDIT SHOE
-
-void MainView::editShoe(quint32 id)
-{
-	ShoeView *view = new ShoeView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-
-	editEventRefreshComboBoxes();
-}
-
-void MainView::on_shoeToolButton_clicked()
-{
-	quint32 id = ui->shoeComboBox->itemData(ui->shoeComboBox->currentIndex()).toInt();
-	editShoe(id);
-}
-
-// EDIT COMBO OBJECTS
-
-void MainView::editEventType(quint32 id)
-{
-	EventTypeView *view = new EventTypeView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-
-	editEventRefreshComboBoxes();
-}
-
-void MainView::editShoeMaker(quint32 id)
-{
-	ShoeMakerView *view = new ShoeMakerView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-
-	editEventRefreshComboBoxes();
-}
-
-void MainView::editShoeModel(quint32 id)
-{
-	ShoeModelView *view = new ShoeModelView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-
-	editEventRefreshComboBoxes();
-}
-
-void MainView::editWeather(quint32 id)
-{
-	WeatherView *view = new WeatherView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-
-	editEventRefreshComboBoxes();
-}
-
-void MainView::editIntervalType(quint32 id)
-{
-	IntervalTypeView *view = new IntervalTypeView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->update();
-	}
-	delete view;
-}
-
-void MainView::options()
-{
-	OptionsView *view = new OptionsView(this);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ui->calendarWidget->setFirstDayOfWeek(Application::instance()->cfg()->isMondayFirstDayOfWeek() ? Qt::Monday : Qt::Sunday);
-		ui->calendarWidget->update();
-	}
-	delete view;
-}
 
 // MAINVIEW
 
-void MainView::systemInformation()
+void MainView::systemInformations()
 {
-	QMessageBox::information(this, tr("System Information"), Application::instance()->systemInformation());
+	QString message = "<html><head></head><body>\n";
+	message += "Qt Library version: " + QString(qVersion()) + ", ";
+	message += "build key: " + QLibraryInfo::buildKey() + ", ";
+	message += "installed in \"" + QLibraryInfo::location(QLibraryInfo::LibrariesPath) + "\", ";
+	QStringList drivers = QSqlDatabase::drivers();
+	if (drivers.count() > 0) {
+		message += "with following database drivers available: ";
+		message += drivers[0];
+		for (int i = 1; i < drivers.count(); ++i) message += ", " + drivers[i];
+		message += ".<br>\n";
+	} else {
+		message += "with no database drivers available.<br>\n";
+	}
+	message += "</body></html>\n";
+	QMessageBox::information(this, tr("System Information"), message);
 }
 
 void MainView::about()
 {
-	QMessageBox::about(this, tr("About"), Application::instance()->about());
+	QString message = "<html><head></head><body>\n";
+	message += "<h1>" + qApp->applicationName() + "</h1>\n";
+	message += qApp->applicationVersion() + "<br><br>\n";
+	message += tr("A simple program for runners based on a calendar and an event list.") + "<br>\n";
+	message += "<hr><br>\n";
+	message += tr("Made with:") + "<br>\n";
+	message += "<a href='http://gcc.gnu.org'>GCC</a> / <a href='http://www.mingw.org'>MinGW</a> Compiler<br>\n";
+	message += "Nokia <a href='http://www.qtsoftware.com'>Qt Framework</a> and Qt Creator IDE<br>\n";
+	message += "<a href='http://www.sqlite.org'>SQLite</a> Database engine<br>\n";
+	message += "QxtStars widget from <a href='http://libqxt.org'>Qxt library</a> Framework extension<br>\n";
+	message += "Icons from: ";
+	message += "<a href='http://www.famfamfam.com'>Silk</a>, ";
+	message += "<a href='http://www.iconspedia.com'>Weby</a> and ";
+	message += "<a href='http://www.kde.org'>Oxygen</a> Icon Sets<br>\n";
+	message += "<hr><br>\n";
+	message += tr("Main author: ") + qApp->organizationName() + "<br>\n";
+	message += tr("Homepage: ") + "<a href='" + qApp->organizationDomain() + "'>" + qApp->organizationDomain() + "</a><br>\n";
+	message += "</body></html>\n";
+	QMessageBox::about(this, tr("About"), message);
 }
 
-void MainView::updateStatusbar()
+void MainView::_updateStatusbar()
 {
-	if (m_currentEvent) {
-		QString message = tr("%1 at %2").arg(m_currentEvent->eventType()->description())
-									.arg(m_currentEvent->start().date().toString(Qt::DefaultLocaleShortDate));
-		if (!m_currentEvent->name().isEmpty()) {
-			message += tr(" - %1").arg(m_currentEvent->name());
+	EventGateway event;
+	if (EventFinder::find(event, calendarWidget->selectedDate())) {
+		QString message = tr("%1 at %2")
+				.arg(event.eventType_description())
+				.arg(event.start().date().toString(Qt::DefaultLocaleShortDate));
+		if (!event.name().isEmpty()) {
+			message += tr(" - %1").arg(event.name());
 		}
-		message += tr(" - %1 %2 in %3").arg(Utility::formatDistance(m_currentEvent->distance(), 3))
-			.arg(Application::instance()->cfg()->cfgDistanceUnit()->description()).arg(Utility::formatDuration(m_currentEvent->duration()));
-
-		ui->statusbar->showMessage(tr("Event: %1.").arg(message));
-
-		return;
+		message += tr(" - %1 in %3")
+				.arg(Utility::formatDistance(event.distance(), 3))
+				.arg(Utility::formatDuration(event.duration()));
+		statusbar->showMessage(tr("Event: %1").arg(message));
+	} else {
+		QString message = tr("No event");
+		statusbar->showMessage(message);
 	}
-
-	StatisticsResults::EventsPerDate r = Utility::StatisticsService::instance()->event(ui->calendarWidget->yearShown(), ui->calendarWidget->monthShown());
-	if (r.events > 0) {
-		QString message = tr("Events: %L1 for a total of %L2 %3.").arg(r.events)
-			.arg(Utility::formatDistance(r.distance, 3)).arg(Application::instance()->cfg()->cfgDistanceUnit()->description());
-		ui->statusbar->showMessage(message);
-		return;
-	}
-
-	QString message = tr("No events.");
-	ui->statusbar->showMessage(message);
-}
-
-void MainView::showDebugOnConsole()
-{
-//	Application::instance()->objectMap()->free();
-
-	qDebug() << Application::instance()->objectMap()->toString();
 }

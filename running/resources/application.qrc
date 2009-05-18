@@ -1,53 +1,48 @@
 <RCC>
-	<qresource prefix="/">
-		<file alias="options">images/cog.png</file>
-		<file alias="mainicon">images/running.png</file>
-		<file alias="exit">images/door_out.png</file>
-		<file alias="about">images/lightbulb.png</file>
-		<file alias="information">images/information.png</file>
-		<file alias="calendar">images/calendar_view_month.png</file>
-		<file alias="statistics">images/chart_curve.png</file>
-		<file alias="event_edit">images/date_edit.png</file>
-		<file alias="event_add">images/date_add.png</file>
-		<file alias="event_delete">images/date_delete.png</file>
-		<file alias="resultset_first">images/resultset_first.png</file>
-		<file alias="resultset_last">images/resultset_last.png</file>
-		<file alias="resultset_next">images/resultset_next.png</file>
-		<file alias="resultset_previous">images/resultset_previous.png</file>
-		<file alias="table_edit">images/table_edit.png</file>
-		<file alias="table_add">images/table_add.png</file>
-		<file alias="table_delete">images/table_delete.png</file>
-		<file alias="reset">images/arrow_refresh.png</file>
-		<file alias="save">images/disk.png</file>
-		<file alias="cancel">images/cancel.png</file>
-		<file alias="star">images/star.png</file>
-		<file alias="medal">images/rosette.png</file>
-		<file alias="intervals">images/arrow_rotate_clockwise.png</file>
-		<file alias="yes">images/tick.png</file>
-		<file alias="vote_high">images/emoticon_smile.png</file>
-		<file alias="vote_low">images/emoticon_unhappy.png</file>
-		<file alias="table_row_up">images/arrow_up.png</file>
-		<file alias="table_row_down">images/arrow_down.png</file>
-        <file alias="nextMonth">images/nextMonth.png</file>
-        <file alias="nextYear">images/nextYear.png</file>
-        <file alias="prevMonth">images/prevMonth.png</file>
-        <file alias="prevYear">images/prevYear.png</file>
+	<qresource prefix="/" >
+		<file alias="icon" >running.png</file>
 	</qresource>
-	<qresource prefix="/">
-		<file>sql/create.sql</file>
-		<file>sql/create_init.sql</file>
-		<file>sql/delete.sql</file>
-		<file>sql/upgrade_0-1.sql</file>
-		<file>sql/upgrade_0-1_init.sql</file>
+	<qresource prefix="/images" >
+		<file alias="about" >images/about.png</file>
+		<file alias="information" >images/information.png</file>
+		<file alias="settings" >images/settings.png</file>
+		<file alias="exit" >images/exit.png</file>
+		<file alias="calendar" >images/calendar.png</file>
+		<file alias="statistics" >images/chart.png</file>
+		<file alias="event_add" >images/event_add.png</file>
+		<file alias="event_delete" >images/event_delete.png</file>
+		<file alias="event_edit" >images/event_edit.png</file>
+		<file alias="star" >images/star.png</file>
+		<file alias="medal" >images/rosette.png</file>
+		<file alias="intervals" >images/arrow_rotate_clockwise.png</file>
+		<file alias="vote_high" >images/emoticon_smile.png</file>
+		<file alias="vote_low" >images/emoticon_unhappy.png</file>
+		<file alias="list_add" >images/list_add.png</file>
+		<file alias="list_remove" >images/list_remove.png</file>
+		<file alias="list_move_up" >images/list_move_up.png</file>
+		<file alias="list_move_down" >images/list_move_down.png</file>
+		<file alias="reset" >images/reset.png</file>
+		<file alias="accept" >images/accept.png</file>
+		<file alias="cancel" >images/cancel.png</file>
+		<file alias="save" >images/save.png</file>
+		<file alias="prev_year" >images/prev_year.png</file>
+		<file alias="prev_month" >images/prev_month.png</file>
+		<file alias="next_month" >images/next_month.png</file>
+		<file alias="next_year" >images/next_year.png</file>
+	</qresource>
+	<qresource prefix="/sql" >
+		<file alias="create.sql" >sql/create.sql</file>
+		<file alias="delete.sql" >sql/delete.sql</file>
+		<file alias="upgrade_0-1.sql" >sql/upgrade_0-1.sql</file>
+		<file alias="upgrade_1-2.sql" >sql/upgrade_1-2.sql</file>
+		<file alias="create_init.sql" >sql/create_init.sql</file>
 	</qresource>
 	<qresource lang="en">
-		<file alias="translations/running.qm">translations/running_en_US.qm</file>
 		<file alias="sql/create_init.sql">sql/create_init_en_US.sql</file>
-		<file alias="sql/upgrade_0-1_init.sql">sql/upgrade_0-1_init_en_US.sql</file>
+		<file alias="translations/running.qm">translations/running_en_US.qm</file>
 	</qresource>
 	<qresource lang="it">
-		<file alias="translations/running.qm">translations/running_it_IT.qm</file>
 		<file alias="sql/create_init.sql">sql/create_init_it_IT.sql</file>
-		<file alias="sql/upgrade_0-1_init.sql">sql/upgrade_0-1_init_it_IT.sql</file>
+		<file alias="translations/running.qm">translations/running_it_IT.qm</file>
 	</qresource>
 </RCC>

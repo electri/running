@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 #define WEATHERINFOPOPUPVIEW_H
 
 #include <QWidget>
-
-#include "../../obj/ui_weatherinfopopupview.h"
+#include "ui_weatherinfopopupview.h"
 
 class WeatherInfoPopupView : public QWidget, public Ui::WeatherInfoPopupView
 {
@@ -37,4 +36,4 @@ private slots:
 	void on_weatherToolButton_clicked();
 };
 
-#endif
+#endif // WEATHERINFOPOPUPVIEW_H

@@ -19,109 +19,77 @@
 ****************************************************************************/
 
 #include <QtGui>
+#include "calendarwidgetdelegate.h"
+#include "objects/eventfinder.h"
+#include "objects/eventgateway.h"
+#include "utility/utility.h"
 
-#include "calendardelegate.h"
-#include "../objects/event.h"
-#include "../objects/eventtype.h"
-#include "../application.h"
-#include "../utility/utility.h"
-
-CalendarDelegate::CalendarDelegate(QObject *parent)
+CalendarWidgetDelegate::CalendarWidgetDelegate(QObject *parent)
 	: QItemDelegate(parent)
 {
-	m_medal = QImage(":medal");
-	m_vote_high = QImage(":vote_high");
-	m_vote_low = QImage(":vote_low");
+	m_medal = QImage(":/images/medal");
+	m_vote_high = QImage(":/images/vote_high");
+	m_vote_low = QImage(":/images/vote_low");
 }
 
-void CalendarDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date) const
+void CalendarWidgetDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date) const
 {
-//	drawBackground(painter, option, QModelIndex());
-//	drawFocus(painter, option, option.rect);
+	painter->save();
 
-	Objects::Event *currentEvent = NULL;
-	Services::ObjectMap *session = Application::instance()->objectMap();
-
-	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
-	if (!list.isEmpty()) {
-		currentEvent = static_cast<Objects::Event *>(list.takeFirst());
-	}
-	if (!list.isEmpty()) {
-		foreach (Objects::BaseObject *object, list) {
-			session->discardObject(object);
-		}
-	}
-
-	if (currentEvent) {
-		painter->save();
-
+	EventGateway event;
+	if (EventFinder::find(event, date)) {
 		QFont font = painter->font();
 		font.setBold(true);
 		painter->setFont(font);
 
-		QString type = currentEvent->eventType()->description();
-		type = type.toLower();
+		QString type = event.eventType_description().toLower();
 		QRect rect1 = painter->boundingRect(option.rect, Qt::AlignCenter | Qt::TextWordWrap, type);
 		painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, type);
 
 		font.setBold(false);
 		painter->setFont(font);
 
-		QString distance = Utility::formatDistance(currentEvent->distance(), 3) + " km";
+		QString distance = Utility::formatDistance(event.distance(), 3);
 		QRect rect2 = painter->boundingRect(option.rect, Qt::TextSingleLine, distance);
 		rect2.moveCenter(option.rect.center());
 		rect2.moveTop(rect1.bottom());
 		painter->drawText(rect2, Qt::TextSingleLine, distance);
 
 		int x = option.rect.right();
-		if (currentEvent->eventType()->hasMedal()) {
+
+		if (event.eventType_hasMedal()) {
 			x -= (m_medal.width() + 2);
 			painter->drawImage(QPoint(x, option.rect.top() + 2), m_medal);
 		}
-		if (currentEvent->vote() >= 5) {
+
+		if (event.vote() >= 5) {
 			x -= (m_vote_high.width() + 2);
 			painter->drawImage(QPoint(x, option.rect.top() + 2), m_vote_high);
 		}
-		if (currentEvent->vote() <= 1) {
+		if (event.vote() <= 1) {
 			x -= (m_vote_low.width() + 2);
 			painter->drawImage(QPoint(x, option.rect.top() + 2), m_vote_low);
 		}
-
-		painter->restore();
-
-		session->discardObject(currentEvent);
 	}
+
+	painter->restore();
 }
 
-QString CalendarDelegate::toolTipText(const QDate &date) const
+QString CalendarWidgetDelegate::toolTipText(const QDate &date) const
 {
-	Objects::Event *currentEvent = NULL;
-	Services::ObjectMap *session = Application::instance()->objectMap();
-
-	QList<Objects::BaseObject *> list = session->getEventsByDate(date, date);
-	if (!list.isEmpty()) {
-		currentEvent = static_cast<Objects::Event *>(list.takeFirst());
-	}
-	if (!list.isEmpty()) {
-		foreach (Objects::BaseObject *object, list) {
-			session->discardObject(object);
-		}
-	}
-
 	QString tip = "";
-	if (currentEvent) {
+	EventGateway event;
+	if (EventFinder::find(event, date)) {
 		tip += "<table border=0 cellpadding=0 cellspacing=6>";
-		tip += "<tr><td colspan=2><i>" + currentEvent->start().date().toString(Qt::DefaultLocaleLongDate) + "</i></td></tr>";
+		tip += "<tr><td colspan=2><i>" + event.start().date().toString(Qt::DefaultLocaleLongDate) + "</i></td></tr>";
 		tip += "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>";
-		tip += "<tr><td>" + tr("Nome:") + "</td><td><b>" + currentEvent->name() + "</b></td></tr>";
-		tip += "<tr><td>" + tr("Descrizione:") + "</td><td>" + currentEvent->description() + "</td></tr>";
-		tip += "<tr><td>" + tr("Tipo:") + "</td><td>" + currentEvent->eventType()->description() + "</td></tr>";
-		tip += "<tr><td>" + tr("Ora di inizio:") + "</td><td>" + currentEvent->start().time().toString("hh:mm") + "</td></tr>";
-		tip += "<tr><td>" + tr("Distanza:") + "</td><td>" + Utility::formatDistance(currentEvent->distance(), 2) + " " + Application::instance()->cfg()->cfgDistanceUnit()->description() + "</td></tr>";
-		tip += "<tr><td>" + tr("Durata:") + "</td><td>" + Utility::formatDuration(currentEvent->duration()) + "</td></tr>";
+		tip += "<tr><td>" + tr("Name:") + "</td><td><b>" + event.name() + "</b></td></tr>";
+		tip += "<tr><td>" + tr("Description:") + "</td><td>" + event.description() + "</td></tr>";
+		tip += "<tr><td>" + tr("Type:") + "</td><td>" + event.eventType_description() + "</td></tr>";
+		tip += "<tr><td>" + tr("Start time:") + "</td><td>" + event.start().time().toString("hh:mm") + "</td></tr>";
+		tip += "<tr><td>" + tr("Distance:") + "</td><td>" + Utility::formatDistance(event.distance(), 2) + "</td></tr>";
+		tip += "<tr><td>" + tr("Duration:") + "</td><td>" + Utility::formatDuration(event.duration()) + "</td></tr>";
 		tip += "</table>";
-
-		session->discardObject(currentEvent);
 	}
 	return tip;
 }

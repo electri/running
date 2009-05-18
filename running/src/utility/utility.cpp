@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,53 +19,9 @@
 ****************************************************************************/
 
 #include "utility.h"
+#include "settings.h"
 
-namespace Utility
-{
-
-QString formatDistance(qreal d, quint8 precision)
-{
-	QString s = "0";
-	s = QString("%L1").arg(d, 0, 'f', precision);
-	while ((s.contains(",") || s.contains(".")) && s.endsWith("0")) {
-		if (s.endsWith("0")) s.chop(1);
-		if (s.endsWith(",") || s.endsWith(".")) s.chop(1);
-	}
-	return s;
-}
-
-QString formatDuration(const QTime &t)
-{
-	QString s = "00\"";
-	if (t.isValid()) {
-		if (t.hour() > 0) {
-			s = t.toString("h'h' mm'' ss'\"'");
-		} else {
-			if (t.minute() > 0) {
-				s = t.toString("m'' ss'\"'");
-			} else {
-				s = t.toString("s'\"'");
-			}
-		}
-	}
-	return s;
-}
-
-QString formatDuration(const QDateTime &t)
-{
-	QString s = "00\"";
-	if (t.isValid()) {
-		qint32 days = QDateTime(QDate(1970, 1, 1)).daysTo(t);
-		if (days > 0) {
-			s = QString("%1g ").arg(days) + t.time().toString("h'h' mm'' ss'\"'");
-		} else {
-			s = formatDuration(t.time());
-		}
-	}
-	return s;
-}
-
-QTime paceTime(qreal distance, const QTime &duration)
+QTime Utility::paceTime(qreal distance, const QTime &duration)
 {
 	QTime t = QTime();
 	if ((distance > 0.0) && (duration > QTime(0, 0, 0))) {
@@ -77,7 +33,7 @@ QTime paceTime(qreal distance, const QTime &duration)
 	return t;
 }
 
-QTime paceTime(qreal distance, const QDateTime &duration)
+QTime Utility::paceTime(qreal distance, const QDateTime &duration)
 {
 	QTime t = QTime();
 	if ((distance > 0.0) && (duration > QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)))) {
@@ -96,7 +52,7 @@ QTime paceTime(qreal distance, const QDateTime &duration)
 	return t;
 }
 
-qreal paceSpeed(qreal distance, const QTime &duration)
+qreal Utility::paceSpeed(qreal distance, const QTime &duration)
 {
 	qreal d = 0.0;
 	if ((distance > 0.0) && (duration > QTime(0, 0, 0))) {
@@ -107,7 +63,7 @@ qreal paceSpeed(qreal distance, const QTime &duration)
 	return d;
 }
 
-qreal paceSpeed(qreal distance, const QDateTime &duration)
+qreal Utility::paceSpeed(qreal distance, const QDateTime &duration)
 {
 	qreal d = 0.0;
 	if ((distance > 0.0) && duration.isValid()) {
@@ -126,4 +82,86 @@ qreal paceSpeed(qreal distance, const QDateTime &duration)
 	return d;
 }
 
+QString Utility::formatDistance(qreal d, quint8 precision)
+{
+	QString s = QString("%1 %2")
+				.arg(formatReal(d, precision))
+				.arg(Settings::instance()->distanceUnit());
+	return s;
+}
+
+QString Utility::formatDuration(const QTime &t)
+{
+	return formatTime(t);
+}
+
+QString Utility::formatDuration(const QDateTime &t)
+{
+	return formatTime(t);
+}
+
+QString Utility::formatPace(qreal distance, const QDateTime &duration)
+{
+	QSettings settings;
+	QTime time = paceTime(distance, duration);
+	qreal speed = paceSpeed(distance, duration);
+	QString s = QString("%1 min/%3 or %2 %3/h")
+				.arg(formatTime(time))
+				.arg(formatReal(speed, 2))
+				.arg(Settings::instance()->distanceUnit());
+	return s;
+}
+
+QString Utility::formatPace(qreal distance, const QTime &duration)
+{
+	QSettings settings;
+	QTime time = paceTime(distance, duration);
+	qreal speed = paceSpeed(distance, duration);
+	QString s = QString("%1 min/%3 or %2 %3/h")
+				.arg(formatTime(time))
+				.arg(formatReal(speed, 2))
+				.arg(Settings::instance()->distanceUnit());
+	return s;
+}
+
+QString Utility::formatReal(qreal d, quint8 precision)
+{
+	QString s = "0";
+	s = QString("%L1").arg(d, 0, 'f', precision);
+	while ((s.contains(",") || s.contains(".")) && s.endsWith("0")) {
+		if (s.endsWith("0")) s.chop(1);
+		if (s.endsWith(",") || s.endsWith(".")) s.chop(1);
+	}
+	return s;
+}
+
+QString Utility::formatTime(const QTime &t)
+{
+	QString s = "00\"";
+	if (t.isValid()) {
+		if (t.hour() > 0) {
+			s = t.toString("h'h' mm'' ss'\"'");
+		} else {
+			if (t.minute() > 0) {
+				s = t.toString("m'' ss'\"'");
+			} else {
+				s = t.toString("s'\"'");
+			}
+		}
+	}
+	return s;
+}
+
+QString Utility::formatTime(const QDateTime &t)
+{
+	QString s = "00\"";
+	if (t.isValid()) {
+		qint32 days = QDateTime(QDate(1970, 1, 1)).daysTo(t);
+		if (days > 0) {
+			s = QString("%1g ").arg(days) + t.time().toString("h'h' mm'' ss'\"'");
+		} else {
+			s = formatTime(t.time());
+		}
+	}
+	return s;
 }
