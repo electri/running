@@ -1,0 +1,17 @@
+0.1		Initial revision.
+
+0.2		Configuration options: Units of measurement, Calendar.
+		Fixed bugs on add/remove events with intervals.
+		Unit tests on internal classes.
+		Database creation on startup if not found.
+		Database upgrade on startup if version is changed.
+
+0.3		Code rewrite to get rid of enterprise patterns.
+		Custom CalendarWidget widget.
+		Custom Event edit widget.
+		Settings are stored not in database anymore but in a
+		 platform-depending location.
+		New big icons and configurable toolbar layout.
+		The database filename has changed: the extension was *.db3, now is
+		 "*.db". Please rename the file to have an upgrade at the next
+		 program start.
