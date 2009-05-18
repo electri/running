@@ -5,6 +5,11 @@ A simple program for runners based on a calendar and an event list. The user
 can record running workouts and later can get statistics about mileage, average 
 speed, shoes.
 
+Made with Nokia Qt library, Qt Creator IDE, MinGW/GNU compiler, SQLite database 
+engine and a few other tools. The program build and run on Windows, Linux and 
+Mac OS X. Data are saved on a SQLite file using Qt internal sql plugin. The 
+program is usable, but not tested in daily usage.
+
 Notable features are:
 The program is multi-platform: it runs on Windows, Linux and Mac OS X.
 The program is multi-language: the interface is translated in English and 
@@ -25,4 +30,4 @@ Add plugins for export data to spreadsheets, html, blogs.
 
 KNOWN BUGS
 Sometimes the correct order of intervals is not saved. The user has to reenter 
-the order and resave the event.
+the order and update the event.
