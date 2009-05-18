@@ -25,7 +25,7 @@
 #include <QDate>
 #include "ui_calendarwidget.h"
 
-class CalendarDelegate;
+class CalendarWidgetDelegate;
 
 class CalendarWidget : public QWidget, Ui::CalendarWidget
 {
@@ -39,7 +39,7 @@ public:
 
 	QDate selectedDate() const;
 	Qt::DayOfWeek firstDayOfWeek() const;
-	CalendarDelegate *delegate() const;
+	CalendarWidgetDelegate *delegate() const;
 	int monthShown() const;
 	int yearShown() const;
 
@@ -52,11 +52,11 @@ signals:
 public slots:
 	void setSelectedDate(const QDate &date);
 	void setFirstDayOfWeek(const Qt::DayOfWeek &dayOfWeek);
-	void setDelegate(CalendarDelegate *delegate);
-	void on_prevMonthToolButton_clicked();
-	void on_nextMonthToolButton_clicked();
-	void on_prevYearToolButton_clicked();
-	void on_nextYearToolButton_clicked();
+	void setDelegate(CalendarWidgetDelegate *delegate);
+	void on_prevMonthPushButton_clicked();
+	void on_nextMonthPushButton_clicked();
+	void on_prevYearPushButton_clicked();
+	void on_nextYearPushButton_clicked();
 
 private:
 	QDate m_selectedDate;

@@ -18,20 +18,17 @@
 
 ****************************************************************************/
 
-#ifndef CALENDARDELEGATE_H
-#define CALENDARDELEGATE_H
+#ifndef CALENDARWIDGETDELEGATE_H
+#define CALENDARWIDGETDELEGATE_H
 
 #include <QItemDelegate>
 
-class QPainter;
-namespace Objects { class Event; }
-
-class CalendarDelegate : public QItemDelegate
+class CalendarWidgetDelegate : public QItemDelegate
 {
 	Q_OBJECT
 
 public:
-	CalendarDelegate(QObject *parent = 0);
+	CalendarWidgetDelegate(QObject *parent = 0);
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QDate &date) const;
 	QString toolTipText(const QDate &date) const;
@@ -41,4 +38,4 @@ private:
 	QImage m_vote_high, m_vote_low;
 };
 
-#endif
+#endif // CALENDARWIDGETDELEGATE_H

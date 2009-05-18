@@ -22,8 +22,8 @@
      <item>
       <widget class="QPushButton" name="addPushButton">
        <property name="icon">
-        <iconset>
-         <normaloff>:table_add</normaloff>:table_add</iconset>
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/list_add</normaloff>:/images/list_add</iconset>
        </property>
       </widget>
      </item>
@@ -33,8 +33,8 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:table_delete</normaloff>:table_delete</iconset>
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/list_remove</normaloff>:/images/list_remove</iconset>
        </property>
       </widget>
      </item>
@@ -130,8 +130,8 @@
         <string>Reset</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:reset</normaloff>:reset</iconset>
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/reset</normaloff>:/images/reset</iconset>
        </property>
       </widget>
      </item>
@@ -154,8 +154,8 @@
         <string>Save</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:save</normaloff>:save</iconset>
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/save</normaloff>:/images/save</iconset>
        </property>
        <property name="default">
         <bool>true</bool>
@@ -168,8 +168,8 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:cancel</normaloff>:cancel</iconset>
+        <iconset resource="../../../resources/application.qrc">
+         <normaloff>:/images/cancel</normaloff>:/images/cancel</iconset>
        </property>
       </widget>
      </item>
@@ -177,6 +177,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../resources/application.qrc"/>
+ </resources>
  <connections/>
 </ui>

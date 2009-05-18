@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,104 +19,43 @@
 ****************************************************************************/
 
 #include <QtGui>
-
+#include <QtSql>
 #include "eventtypeview.h"
-
-#include "../delegates/booleanimageitemdelegate.h"
-#include "../models/eventtypetablemodel.h"
-#include "../views/viewhelper.h"
+#include "delegates/booleanimageitemdelegate.h"
+#include "utility/completerhelper.h"
 
 EventTypeView::EventTypeView(QWidget *parent, quint32 id)
-	: QDialog(parent)
+	: AbstractTableView(parent)
 {
 	setupUi(this);
 
-	m_model = new EventTypeTableModel(this);
+	m_model->setTable("EventType");
+	m_model->select();
+
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Description"), Qt::DisplayRole);
+	m_model->setHeaderData(2, Qt::Horizontal, tr("Medal"), Qt::DisplayRole);
+	m_model->setHeaderData(3, Qt::Horizontal, tr("Intervals"), Qt::DisplayRole);
+
+	m_tableView = tableView;
 
 	tableView->setModel(m_model);
 	tableView->hideColumn(0);
 	tableView->setColumnWidth(1, 170);
 	tableView->setColumnWidth(2, 80);
-	tableView->setItemDelegateForColumn(2, new BooleanImageItemDelegate(":medal", tableView));
+	tableView->setItemDelegateForColumn(2, new BooleanImageItemDelegate(":images/medal", tableView));
 	tableView->setColumnWidth(3, 80);
-	tableView->setItemDelegateForColumn(3, new BooleanImageItemDelegate(":intervals", tableView));
+	tableView->setItemDelegateForColumn(3, new BooleanImageItemDelegate(":images/intervals", tableView));
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
-	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "EventType", "Description"));
+	descriptionLineEdit->setCompleter(CompleterHelper::completer("EventType", "Description", descriptionLineEdit));
 
-	if (m_model->rowCount() > 0) {
-		if (id) {
-			tableView->setCurrentIndex(m_model->index(m_model->indexById(id).row(), 1));
-		} else {
-			tableView->setCurrentIndex(m_model->index(0, 1));
-		}
-	} else {
-		this->setControlsEnabled(false);
-	}
+	refresh(id);
 }
 
 EventTypeView::~EventTypeView()
 {
-	delete m_model;
 }
-
-
-
-void EventTypeView::on_addPushButton_clicked()
-{
-	if (m_model->rowCount() == 0) {
-		this->setControlsEnabled(true);
-	}
-
-	int row = m_model->rowCount() > 0 ? tableView->currentIndex().row() + 1 : 0;
-	m_model->insertRows(row, 1);
-	tableView->setCurrentIndex(m_model->index(row, 1));
-}
-
-void EventTypeView::on_removePushButton_clicked()
-{
-	if (m_model->rowCount() == 1) {
-		this->setControlsEnabled(false);
-	}
-
-	if (m_model->rowCount() > 0) {
-		QModelIndexList indexes = tableView->selectionModel()->selectedIndexes();
-		if (!indexes.isEmpty()) {
-			m_model->removeRows(indexes.at(0).row(), 1);
-		}
-	}
-}
-
-void EventTypeView::on_resetPushButton_clicked()
-{
-	m_model->revertAll();
-
-	if (m_model->rowCount() > 0) {
-		this->setControlsEnabled(true);
-		tableView->setCurrentIndex(m_model->index(0, 1));
-	} else {
-		this->setControlsEnabled(false);
-	}
-}
-
-void EventTypeView::on_savePushButton_clicked()
-{
-	bool result = m_model->submitAll();
-	if (!result) {
-		QMessageBox::critical(this, tr("Error"), m_model->lastError());
-		return;
-	}
-
-	this->accept();
-}
-
-void EventTypeView::on_cancelPushButton_clicked()
-{
-	this->reject();
-}
-
-
 
 void EventTypeView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
@@ -127,28 +66,24 @@ void EventTypeView::currentRowChanged(const QModelIndex &current, const QModelIn
 	hasIntervalsCheckBox->setChecked(current.sibling(current.row(), 3).data().toBool());
 }
 
-
-
-void EventTypeView::on_descriptionLineEdit_textChanged(const QString &text)
+void EventTypeView::on_descriptionLineEdit_textChanged(const QString &value)
 {
-	tableView->model()->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 1), text);
+	onTextChanged(1, value);
 }
 
 void EventTypeView::on_hasMedalCheckBox_stateChanged(int state)
 {
-	tableView->model()->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 2), (state > 0));
+	onBoolChanged(2, state);
 }
 
 void EventTypeView::on_hasIntervalsCheckBox_stateChanged(int state)
 {
-	tableView->model()->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 3), (state > 0));
+	onBoolChanged(3, state);
 }
 
-
-
-void EventTypeView::setControlsEnabled(bool enable)
+void EventTypeView::setControlsEnabled(bool value)
 {
-	descriptionLineEdit->setEnabled(enable);
-	hasMedalCheckBox->setEnabled(enable);
-	hasIntervalsCheckBox->setEnabled(enable);
+	descriptionLineEdit->setEnabled(value);
+	hasMedalCheckBox->setEnabled(value);
+	hasIntervalsCheckBox->setEnabled(value);
 }

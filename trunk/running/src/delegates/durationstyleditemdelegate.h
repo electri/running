@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@
 
 class DurationStyledItemDelegate : public QStyledItemDelegate
 {
+	Q_OBJECT
+
 public:
 	DurationStyledItemDelegate(QObject *parent = 0);
 
 	QString displayText(const QVariant &value, const QLocale &locale) const;
 };
 
-#endif
-
-
+#endif // DURATIONSTYLEDITEMDELEGATE_H

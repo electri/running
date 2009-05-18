@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,18 +19,21 @@
 ****************************************************************************/
 
 #include <QtGui>
-
+#include <QtSql>
 #include "weatherview.h"
-
-#include "../models/comboobjecttablemodel.h"
-#include "../views/viewhelper.h"
+#include "utility/completerhelper.h"
 
 WeatherView::WeatherView(QWidget *parent, quint32 id)
-	: QDialog(parent)
+	: AbstractTableView(parent)
 {
 	setupUi(this);
 
-	m_model = new ComboObjectTableModel(Objects::Types::Weather, this);
+	m_model->setTable("Weather");
+	m_model->select();
+
+	m_model->setHeaderData(1, Qt::Horizontal, tr("Description"), Qt::DisplayRole);
+
+	m_tableView = tableView;
 
 	tableView->setModel(m_model);
 	tableView->hideColumn(0);
@@ -38,80 +41,14 @@ WeatherView::WeatherView(QWidget *parent, quint32 id)
 
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(currentRowChanged(const QModelIndex &, const QModelIndex &)));
 
-	descriptionLineEdit->setCompleter(ViewHelper::completer(descriptionLineEdit, "Weather", "Description"));
+	descriptionLineEdit->setCompleter(CompleterHelper::completer("Weather", "Description", descriptionLineEdit));
 
-	if (m_model->rowCount() > 0) {
-		if (id) {
-			tableView->setCurrentIndex(m_model->index(m_model->indexById(id).row(), 1));
-		} else {
-			tableView->setCurrentIndex(m_model->index(0, 1));
-		}
-	} else {
-		this->setControlsEnabled(false);
-	}
+	refresh(id);
 }
 
 WeatherView::~WeatherView()
 {
-	delete m_model;
 }
-
-
-
-void WeatherView::on_addPushButton_clicked()
-{
-	if (m_model->rowCount() == 0) {
-		this->setControlsEnabled(true);
-	}
-
-	int row = m_model->rowCount() > 0 ? tableView->currentIndex().row() + 1 : 0;
-	m_model->insertRows(row, 1);
-	tableView->setCurrentIndex(m_model->index(row, 1));
-}
-
-void WeatherView::on_removePushButton_clicked()
-{
-	if (m_model->rowCount() == 1) {
-		this->setControlsEnabled(false);
-	}
-
-	if (m_model->rowCount() > 0) {
-		QModelIndexList indexes = tableView->selectionModel()->selectedIndexes();
-		if (!indexes.isEmpty()) {
-			m_model->removeRows(indexes.at(0).row(), 1);
-		}
-	}
-}
-
-void WeatherView::on_resetPushButton_clicked()
-{
-	m_model->revertAll();
-
-	if (m_model->rowCount() > 0) {
-		this->setControlsEnabled(true);
-		tableView->setCurrentIndex(m_model->index(0, 1));
-	} else {
-		this->setControlsEnabled(false);
-	}
-}
-
-void WeatherView::on_savePushButton_clicked()
-{
-	bool result = m_model->submitAll();
-	if (!result) {
-		QMessageBox::critical(this, tr("Error"), m_model->lastError());
-		return;
-	}
-
-	this->accept();
-}
-
-void WeatherView::on_cancelPushButton_clicked()
-{
-	this->reject();
-}
-
-
 
 void WeatherView::currentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
@@ -120,14 +57,10 @@ void WeatherView::currentRowChanged(const QModelIndex &current, const QModelInde
 	descriptionLineEdit->setText(current.sibling(current.row(), 1).data().toString());
 }
 
-
-
-void WeatherView::on_descriptionLineEdit_textChanged(const QString &text)
+void WeatherView::on_descriptionLineEdit_textChanged(const QString &value)
 {
-	tableView->model()->setData(tableView->currentIndex().sibling(tableView->currentIndex().row(), 1), text);
+	onTextChanged(1, value);
 }
-
-
 
 void WeatherView::setControlsEnabled(bool enable)
 {

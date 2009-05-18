@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,30 +21,23 @@
 #ifndef SHOEVIEW_H
 #define SHOEVIEW_H
 
-#include <QWidget>
+#include "abstracttableview.h"
+#include "ui_shoeview.h"
 
-#include "../../obj/ui_shoeview.h"
-
-class ShoeTableModel;
-
-class ShoeView : public QDialog, public Ui::ShoeView
+class ShoeView : public AbstractTableView, public Ui::ShoeView
 {
 	Q_OBJECT
 
 public:
 	ShoeView(QWidget *parent = 0, quint32 id = 0);
 	~ShoeView();
+
 	void showEvent(QShowEvent *);
 
 private slots:
-	void on_addPushButton_clicked();
-	void on_removePushButton_clicked();
-	void on_resetPushButton_clicked();
-	void on_savePushButton_clicked();
-	void on_cancelPushButton_clicked();
-
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
+	void on_shoeMakerComboBox_currentIndexChanged(int index);
 	void on_shoeModelComboBox_currentIndexChanged(int index);
 	void on_initialDistanceDoubleSpinBox_valueChanged(double value);
 	void on_purchaseDateDateEdit_dateChanged(const QDate &value);
@@ -53,13 +46,13 @@ private slots:
 	void on_retiredCheckBox_stateChanged(int state);
 	void on_notesPlainTextEdit_textChanged();
 
+	void on_shoeMakerToolButton_clicked();
 	void on_shoeModelToolButton_clicked();
 
 private:
 	void setControlsEnabled(bool enable);
 
-	ShoeTableModel *m_model;
-	double m_distance;
+//	double m_distance;
 };
 
-#endif
+#endif // SHOEVIEW_H

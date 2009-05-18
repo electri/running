@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,37 +19,31 @@
 ****************************************************************************/
 
 #include <QtGui>
-
 #include "weatherinfopopupview.h"
-
-#include "../application.h"
-#include "../objects/comboobject.h"
-#include "../views/weatherview.h"
-#include "../views/viewhelper.h"
+#include "settings.h"
+#include "utility/comboboxhelper.h"
+#include "views/tableviews/weatherview.h"
 
 WeatherInfoPopupView::WeatherInfoPopupView(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
 
-	ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather, true);
+	ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
+}
+
+void WeatherInfoPopupView::on_weatherToolButton_clicked()
+{
+	quint32 id = ComboBoxHelper::selected(weatherComboBox);
+
+	WeatherView view(this, id);
+	int result = view.exec();
+	if (result == QDialog::Accepted) {
+		ComboBoxHelper::fillComboBox(weatherComboBox, "Weather", true);
+	}
 }
 
 void WeatherInfoPopupView::showEvent(QShowEvent *)
 {
-	temperatureDoubleSpinBox->setSuffix(" " + Application::instance()->cfg()->cfgTemperatureUnit()->description());
-}
-
-
-
-void WeatherInfoPopupView::on_weatherToolButton_clicked()
-{
-	quint32 id = weatherComboBox->itemData(weatherComboBox->currentIndex()).toInt();
-
-	WeatherView *view = new WeatherView(this, id);
-	int result = view->exec();
-	if (result == QDialog::Accepted) {
-		ViewHelper::fillComboBox(weatherComboBox, Objects::Types::Weather, true);
-	}
-	delete view;
+	temperatureDoubleSpinBox->setSuffix(QString(" %1").arg(Settings::instance()->temperatureUnit()));
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,13 +21,10 @@
 #ifndef WEATHERVIEW_H
 #define WEATHERVIEW_H
 
-#include <QWidget>
+#include "abstracttableview.h"
+#include "ui_weatherview.h"
 
-#include "../../obj/ui_weatherview.h"
-
-class ComboObjectTableModel;
-
-class WeatherView : public QDialog, public Ui::WeatherView
+class WeatherView : public AbstractTableView, public Ui::WeatherView
 {
 	Q_OBJECT
 
@@ -36,20 +33,12 @@ public:
 	~WeatherView();
 
 private slots:
-	void on_addPushButton_clicked();
-	void on_removePushButton_clicked();
-	void on_resetPushButton_clicked();
-	void on_savePushButton_clicked();
-	void on_cancelPushButton_clicked();
-
 	void currentRowChanged(const QModelIndex &current, const QModelIndex &previous);
 
-	void on_descriptionLineEdit_textChanged(const QString &text);
+	void on_descriptionLineEdit_textChanged(const QString &value);
 
 private:
 	void setControlsEnabled(bool enable);
-
-	ComboObjectTableModel *m_model;
 };
 
-#endif
+#endif // WEATHERVIEW_H

@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,20 +23,27 @@
 
 #include <QString>
 #include <QDateTime>
-#include <QTime>
 
-namespace Utility
+class Utility
 {
+public:
+	static QTime paceTime(qreal distance, const QTime &duration);
+	static QTime paceTime(qreal distance, const QDateTime &duration);
+	static qreal paceSpeed(qreal distance, const QTime &duration);
+	static qreal paceSpeed(qreal distance, const QDateTime &duration);
 
-QString formatDistance(qreal d, quint8 precision);
-QString formatDuration(const QTime &t);
-QString formatDuration(const QDateTime &t);
+	static QString formatDistance(qreal d, quint8 precision);
 
-QTime paceTime(qreal distance, const QTime &duration);
-QTime paceTime(qreal distance, const QDateTime &duration);
-qreal paceSpeed(qreal distance, const QTime &duration);
-qreal paceSpeed(qreal distance, const QDateTime &duration);
+	static QString formatDuration(const QTime &t);
+	static QString formatDuration(const QDateTime &t);
 
-}
+	static QString formatPace(qreal distance, const QTime &duration);
+	static QString formatPace(qreal distance, const QDateTime &duration);
+
+	static QString formatReal(qreal d, quint8 precision);
+
+	static QString formatTime(const QTime &t);
+	static QString formatTime(const QDateTime &t);
+};
 
 #endif

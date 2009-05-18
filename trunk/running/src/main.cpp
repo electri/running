@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,18 +20,16 @@
 
 #include <QApplication>
 #include <QTranslator>
-#include <QLocale>
-
 #include "views/mainview.h"
 
 int main(int argc, char *argv[])
 {
 	Q_INIT_RESOURCE(application);
-	QApplication app(argc, argv);
 
-	app.setApplicationName("running");
-	app.setApplicationVersion("0.2");
-	app.setOrganizationName("Project hosted at Google Code");
+	QApplication app(argc, argv);
+	app.setApplicationName("Running");
+	app.setApplicationVersion("0.3");
+	app.setOrganizationName("Marco Gasparetto");
 	app.setOrganizationDomain("http://code.google.com/p/running");
 
 	QTranslator myappTranslator;
@@ -39,8 +37,8 @@ int main(int argc, char *argv[])
 		app.installTranslator(&myappTranslator);
 	}
 
-        MainView view;
-        view.show();
+	MainView view;
+	view.show();
 
 	return app.exec();
 }

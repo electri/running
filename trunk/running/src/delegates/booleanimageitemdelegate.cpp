@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 ****************************************************************************/
 
 #include <QtGui>
-
 #include "booleanimageitemdelegate.h"
 
 BooleanImageItemDelegate::BooleanImageItemDelegate(const QString &image, QObject *parent)
@@ -30,17 +29,15 @@ BooleanImageItemDelegate::BooleanImageItemDelegate(const QString &image, QObject
 	m_image_off = icon.pixmap(16, 16, QIcon::Disabled);
 }
 
-void BooleanImageItemDelegate::paint(QPainter *painter,
-		const QStyleOptionViewItem &option, const QModelIndex &index) const
+void BooleanImageItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	drawBackground(painter, option, index);
 	drawFocus(painter, option, option.rect);
 
 	int value = index.model()->data(index, Qt::DisplayRole).toBool();
 
-	QPoint point = option.rect.topLeft()
-			+ QPoint(	(option.rect.width() - m_image_on.width()) / 2,
-						(option.rect.height() - m_image_on.height()) / 2	);
+	QPoint point = option.rect.topLeft() + QPoint((option.rect.width() - m_image_on.width()) / 2,
+					(option.rect.height() - m_image_on.height()) / 2	);
 	if (value) {
 		painter->drawPixmap(point, m_image_on);
 	} else {
@@ -48,17 +45,20 @@ void BooleanImageItemDelegate::paint(QPainter *painter,
 	}
 }
 
-QSize BooleanImageItemDelegate::sizeHint(const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+QSize BooleanImageItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	Q_UNUSED(option);
+	Q_UNUSED(index);
+
 	return m_image_on.size();
 }
 
-QWidget *BooleanImageItemDelegate::createEditor(QWidget *parent,
-		const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+QWidget *BooleanImageItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QWidget *editor = QItemEditorFactory::defaultFactory()->createEditor(QVariant::Bool, parent);
+	Q_UNUSED(option);
+	Q_UNUSED(index);
 
-	return editor;
+	return QItemEditorFactory::defaultFactory()->createEditor(QVariant::Bool, parent);
 }
 
 void BooleanImageItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -77,8 +77,9 @@ void BooleanImageItemDelegate::setModelData(QWidget *editor, QAbstractItemModel 
 	model->setData(index, value, Qt::EditRole);
 }
 
-void BooleanImageItemDelegate::updateEditorGeometry(QWidget *editor,
-			const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+void BooleanImageItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	Q_UNUSED(index);
+
 	editor->setGeometry(option.rect);
 }

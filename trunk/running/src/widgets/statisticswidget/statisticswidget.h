@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,12 +23,9 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QSqlRecord>
 
-#include "../utility/statisticsservice.h"
-
-namespace StatisticsPages {
-	enum Page { EventsPerDate, Shoes };
-}
+enum StatisticsPage { StatisticsPageEventsPerDate, StatisticsPageShoes };
 
 class StatisticsWidget : public QWidget
 {
@@ -37,21 +34,22 @@ class StatisticsWidget : public QWidget
 public:
 	StatisticsWidget(QWidget *parent = 0);
 
-	void setPage(StatisticsPages::Page);
-
-//	void resetHeight();
+	void setPage(StatisticsPage page);
+	void refreshCache();
 
 private:
-	StatisticsPages::Page m_page;
-
 	void paintEvent(QPaintEvent *);
-	void drawHeader(QPainter &painter, int x, int y, int cw, int ch);
-	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::EventsPerDate &row);
-	void drawRow(QPainter &painter, int x, int y, int cw, int ch, int col, const StatisticsResults::Shoes &row);
 
-	int findMinimumHeight();
+	void _drawHeader(QPainter &painter, int x, int y, int cw, int ch);
+	void _drawEventsPerDateRow(QPainter &painter, int x, int y, int cw, int ch, int row);
+	void _drawShoesRow(QPainter &painter, int x, int y, int cw, int ch, int row);
+	void _cacheEventsPerDateRow(const QSqlRecord &record);
+	void _cacheShoesRow(const QSqlRecord &record);
+	int _minimumHeight();
 
-	int margin, cellheight, cellwidth;
+	StatisticsPage m_page;
+	int m_margin;
+	int m_cellheight, m_cellwidth;
 };
 
-#endif
+#endif // STATISTICSWIDGET_H

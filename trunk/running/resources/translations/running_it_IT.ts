@@ -3,35 +3,125 @@
 <TS version="2.0" language="it">
 <defaultcodec>ISO-8859-15</defaultcodec>
 <context>
+    <name>AbstractTableView</name>
+    <message>
+        <location filename="../../src/views/tableviews/abstracttableview.cpp" line="73"/>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/abstracttableview.cpp" line="73"/>
+        <source>There are pending changes to save. Are you sure to reset?</source>
+        <translation>Ci sono modifiche da salvare. Si è sicuri di voler ripristinare?</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/abstracttableview.cpp" line="101"/>
+        <source>Error</source>
+        <translation>Errore</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/abstracttableview.cpp" line="111"/>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/abstracttableview.cpp" line="111"/>
+        <source>There are pending changes to save. Are you sure to cancel?</source>
+        <translation>Ci sono modifiche da salvare. Si è sicuri di voler annullare?</translation>
+    </message>
+</context>
+<context>
     <name>Application</name>
     <message>
-        <location filename="../../src/application.cpp" line="78"/>
         <source>A simple program for runners based on a calendar and an event list.</source>
-        <translation>Una semplice applicazione per runners basata su un calendario e una lista di eventi.</translation>
+        <translation type="obsolete">Una semplice applicazione per runners basata su un calendario e una lista di eventi.</translation>
     </message>
     <message>
-        <location filename="../../src/application.cpp" line="80"/>
         <source>Made with:</source>
-        <translation>Realizzato con:</translation>
+        <translation type="obsolete">Realizzato con:</translation>
     </message>
     <message>
-        <location filename="../../src/application.cpp" line="102"/>
         <source>system informations</source>
         <translation type="obsolete">informazioni del sistema</translation>
     </message>
 </context>
 <context>
+    <name>CalendarWidget</name>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidget.ui" line="117"/>
+        <source>selectedDate</source>
+        <translation>selectedDate</translation>
+    </message>
+</context>
+<context>
+    <name>CalendarWidgetDelegate</name>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="86"/>
+        <source>Name:</source>
+        <translation>Nome:</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="87"/>
+        <source>Description:</source>
+        <translation>Descrizione:</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="88"/>
+        <source>Type:</source>
+        <translation>Tipologia:</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="89"/>
+        <source>Start time:</source>
+        <translation>Ora di inizio:</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="90"/>
+        <source>Distance:</source>
+        <translation>Distanza:</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/calendarwidget/calendarwidgetdelegate.cpp" line="91"/>
+        <source>Duration:</source>
+        <translation>Durata:</translation>
+    </message>
+</context>
+<context>
     <name>ComboObjectTableModel</name>
     <message>
-        <location filename="../../src/models/comboobjecttablemodel.cpp" line="86"/>
         <source>Description</source>
-        <translation>Descrizione</translation>
+        <translation type="obsolete">Descrizione</translation>
     </message>
 </context>
 <context>
     <name>Database</name>
     <message>
-        <location filename="../../src/services/database.cpp" line="100"/>
+        <location filename="../../src/utility/database.cpp" line="46"/>
+        <source>Unable to open existing database file.</source>
+        <translation>Non è stato possibile aprire o leggere il file del database.</translation>
+    </message>
+    <message>
+        <location filename="../../src/utility/database.cpp" line="52"/>
+        <source>The database file is for a newer version of the software.</source>
+        <translation>Il file del database è per una versione più recente del programma.</translation>
+    </message>
+    <message>
+        <location filename="../../src/utility/database.cpp" line="56"/>
+        <source>An error has occurred upgrading the database.</source>
+        <translation>Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
+    </message>
+    <message>
+        <location filename="../../src/utility/database.cpp" line="62"/>
+        <source>Unable to create new database file.</source>
+        <translation>Non è stato possibile creare il file del database.</translation>
+    </message>
+    <message>
+        <location filename="../../src/utility/database.cpp" line="66"/>
+        <source>An error has occurred creating a new database.</source>
+        <translation>Si è verificato un errore durante la creazione del nuovo database.</translation>
+    </message>
+    <message>
+        <location filename="../../src/utility/database.cpp" line="101"/>
         <source>A database error has occurred:
 
 </source>
@@ -40,12 +130,12 @@
 </translation>
     </message>
     <message>
-        <location filename="../../src/services/database.cpp" line="120"/>
+        <location filename="../../src/utility/database.cpp" line="125"/>
         <source>Creating database ...</source>
         <translation>Creazione del database ...</translation>
     </message>
     <message>
-        <location filename="../../src/services/database.cpp" line="129"/>
+        <location filename="../../src/utility/database.cpp" line="147"/>
         <source>Upgrading database ...</source>
         <translation>Aggiornamento del database ...</translation>
     </message>
@@ -53,126 +143,319 @@
 <context>
     <name>EventTypeTableModel</name>
     <message>
-        <location filename="../../src/models/eventtypetablemodel.cpp" line="45"/>
         <source>Description</source>
-        <translation>Descrizione</translation>
+        <translation type="obsolete">Descrizione</translation>
     </message>
     <message>
-        <location filename="../../src/models/eventtypetablemodel.cpp" line="46"/>
         <source>Medal</source>
-        <translation>Stemma</translation>
+        <translation type="obsolete">Stemma</translation>
     </message>
     <message>
-        <location filename="../../src/models/eventtypetablemodel.cpp" line="47"/>
         <source>Intervals</source>
-        <translation>Intervalli</translation>
+        <translation type="obsolete">Intervalli</translation>
     </message>
 </context>
 <context>
     <name>EventTypeView</name>
     <message>
-        <location filename="../../src/views/eventtypeview.cpp" line="108"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="obsolete">Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/eventtypeview.cpp" line="108"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="16"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="17"/>
         <source>Edit &quot;Event type&quot;</source>
         <translation>Modifica di &quot;Tipo di evento&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="80"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="87"/>
         <source>Show the medal ?</source>
         <translation>Visualizza lo stemma ?</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="90"/>
+        <location filename="../../src/views/tableviews/eventtypeview.cpp" line="35"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="97"/>
         <source>Description</source>
         <translation>Descrizione</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="110"/>
+        <location filename="../../src/views/tableviews/eventtypeview.cpp" line="36"/>
+        <source>Medal</source>
+        <translation>Stemma</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/eventtypeview.cpp" line="37"/>
+        <source>Intervals</source>
+        <translation>Intervalli</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="117"/>
         <source>Can have intervals ?</source>
         <translation>Può avere gli intervalli ?</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="160"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="167"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="174"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="181"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/eventtypeview.ui" line="136"/>
+        <location filename="../../src/views/tableviews/eventtypeview.ui" line="143"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
 </context>
 <context>
-    <name>IntervalTableModel</name>
+    <name>EventWidget</name>
     <message>
-        <location filename="../../src/models/intervaltablemodel.cpp" line="47"/>
-        <source>Interval type</source>
-        <translation>Tipo di intervallo</translation>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="125"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="385"/>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
-        <location filename="../../src/models/intervaltablemodel.cpp" line="48"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="125"/>
+        <source>There are pending changes to save. Are you sure to reset?</source>
+        <translation>Ci sono modifiche da salvare. Si è sicuri di voler ripristinare?</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="142"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="148"/>
+        <source>Add/Edit an event</source>
+        <translation>Aggiunta/Modifica di un evento</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="160"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="426"/>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.cpp" line="160"/>
+        <source>There are pending changes to save. Are you sure to cancel?</source>
+        <translation>Ci sono modifiche da salvare. Si è sicuri di voler annullare?</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="23"/>
+        <source>Main informations</source>
+        <translation>Dati principali</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="29"/>
+        <source>Type</source>
+        <translation>Tipologia</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="62"/>
+        <source>Vote</source>
+        <translation>Voto</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="72"/>
+        <source>Start time</source>
+        <translation>Ora di inizio</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="82"/>
+        <source>h:mm AP</source>
+        <translation>h:mm</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="102"/>
+        <source>Name</source>
+        <translation>Nome</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="128"/>
+        <source>Long description</source>
+        <translation>Descrizione lunga</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="141"/>
         <source>Distance</source>
         <translation>Distanza</translation>
     </message>
     <message>
-        <location filename="../../src/models/intervaltablemodel.cpp" line="49"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="163"/>
+        <source> km</source>
+        <translation> km</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="189"/>
         <source>Duration</source>
         <translation>Durata</translation>
     </message>
     <message>
-        <location filename="../../src/models/intervaltablemodel.cpp" line="50"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="205"/>
+        <source>h:mm:ss</source>
+        <translation>h:mm:ss</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="212"/>
+        <source>Computed pace</source>
+        <translation>Media calcolata</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="272"/>
+        <source>Shoes</source>
+        <translation>Scarpe</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="287"/>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="316"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="296"/>
+        <source>Notes</source>
+        <translation>Note</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="309"/>
+        <source>Vote details ...</source>
+        <translation>Dettaglio del voto ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="326"/>
+        <source>Additional informations</source>
+        <translation>Dati aggiuntivi</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="337"/>
+        <source>Interval&apos;s details ...</source>
+        <translation>Dettaglio degli intervalli ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="344"/>
+        <source>Runner informations ...</source>
+        <translation>Informazioni sull&apos;atleta ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="351"/>
+        <source>Weather informations ...</source>
+        <translation>Informazioni meteo ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/eventwidget/eventwidget.ui" line="409"/>
+        <source>Save</source>
+        <translation>Salva</translation>
+    </message>
+</context>
+<context>
+    <name>IntervalPopupView</name>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.cpp" line="44"/>
+        <source>Type</source>
+        <translation>Tipologia</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.cpp" line="45"/>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="161"/>
+        <source>Distance</source>
+        <translation>Distanza</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.cpp" line="46"/>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="184"/>
+        <source>Duration</source>
+        <translation>Durata</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="32"/>
+        <source>Interval&apos;s details</source>
+        <translation>Dettagli degli intervalli</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="137"/>
+        <source>Interval type</source>
+        <translation>Tipo di intervallo</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="152"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="171"/>
+        <source> km</source>
+        <translation> km</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="194"/>
+        <source>h:mm:ss</source>
+        <translation>h:mm:ss</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="201"/>
+        <source>Computed pace</source>
+        <translation>Media calcolata</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/intervalpopupview.ui" line="282"/>
         <source>Notes</source>
         <translation>Note</translation>
     </message>
 </context>
 <context>
-    <name>IntervalTypeView</name>
+    <name>IntervalTableModel</name>
     <message>
-        <location filename="../../src/views/intervaltypeview.cpp" line="103"/>
-        <source>Error</source>
-        <translation>Errore</translation>
+        <source>Interval type</source>
+        <translation type="obsolete">Tipo di intervallo</translation>
     </message>
     <message>
-        <location filename="../../src/views/intervaltypeview.cpp" line="103"/>
+        <source>Distance</source>
+        <translation type="obsolete">Distanza</translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation type="obsolete">Durata</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Note</translation>
+    </message>
+</context>
+<context>
+    <name>IntervalTypeView</name>
+    <message>
+        <source>Error</source>
+        <translation type="obsolete">Errore</translation>
+    </message>
+    <message>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervaltypeview.ui" line="80"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.cpp" line="34"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.ui" line="81"/>
         <source>Description</source>
         <translation>Descrizione</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervaltypeview.ui" line="129"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.ui" line="130"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervaltypeview.ui" line="143"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.ui" line="144"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervaltypeview.ui" line="16"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.ui" line="17"/>
         <source>Edit &quot;Interval type&quot;</source>
         <translation>Modifica di &quot;Tipo di evento&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervaltypeview.ui" line="105"/>
+        <location filename="../../src/views/tableviews/intervaltypeview.ui" line="106"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
@@ -180,428 +463,436 @@
 <context>
     <name>IntervalView</name>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="145"/>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="obsolete">...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="164"/>
         <source> km</source>
-        <translation> km</translation>
+        <translation type="obsolete"> km</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="154"/>
         <source>Distance</source>
-        <translation>Distanza</translation>
+        <translation type="obsolete">Distanza</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="177"/>
         <source>Duration</source>
-        <translation>Durata</translation>
+        <translation type="obsolete">Durata</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="191"/>
         <source>Computed pace</source>
-        <translation>Media calcolata</translation>
+        <translation type="obsolete">Media calcolata</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="274"/>
         <source>Notes</source>
-        <translation>Note</translation>
+        <translation type="obsolete">Note</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="130"/>
         <source>Interval type</source>
-        <translation>Tipo di intervallo</translation>
+        <translation type="obsolete">Tipo di intervallo</translation>
     </message>
     <message>
-        <location filename="../../src/views/intervalview.cpp" line="189"/>
         <source>%1 min/km or %2 km/h</source>
         <translation type="obsolete">%1 min/km oppure %2 km/h</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/intervalview.ui" line="184"/>
         <source>h:mm:ss</source>
-        <translation>h:mm:ss</translation>
+        <translation type="obsolete">h:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/views/intervalview.cpp" line="231"/>
         <source>%1 min/%3 or %2 %3/h</source>
-        <translation>%1 min/%3 oppure %2 %3/h</translation>
+        <translation type="obsolete">%1 min/%3 oppure %2 %3/h</translation>
     </message>
 </context>
 <context>
     <name>MainView</name>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="13"/>
+        <location filename="../../src/views/mainview.ui" line="14"/>
         <source>Running</source>
         <translation>Running</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="542"/>
+        <location filename="../../src/views/mainview.cpp" line="327"/>
         <source> - %1</source>
         <translation> - %1</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="584"/>
         <source> - %1 km in %2</source>
         <translation type="obsolete"> - %1 km in %2</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="203"/>
         <source> km</source>
-        <translation> km</translation>
+        <translation type="obsolete"> km</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="356"/>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="obsolete">...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="628"/>
+        <location filename="../../src/views/mainview.ui" line="197"/>
         <source>&amp;File</source>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="650"/>
+        <location filename="../../src/views/mainview.ui" line="219"/>
         <source>&amp;?</source>
         <translation>&amp;?</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="99"/>
+        <location filename="../../src/views/mainview.cpp" line="68"/>
         <source>Error</source>
         <translation>Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="99"/>
         <source>Unable to open or read the database file.</source>
-        <translation>Non è stato possibile aprire o leggere il file del database.</translation>
+        <translation type="obsolete">Non è stato possibile aprire o leggere il file del database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="171"/>
         <source>Calendar statistics.</source>
-        <translation>Statistiche del calendario.</translation>
+        <translation type="obsolete">Statistiche del calendario.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="190"/>
+        <location filename="../../src/views/mainview.cpp" line="143"/>
         <source>Add a new event</source>
         <translation>Aggiunta di un nuovo evento</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="190"/>
+        <location filename="../../src/views/mainview.cpp" line="143"/>
         <source>The selected day already has an event.</source>
         <translation>Il giorno selezionato contiene già un evento.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="197"/>
         <source>Add event: %1.</source>
-        <translation>Aggiunta di un nuovo evento: %1.</translation>
+        <translation type="obsolete">Aggiunta di un nuovo evento: %1.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="223"/>
+        <location filename="../../src/views/mainview.cpp" line="153"/>
+        <location filename="../../src/views/mainview.cpp" line="166"/>
+        <location filename="../../src/views/mainview.cpp" line="172"/>
+        <location filename="../../src/views/mainview.cpp" line="181"/>
         <source>Remove an event</source>
         <translation>Cancellazione di un evento</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="206"/>
+        <location filename="../../src/views/mainview.cpp" line="153"/>
         <source>Are you sure you want to remove the event: %1?</source>
         <translation>Si è veramente sicuri di voler rimuovere l&apos;evento: %1?</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="235"/>
+        <location filename="../../src/views/mainview.cpp" line="181"/>
+        <location filename="../../src/views/mainview.cpp" line="191"/>
         <source>The selected day don&apos;t have an event.</source>
         <translation>Il giorno selezionato non contiene nessun evento.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="232"/>
-        <source>Edit event: %1.</source>
-        <translation>Modifica dell&apos;evento: %1.</translation>
+        <location filename="../../src/views/mainview.cpp" line="202"/>
+        <source>Add event: %1</source>
+        <translation>Aggiunta di un nuovo evento: %1</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="235"/>
+        <location filename="../../src/views/mainview.cpp" line="210"/>
+        <source>Edit event: %1</source>
+        <translation>Modifica dell&apos;evento: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="313"/>
+        <source>Main author: </source>
+        <translation>Autore principale: </translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="314"/>
+        <source>Homepage: </source>
+        <translation>Home page: </translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="329"/>
+        <source> - %1 in %3</source>
+        <translation> - %1 in %3</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="332"/>
+        <source>Event: %1</source>
+        <translation>Evento: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="334"/>
+        <source>No event</source>
+        <translation>Nessun evento</translation>
+    </message>
+    <message>
+        <source>Edit event: %1.</source>
+        <translation type="obsolete">Modifica dell&apos;evento: %1.</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.cpp" line="191"/>
         <source>Edit an event</source>
         <translation>Modifica di un evento</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="354"/>
         <source>Add/Edit an event</source>
-        <translation>Aggiunta/Modifica di un evento</translation>
+        <translation type="obsolete">Aggiunta/Modifica di un evento</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="390"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="390"/>
         <source>%1 min/km or %2 km/h</source>
         <translation type="obsolete">%1 min/km oppure %2 km/h</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="562"/>
+        <location filename="../../src/views/mainview.cpp" line="303"/>
         <source>Made with:</source>
-        <translation type="obsolete">Realizzato con:</translation>
+        <translation>Realizzato con:</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="730"/>
+        <location filename="../../src/views/mainview.cpp" line="316"/>
         <source>About</source>
         <translation>Informazioni</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="539"/>
+        <location filename="../../src/views/mainview.cpp" line="323"/>
         <source>%1 at %2</source>
         <translation>%1 del %2</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="547"/>
         <source>Event: %1.</source>
-        <translation>Evento: %1.</translation>
+        <translation type="obsolete">Evento: %1.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="594"/>
         <source>Events: %L1 for a total of %L2 km.</source>
         <translation type="obsolete">Eventi: %L1 per un totale di %L2 km.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="560"/>
         <source>No events.</source>
-        <translation>Nessun evento.</translation>
+        <translation type="obsolete">Nessun evento.</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="560"/>
+        <location filename="../../src/views/mainview.cpp" line="301"/>
         <source>A simple program for runners based on a calendar and an event list.</source>
-        <translation type="obsolete">Una semplice applicazione per runners basata su un calendario e una lista di eventi.</translation>
+        <translation>Una semplice applicazione per runners basata su un calendario e una lista di eventi.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="63"/>
         <source>Main informations</source>
-        <translation>Dati principali</translation>
+        <translation type="obsolete">Dati principali</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="69"/>
         <source>Type</source>
-        <translation>Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="102"/>
         <source>Vote</source>
-        <translation>Voto</translation>
+        <translation type="obsolete">Voto</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="112"/>
         <source>Start time</source>
-        <translation>Ora di inizio</translation>
+        <translation type="obsolete">Ora di inizio</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="142"/>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="168"/>
         <source>Long description</source>
-        <translation>Descrizione lunga</translation>
+        <translation type="obsolete">Descrizione lunga</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="181"/>
         <source>Distance</source>
-        <translation>Distanza</translation>
+        <translation type="obsolete">Distanza</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="229"/>
         <source>Duration</source>
-        <translation>Durata</translation>
+        <translation type="obsolete">Durata</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="252"/>
         <source>Computed pace</source>
-        <translation>Media calcolata</translation>
+        <translation type="obsolete">Media calcolata</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="499"/>
+        <location filename="../../src/views/mainview.ui" line="68"/>
         <source>Shoes</source>
         <translation>Scarpe</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="336"/>
         <source>Notes</source>
-        <translation>Note</translation>
+        <translation type="obsolete">Note</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="349"/>
         <source>Vote details ...</source>
-        <translation>Dettaglio del voto ...</translation>
+        <translation type="obsolete">Dettaglio del voto ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="366"/>
         <source>Additional informations</source>
-        <translation>Dati aggiuntivi</translation>
+        <translation type="obsolete">Dati aggiuntivi</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="377"/>
         <source>Interval&apos;s details ...</source>
-        <translation>Dettaglio degli intervalli ...</translation>
+        <translation type="obsolete">Dettaglio degli intervalli ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="384"/>
         <source>Runner informations ...</source>
-        <translation>Informazioni sull&apos;atleta ...</translation>
+        <translation type="obsolete">Informazioni sull&apos;atleta ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="391"/>
         <source>Weather informations ...</source>
-        <translation>Informazioni meteo ...</translation>
+        <translation type="obsolete">Informazioni meteo ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="449"/>
         <source>Save</source>
-        <translation>Salva</translation>
+        <translation type="obsolete">Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="466"/>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation type="obsolete">Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="485"/>
+        <location filename="../../src/views/mainview.ui" line="54"/>
         <source>Search type:</source>
         <translation>Tipo di ricerca:</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="492"/>
+        <location filename="../../src/views/mainview.ui" line="61"/>
         <source>Events</source>
         <translation>Eventi</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="634"/>
+        <location filename="../../src/views/mainview.ui" line="203"/>
         <source>&amp;Edit</source>
         <translation>&amp;Modifica</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="643"/>
+        <location filename="../../src/views/mainview.ui" line="212"/>
         <source>&amp;View</source>
         <translation>&amp;Visualizza</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="657"/>
+        <location filename="../../src/views/mainview.ui" line="226"/>
         <source>&amp;Tools</source>
         <translation>&amp;Strumenti</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="703"/>
+        <location filename="../../src/views/mainview.ui" line="272"/>
         <source>Add</source>
         <translation>Aggiungi</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="712"/>
+        <location filename="../../src/views/mainview.ui" line="281"/>
         <source>Remove</source>
         <translation>Rimuovi</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="721"/>
+        <location filename="../../src/views/mainview.ui" line="290"/>
         <source>Exit</source>
         <translation>Esci</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="739"/>
+        <location filename="../../src/views/mainview.ui" line="299"/>
+        <source>About ...</source>
+        <translation>Informazioni ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.ui" line="308"/>
         <source>Edit</source>
         <translation>Modifica</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="748"/>
+        <location filename="../../src/views/mainview.ui" line="317"/>
         <source>Calendar</source>
         <translation>Calendario</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="757"/>
+        <location filename="../../src/views/mainview.ui" line="326"/>
+        <source>Settings ...</source>
+        <translation>Opzioni ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.ui" line="329"/>
+        <source>Settings</source>
+        <translation>Opzioni</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.ui" line="338"/>
         <source>Statistics</source>
         <translation>Statistiche</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="766"/>
+        <location filename="../../src/views/mainview.ui" line="347"/>
+        <source>System Informations ...</source>
+        <translation>Informazioni di sistema ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/mainview.ui" line="350"/>
+        <source>System Informations</source>
+        <translation>Informazioni di sistema</translation>
+    </message>
+    <message>
         <source>Edit &quot;Event type&quot;</source>
-        <translation>Modifica di &quot;Tipo di evento&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Tipo di evento&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="775"/>
         <source>Edit &quot;Shoe maker&quot;</source>
-        <translation>Modifica di &quot;Marca scarpe&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Marca scarpe&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="784"/>
         <source>Edit &quot;Shoe model&quot;</source>
-        <translation>Modifica di &quot;Modello scarpe&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Modello scarpe&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="793"/>
         <source>Edit &quot;Shoe&quot;</source>
-        <translation>Modifica di &quot;Scarpa&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Scarpa&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="802"/>
         <source>Edit &quot;Weather&quot;</source>
-        <translation>Modifica di &quot;Meteo&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Meteo&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="811"/>
         <source>Edit &quot;Interval type&quot;</source>
-        <translation>Modifica di &quot;Tipo di evento&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Tipo di evento&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="820"/>
         <source>Edit &quot;Interval&quot;</source>
-        <translation>Modifica di &quot;Intervallo&quot;</translation>
+        <translation type="obsolete">Modifica di &quot;Intervallo&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="122"/>
         <source>h:mm AP</source>
-        <translation>h:mm</translation>
+        <translation type="obsolete">h:mm</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="245"/>
         <source>h:mm:ss</source>
-        <translation>h:mm:ss</translation>
+        <translation type="obsolete">h:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="425"/>
         <source>Reset</source>
-        <translation>Ripristina</translation>
+        <translation type="obsolete">Ripristina</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="528"/>
+        <location filename="../../src/views/mainview.cpp" line="293"/>
         <source>System Information</source>
         <translation>Informazioni di sistema</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="544"/>
         <source> - %1 %2 in %3</source>
-        <translation> - %1 %2 in %3</translation>
+        <translation type="obsolete"> - %1 %2 in %3</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="554"/>
         <source>Events: %L1 for a total of %L2 %3.</source>
-        <translation>Eventi: %L1 per un totale di %L2 %3.</translation>
+        <translation type="obsolete">Eventi: %L1 per un totale di %L2 %3.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="829"/>
         <source>&amp;Options ...</source>
-        <translation>&amp;Opzioni ...</translation>
+        <translation type="obsolete">&amp;Opzioni ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/mainview.ui" line="838"/>
         <source>System Information ...</source>
-        <translation>Informazioni di sistema ...</translation>
+        <translation type="obsolete">Informazioni di sistema ...</translation>
     </message>
     <message>
-        <location filename="../../src/views/mainview.cpp" line="400"/>
         <source>%1 min/%3 or %2 %3/h</source>
-        <translation>%1 min/%3 oppure %2 %3/h</translation>
+        <translation type="obsolete">%1 min/%3 oppure %2 %3/h</translation>
     </message>
 </context>
 <context>
     <name>ObjectRepository</name>
     <message>
-        <location filename="../../src/services/objectrepository.cpp" line="132"/>
         <source>A database error has occurred:
 
 </source>
@@ -610,12 +901,10 @@
 </translation>
     </message>
     <message>
-        <location filename="../../src/services/objectrepository.cpp" line="152"/>
         <source>Creating database ...</source>
         <translation type="obsolete">Creazione del database ...</translation>
     </message>
     <message>
-        <location filename="../../src/services/objectrepository.cpp" line="161"/>
         <source>Upgrading database ...</source>
         <translation type="obsolete">Aggiornamento del database ...</translation>
     </message>
@@ -623,118 +912,198 @@
 <context>
     <name>OptionsView</name>
     <message>
-        <location filename="../../src/views/optionsview.cpp" line="37"/>
         <source>Calendar</source>
-        <translation>Calendario</translation>
+        <translation type="obsolete">Calendario</translation>
     </message>
     <message>
-        <location filename="../../src/views/optionsview.cpp" line="37"/>
         <source>Units of measurement</source>
-        <translation>Unità di misura</translation>
+        <translation type="obsolete">Unità di misura</translation>
     </message>
     <message>
-        <location filename="../../src/views/optionsview.cpp" line="72"/>
         <source>Edit options</source>
-        <translation>Modifica delle opzioni</translation>
+        <translation type="obsolete">Modifica delle opzioni</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="16"/>
         <source>Options</source>
-        <translation>Opzioni</translation>
+        <translation type="obsolete">Opzioni</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="50"/>
         <source>Monday is first day of week</source>
-        <translation>Lunedì è il primo giorno della settimana</translation>
+        <translation type="obsolete">Lunedì è il primo giorno della settimana</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="74"/>
         <source>Distance</source>
-        <translation>Distanza</translation>
+        <translation type="obsolete">Distanza</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="94"/>
         <source>Weight</source>
-        <translation>Peso</translation>
+        <translation type="obsolete">Peso</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="114"/>
         <source>Temperature</source>
-        <translation>Temperatura</translation>
+        <translation type="obsolete">Temperatura</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="134"/>
         <source>Currency</source>
-        <translation>Valuta</translation>
+        <translation type="obsolete">Valuta</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="171"/>
         <source>Reset</source>
-        <translation>Ripristina</translation>
+        <translation type="obsolete">Ripristina</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="195"/>
         <source>Save</source>
-        <translation>Salva</translation>
+        <translation type="obsolete">Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/optionsview.ui" line="209"/>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation type="obsolete">Annulla</translation>
     </message>
 </context>
 <context>
     <name>RunnerInfoPopupView</name>
     <message>
-        <location filename="../../src/views/ui/runnerinfopopupview.ui" line="61"/>
+        <location filename="../../src/views/popupviews/runnerinfopopupview.ui" line="62"/>
         <source> kg</source>
         <translation> kg</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/runnerinfopopupview.ui" line="31"/>
+        <location filename="../../src/views/popupviews/runnerinfopopupview.ui" line="32"/>
         <source>Runner informations</source>
         <translation>Informazioni</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/runnerinfopopupview.ui" line="45"/>
+        <location filename="../../src/views/popupviews/runnerinfopopupview.ui" line="46"/>
         <source>Weight</source>
         <translation>Peso</translation>
     </message>
 </context>
 <context>
-    <name>ShoeMakerView</name>
+    <name>SettingsView</name>
     <message>
-        <location filename="../../src/views/ui/shoemakerview.ui" line="80"/>
-        <source>Description</source>
-        <translation>Descrizione</translation>
+        <location filename="../../src/views/settingsview.cpp" line="34"/>
+        <source>General</source>
+        <translation>Generale</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemakerview.ui" line="129"/>
+        <location filename="../../src/views/settingsview.cpp" line="34"/>
+        <source>Calendar</source>
+        <translation>Calendario</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.cpp" line="34"/>
+        <source>Units of measurement</source>
+        <translation>Unità di misura</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.cpp" line="45"/>
+        <source>Only display the icon</source>
+        <translation>Visualizza solo le icone</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.cpp" line="46"/>
+        <source>Only display the text</source>
+        <translation>Visualizza solo il testo</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.cpp" line="47"/>
+        <source>The text appears beside the icon</source>
+        <translation>Il testo appare accanto alle icone</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.cpp" line="48"/>
+        <source>The text appears under the icon</source>
+        <translation>Il testo appare sotto le icone</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="17"/>
+        <source>Settings</source>
+        <translation>Opzioni</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="51"/>
+        <source>Toolbar tool button style</source>
+        <translation>Stile dei pulsanti della toolbar</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="77"/>
+        <source>Toolbar icon size</source>
+        <translation>Dimensione delle icone della toolbar</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="91"/>
+        <source>Monday is first day of week</source>
+        <translation>Lunedì è il primo giorno della settimana</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="115"/>
+        <source>Distance</source>
+        <translation>Distanza</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="135"/>
+        <source>Weight</source>
+        <translation>Peso</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="171"/>
+        <source>Currency</source>
+        <translation>Valuta</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="191"/>
+        <source>Temperature</source>
+        <translation>Temperatura</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="212"/>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/settingsview.ui" line="236"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemakerview.ui" line="143"/>
+        <location filename="../../src/views/settingsview.ui" line="250"/>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+</context>
+<context>
+    <name>ShoeMakerView</name>
+    <message>
+        <location filename="../../src/views/tableviews/shoemakerview.cpp" line="34"/>
+        <location filename="../../src/views/tableviews/shoemakerview.ui" line="81"/>
+        <source>Description</source>
+        <translation>Descrizione</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/shoemakerview.ui" line="130"/>
+        <source>Save</source>
+        <translation>Salva</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/shoemakerview.ui" line="144"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemakerview.ui" line="16"/>
+        <location filename="../../src/views/tableviews/shoemakerview.ui" line="17"/>
         <source>Edit &quot;Shoe maker&quot;</source>
         <translation>Modifica di &quot;Marca scarpe&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoemakerview.cpp" line="103"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="obsolete">Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoemakerview.cpp" line="103"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemakerview.ui" line="105"/>
+        <location filename="../../src/views/tableviews/shoemakerview.ui" line="106"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
@@ -742,55 +1111,58 @@
 <context>
     <name>ShoeModelTableModel</name>
     <message>
-        <location filename="../../src/models/shoemodeltablemodel.cpp" line="46"/>
         <source>Maker</source>
-        <translation>Marca</translation>
+        <translation type="obsolete">Marca</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoemodeltablemodel.cpp" line="47"/>
         <source>Description</source>
-        <translation>Descrizione</translation>
+        <translation type="obsolete">Descrizione</translation>
     </message>
 </context>
 <context>
     <name>ShoeModelView</name>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="80"/>
+        <location filename="../../src/views/tableviews/shoemodelview.cpp" line="37"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="81"/>
         <source>Description</source>
         <translation>Descrizione</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="93"/>
+        <location filename="../../src/views/tableviews/shoemodelview.cpp" line="38"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="91"/>
         <source>Maker</source>
         <translation>Marca</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="142"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="109"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="154"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="156"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="168"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="16"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="17"/>
         <source>Edit &quot;Shoe model&quot;</source>
         <translation>Modifica di &quot;Modello scarpe&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoemodelview.cpp" line="108"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="obsolete">Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoemodelview.cpp" line="109"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoemodelview.ui" line="118"/>
+        <location filename="../../src/views/tableviews/shoemodelview.ui" line="130"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
@@ -798,150 +1170,150 @@
 <context>
     <name>ShoeTableModel</name>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="86"/>
         <source>Maker</source>
-        <translation>Marca</translation>
+        <translation type="obsolete">Marca</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="87"/>
         <source>Model</source>
-        <translation>Modello</translation>
+        <translation type="obsolete">Modello</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="88"/>
         <source>Size</source>
-        <translation>Taglia</translation>
+        <translation type="obsolete">Taglia</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="50"/>
         <source>Purchase date</source>
         <translation type="obsolete">Data di acquisto</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="90"/>
         <source>Price</source>
-        <translation>Prezzo</translation>
+        <translation type="obsolete">Prezzo</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="91"/>
         <source>Initial distance</source>
-        <translation>Distanza iniziale</translation>
+        <translation type="obsolete">Distanza iniziale</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="92"/>
         <source>Retired</source>
-        <translation>Ritirata</translation>
+        <translation type="obsolete">Ritirata</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="93"/>
         <source>Notes</source>
-        <translation>Note</translation>
+        <translation type="obsolete">Note</translation>
     </message>
     <message>
-        <location filename="../../src/models/shoetablemodel.cpp" line="89"/>
         <source>Purchase</source>
-        <translation>Acquistato</translation>
+        <translation type="obsolete">Acquistato</translation>
     </message>
 </context>
 <context>
     <name>ShoeView</name>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="132"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="105"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="126"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="255"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="151"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="246"/>
         <source> km</source>
         <translation> km</translation>
     </message>
-    <message utf8="true">
-        <location filename="../../src/views/ui/shoeview.ui" line="229"/>
+    <message>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="220"/>
         <source> €</source>
         <translation> €</translation>
     </message>
-    <message utf8="true">
-        <location filename="../../src/views/ui/shoeview.ui" line="297"/>
+    <message>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="275"/>
         <source> €/km</source>
         <translation> €/km</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="17"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="17"/>
         <source>Edit a shoe</source>
         <translation>Modifica di una scarpa</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="93"/>
+        <location filename="../../src/views/tableviews/shoeview.cpp" line="40"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="93"/>
         <source>Maker</source>
         <translation>Marca</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="117"/>
+        <location filename="../../src/views/tableviews/shoeview.cpp" line="41"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="114"/>
         <source>Model</source>
         <translation>Modello</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="141"/>
+        <location filename="../../src/views/tableviews/shoeview.cpp" line="43"/>
+        <source>Purchase Date</source>
+        <translation>Data di acquisto</translation>
+    </message>
+    <message>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="135"/>
         <source>Initial distance</source>
         <translation>Distanza iniziale</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="170"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="164"/>
         <source>Purchase date</source>
         <translation>Data di acquisto</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="190"/>
+        <location filename="../../src/views/tableviews/shoeview.cpp" line="42"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="184"/>
         <source>Size</source>
         <translation>Taglia</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="219"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="210"/>
         <source>Price</source>
         <translation>Prezzo</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="268"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="259"/>
         <source>Price per km</source>
         <translation>Costo per km</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="278"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="285"/>
         <source>Notes</source>
         <translation>Note</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="307"/>
+        <location filename="../../src/views/tableviews/shoeview.cpp" line="44"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="298"/>
         <source>Retired</source>
         <translation>Ritirata</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="350"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="341"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="364"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="355"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoeview.cpp" line="132"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="obsolete">Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/shoeview.cpp" line="124"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="239"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="230"/>
         <source>Distance traveled</source>
         <translation>Distanza percorsa</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/shoeview.ui" line="326"/>
+        <location filename="../../src/views/tableviews/shoeview.ui" line="317"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
@@ -949,65 +1321,82 @@
 <context>
     <name>StatisticsWidget</name>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="89"/>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="176"/>
+        <source>DISTANCE
+(%1)</source>
+        <translation>DISTANZA
+(%1)</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="181"/>
+        <source>AVR. SPEED
+(min/%1 - %1/h)</source>
+        <translation>VEL. MEDIA
+(min/%1 - %1/h)</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="184"/>
+        <source>COST
+(%1/%2)</source>
+        <translation>COSTO
+(%1/%2)</translation>
+    </message>
+    <message>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="215"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="52"/>
         <source>DISTANCE
 (km)</source>
-        <translation>DISTANZA
+        <translation type="obsolete">DISTANZA
 (km)</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="53"/>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="177"/>
         <source>DURATION
 (h min sec)</source>
         <translation>DURATA
 (h min sec)</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="57"/>
         <source>AVR. SPEED
 (min/km - km/h)</source>
-        <translation>VEL. MEDIA
+        <translation type="obsolete">VEL. MEDIA
 (min/km - km/h)</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="60"/>
         <source>COST
 (/km)</source>
         <translation type="obsolete">COSTO
 (€/km)</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="85"/>
+        <location filename="../../src/widgets/statisticswidget/statisticswidget.cpp" line="211"/>
         <source>TOTALS</source>
         <translation>TOTALI</translation>
     </message>
     <message>
-        <location filename="../../src/widgets/statisticswidget.cpp" line="60"/>
         <source>COST
 (/km)</source>
-        <translation>COSTO
+        <translation type="obsolete">COSTO
 (€/km)</translation>
     </message>
 </context>
 <context>
     <name>VotePopupView</name>
     <message>
-        <location filename="../../src/views/ui/votepopupview.ui" line="31"/>
+        <location filename="../../src/views/popupviews/votepopupview.ui" line="31"/>
         <source>Vote details</source>
         <translation>Dettaglio del voto</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/votepopupview.ui" line="39"/>
+        <location filename="../../src/views/popupviews/votepopupview.ui" line="39"/>
         <source>Quality</source>
         <translation>Qualità</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/votepopupview.ui" line="56"/>
+        <location filename="../../src/views/popupviews/votepopupview.ui" line="56"/>
         <source>Effort</source>
         <translation>Fatica</translation>
     </message>
@@ -1015,27 +1404,27 @@
 <context>
     <name>WeatherInfoPopupView</name>
     <message>
-        <location filename="../../src/views/ui/weatherinfopopupview.ui" line="52"/>
+        <location filename="../../src/views/popupviews/weatherinfopopupview.ui" line="52"/>
         <source>...</source>
         <translation>...</translation>
     </message>
-    <message utf8="true">
-        <location filename="../../src/views/ui/weatherinfopopupview.ui" line="83"/>
+    <message>
+        <location filename="../../src/views/popupviews/weatherinfopopupview.ui" line="83"/>
         <source> °C</source>
         <translation> °C</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherinfopopupview.ui" line="31"/>
+        <location filename="../../src/views/popupviews/weatherinfopopupview.ui" line="31"/>
         <source>Weather informations</source>
         <translation>Informazioni meteo</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherinfopopupview.ui" line="37"/>
+        <location filename="../../src/views/popupviews/weatherinfopopupview.ui" line="37"/>
         <source>Weather</source>
         <translation>Meteo</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherinfopopupview.ui" line="67"/>
+        <location filename="../../src/views/popupviews/weatherinfopopupview.ui" line="67"/>
         <source>Temperature</source>
         <translation>Temperatura</translation>
     </message>
@@ -1043,37 +1432,36 @@
 <context>
     <name>WeatherView</name>
     <message>
-        <location filename="../../src/views/ui/weatherview.ui" line="16"/>
+        <location filename="../../src/views/tableviews/weatherview.ui" line="17"/>
         <source>Edit &quot;Weather&quot;</source>
         <translation>Modifica di &quot;Meteo&quot;</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherview.ui" line="80"/>
+        <location filename="../../src/views/tableviews/weatherview.cpp" line="34"/>
+        <location filename="../../src/views/tableviews/weatherview.ui" line="81"/>
         <source>Description</source>
         <translation>Descrizione</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherview.ui" line="129"/>
+        <location filename="../../src/views/tableviews/weatherview.ui" line="130"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherview.ui" line="143"/>
+        <location filename="../../src/views/tableviews/weatherview.ui" line="144"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../../src/views/weatherview.cpp" line="103"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="obsolete">Errore</translation>
     </message>
     <message>
-        <location filename="../../src/views/weatherview.cpp" line="103"/>
         <source>An error has occoured during saving modifications in the database.</source>
         <translation type="obsolete">Si è verificato un errore durante il salvataggio delle modifiche sul database.</translation>
     </message>
     <message>
-        <location filename="../../src/views/ui/weatherview.ui" line="105"/>
+        <location filename="../../src/views/tableviews/weatherview.ui" line="106"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>

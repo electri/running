@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 #define VOTEPOPUPVIEW_H
 
 #include <QWidget>
-
-#include "../../obj/ui_votepopupview.h"
+#include "ui_votepopupview.h"
 
 class VotePopupView : public QWidget, public Ui::VotePopupView
 {
@@ -33,4 +32,4 @@ public:
 	VotePopupView(QWidget *parent = 0);
 };
 
-#endif
+#endif // VOTEPOPUPVIEW_H

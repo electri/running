@@ -72,12 +72,12 @@ Qt::DayOfWeek CalendarWidget::firstDayOfWeek() const
 	return calendarWidgetInternal->firstDayOfWeek();
 }
 
-void CalendarWidget::setDelegate(CalendarDelegate *delegate)
+void CalendarWidget::setDelegate(CalendarWidgetDelegate *delegate)
 {
 	calendarWidgetInternal->setDelegate(delegate);
 }
 
-CalendarDelegate *CalendarWidget::delegate() const
+CalendarWidgetDelegate *CalendarWidget::delegate() const
 {
 	return calendarWidgetInternal->delegate();
 }
@@ -92,22 +92,22 @@ int CalendarWidget::yearShown() const
 	return m_selectedDate.year();
 }
 
-void CalendarWidget::on_prevMonthToolButton_clicked()
+void CalendarWidget::on_prevMonthPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addMonths(-1));
 }
 
-void CalendarWidget::on_nextMonthToolButton_clicked()
+void CalendarWidget::on_nextMonthPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addMonths(1));
 }
 
-void CalendarWidget::on_prevYearToolButton_clicked()
+void CalendarWidget::on_prevYearPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addYears(-1));
 }
 
-void CalendarWidget::on_nextYearToolButton_clicked()
+void CalendarWidget::on_nextYearPushButton_clicked()
 {
 	setSelectedDate(m_selectedDate.addYears(1));
 }

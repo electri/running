@@ -1,7 +1,7 @@
 /****************************************************************************
 
 	running - A small program to keep track of your workouts.
-	Copyright (C) 2008  Marco Gasparetto (markgabbahey@gmail.com)
+	Copyright (C) 2009  Marco Gasparetto (markgabbahey@gmail.com)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,40 +18,32 @@
 
 ****************************************************************************/
 
-#ifndef OPTIONSVIEW_H
-#define OPTIONSVIEW_H
+#ifndef SETTINGSVIEW_H
+#define SETTINGSVIEW_H
 
 #include <QWidget>
-
-#include "../../obj/ui_optionsview.h"
+#include "ui_settingsview.h"
 
 class QStringListModel;
-namespace Objects { class Cfg; }
-namespace Services { class Memento; }
 
-class OptionsView : public QDialog, public Ui::OptionsView
+class SettingsView : public QDialog, public Ui::SettingsView
 {
 	Q_OBJECT
 
 public:
-	OptionsView(QWidget *parent = 0);
-	~OptionsView();
+	SettingsView(QWidget *parent = 0);
+	~SettingsView();
 
 private slots:
 	void on_resetPushButton_clicked();
 	void on_savePushButton_clicked();
 	void on_cancelPushButton_clicked();
-
 	void on_treeView_clicked(const QModelIndex &);
 
 private:
-	void getProperties(Objects::Cfg *);
-	void setProperties(Objects::Cfg *);
-	void refreshComboBoxes();
+	void _refresh();
 
 	QStringListModel *m_model;
-	Objects::Cfg *m_cfg;
-	Services::Memento *m_memento;
 };
 
-#endif
+#endif // SETTINGSVIEW_H

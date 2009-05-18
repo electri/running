@@ -22,84 +22,45 @@
 #define MAINVIEW_H
 
 #include <QMainWindow>
+#include "ui_mainview.h"
+#include "objects/eventgateway.h"
 
-#include "../../obj/ui_mainview.h"
+class EventWidget;
 
-namespace Objects { class Event; }
-namespace Services { class Memento; }
-
-class VotePopupView;
-class IntervalView;
-class RunnerInfoPopupView;
-class WeatherInfoPopupView;
-
-namespace Ui
-{
-	class MainView;
-}
-
-class MainView : public QMainWindow
+class MainView : public QMainWindow, Ui::MainView
 {
 	Q_OBJECT
 
 public:
 	MainView(QWidget *parent = 0);
+	~MainView();
 
 private slots:
-	void showCalendar();
+	void showCalendarAction();
 	void on_calendarWidget_selectionChanged();
+	void on_calendarWidget_activated();
 
-	void showStatistics();
+	void showStatisticsAction();
 	void on_statisticsPageEventsPushButton_clicked();
 	void on_statisticsPageShoesPushButton_clicked();
 
-	void addEvent();
-	void removeEvent();
-	void editEvent();
-	void on_resetPushButton_clicked();
-	void on_savePushButton_clicked();
-	void on_cancelPushButton_clicked();
-	void on_eventTypeComboBox_currentIndexChanged(int index);
-	void on_distanceDoubleSpinBox_valueChanged(double value);
-	void on_durationTimeEdit_timeChanged(const QTime &value);
-	void on_eventTypeToolButton_clicked();
-	void on_votePushButton_clicked();
-	void on_intervalsPushButton_clicked();
-	void on_runnerInfoPushButton_clicked();
-	void on_weatherInfoPushButton_clicked();
+	void addEventAction();
+	void removeEventAction();
+	void editEventAction();
+	void on_eventWidget_accepted();
+	void on_eventWidget_rejected();
 
-	void editShoe(quint32 id = 0);
-	void on_shoeToolButton_clicked();
-
-	void editEventType(quint32 id = 0);
-	void editShoeMaker(quint32 id = 0);
-	void editShoeModel(quint32 id = 0);
-	void editWeather(quint32 id = 0);
-	void editIntervalType(quint32 id = 0);
-
-	void options();
-	void systemInformation();
+	void settings();
+	void systemInformations();
 	void about();
-	void showDebugOnConsole();
 
 private:
-	void editEventBegin(Objects::Event *);
-	void editEventEnd();
-	void editEventGetProperties(Objects::Event *);
-	void editEventSetProperties(Objects::Event *);
-	void editEventRefreshComboBoxes();
-	void refreshPaceLineEdit(double distance, const QTime &time);
+	void _addEvent(EventGateway &event);
+	void _editEvent(EventGateway &event);
+	void _showEventWidget(EventGateway &event);
+	void _updateStatusbar();
 
-	void updateStatusbar();
-
-	Objects::Event *m_currentEvent;
-	Services::Memento *m_memento;
-	VotePopupView *m_votepopupview;
-	IntervalView *m_intervalview;
-	RunnerInfoPopupView *m_runnerinfopopupview;
-	WeatherInfoPopupView *m_weatherinfopopupview;
-
-	Ui::MainView *ui;
+	EventWidget *m_eventWidget;
 };
 
 #endif
